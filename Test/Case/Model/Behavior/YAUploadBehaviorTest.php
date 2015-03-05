@@ -9,6 +9,7 @@
  */
 
 App::uses('YAUploadBehaviorModel', 'Files.Test/Case/Model/Behavior');
+App::uses('ModelBehavior', 'Model');
 App::uses('UploadBehavior', 'Upload.Model/Behavior');
 
 /**

@@ -9,7 +9,6 @@
  * @copyright Copyright 2014, NetCommons Project
  */
 
-App::uses('ModelBehavior', 'Model');
 App::uses('FilesAppModel', 'Files.Model');
 App::uses('Folder', 'Utility');
 
