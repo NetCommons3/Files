@@ -11,6 +11,9 @@
 
 App::uses('AppModel', 'Model');
 
+/**
+ * Summary for FileApp Model
+ */
 class FilesAppModel extends AppModel {
 
 }

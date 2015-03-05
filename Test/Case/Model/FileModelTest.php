@@ -1,6 +1,6 @@
 <?php
 /**
- * File Model
+ * File Test Case
  *
  * @author Noriko Arai <arai@nii.ac.jp>
  * @author Shohei Nakajima <nakajimashouhei@gmail.com>
@@ -9,11 +9,11 @@
  * @copyright Copyright 2014, NetCommons Project
  */
 
-App::uses('FilesAppModel', 'Files.Model');
+App::uses('FilesModelTestBase', 'Files.Test/Case/Model');
 
 /**
- * File Model
+ * FileModel Test Case
  */
-class File extends FilesAppModel {
+class FileModelTest extends FilesModelTestBase {
 
 }

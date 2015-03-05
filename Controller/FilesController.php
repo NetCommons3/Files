@@ -24,7 +24,9 @@ class FilesController extends FilesAppController {
  *
  * @var array
  */
-	//public $uses = array();
+	public $uses = array(
+		'Files.FileModel'
+	);
 
 /**
  * use component
@@ -34,48 +36,88 @@ class FilesController extends FilesAppController {
 	//public $components = array();
 
 /**
- * index method
+ * beforeFilter
+ *
+ * @return void
+ */
+	public function beforeFilter() {
+		parent::beforeFilter();
+		$this->Auth->allow('download');
+	}
+
+/**
+ * index action
  *
  * @return void
  */
 	public function index() {
-		return;
 	}
 
 /**
- * view method
+ * view action
  *
  * @return void
  */
 	public function view() {
-		return;
 	}
 
 /**
- * add method
+ * add action
  *
  * @return void
  */
 	public function add() {
-		return;
 	}
 
 /**
- * edit method
+ * edit action
  *
  * @return void
  */
 	public function edit() {
-		return;
 	}
 
 /**
- * delete method
+ * delete action
  *
  * @return void
  */
 	public function delete() {
-		return;
 	}
+
+/**
+ * download action
+ *
+ * @param string $fileName File name
+ * @return void
+ * @throws NotFoundException
+ */
+	public function download($fileName = null) {
+		$this->autoRender = false;
+
+		list($slug, ) = explode('_', pathinfo($fileName, PATHINFO_BASENAME));
+
+		if (! $file = $this->FileModel->find('first', [
+			'recursive' => -1,
+			'conditions' => ['slug' => $slug],
+		])) {
+			// @codeCoverageIgnoreStart
+			throw new NotFoundException(__d('files', 'Not Found file.'));
+			// @codeCoverageIgnoreEnd
+		}
+
+		//TODO: 権限チェック
+
+		$filePath = $file[$this->FileModel->alias]['path'] . $fileName . '.' . $file[$this->FileModel->alias]['extension'];
+		if (file_exists($filePath)) {
+			$this->response->file($filePath);
+
+			// 単にダウンロードさせる場合はこれを使う
+			//$this->response->download($file[$this->FileModel->alias]['name']);
+
+			$this->response->body($file[$this->FileModel->alias]['name']);
+		}
+	}
+
 }
 
