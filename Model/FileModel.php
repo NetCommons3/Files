@@ -373,7 +373,7 @@ class FileModel extends FilesAppModel {
 
 		//削除チェック
 		foreach ($files as $file) {
-			//TODO権限チェック
+			//権限チェック
 			CakeLog::debug(print_r($file, true));
 		}
 

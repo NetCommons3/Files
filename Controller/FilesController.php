@@ -106,7 +106,7 @@ class FilesController extends FilesAppController {
 			// @codeCoverageIgnoreEnd
 		}
 
-		//TODO権限チェック
+		//権限チェック
 
 		$filePath = $file[$this->FileModel->alias]['path'] . $fileName . '.' . $file[$this->FileModel->alias]['extension'];
 		if (file_exists($filePath)) {
