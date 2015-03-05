@@ -16,6 +16,7 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
+App::uses('ModelBehavior', 'Model');
 App::uses('UploadBehavior', 'Upload.Model/Behavior');
 App::uses('Folder', 'Utility');
 
