@@ -8,4 +8,4 @@ Files for NetComomns3
 
 | dependencies  | status |
 | ------------- | ------ |
-| composer.json | [![Dependency Status](https://www.versioneye.com/user/projects/54caf6a8fb6eba796200009b/badge.png)](https://www.versioneye.com/user/projects/54caf6a8fb6eba796200009b) |
+| composer.json | [![Dependency Status](https://www.versioneye.com/user/projects/54e54d12b3ca9bffb4000185/badge.png)](https://www.versioneye.com/user/projects/54e54d12b3ca9bffb4000185) |
