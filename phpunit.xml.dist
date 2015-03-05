@@ -20,7 +20,6 @@
             <directory suffix=".php">app/Plugin/Migration</directory>
             <directory suffix=".php">app/Plugin/MobileDetect</directory>
             <directory suffix=".php">app/Plugin/NetCommons</directory>
-            <directory suffix=".ctp">app/Plugin/NetCommons</directory>
             <directory suffix=".php">app/Plugin/Pages</directory>
             <directory suffix=".php">app/Plugin/TinyMCE</directory>
             <directory suffix=".php">app/Plugin/Upload</directory>

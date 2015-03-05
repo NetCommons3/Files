@@ -19,7 +19,6 @@
     },
     "require-dev": {
         "mustangostang/spyc":           "dev-master",
-        "satooshi/php-coveralls":       "dev-master",
         "netcommons/auth":              "dev-master",
         "netcommons/auth-general":      "dev-master",
         "netcommons/boxes":             "dev-master",
@@ -33,8 +32,9 @@
         "netcommons/roles":             "dev-master",
         "netcommons/rooms":             "dev-master",
         "netcommons/pages":             "dev-master",
-        "netcommons/users":             "dev-master"
-    },
+        "netcommons/users":             "dev-master",
+		"satooshi/php-coveralls":       "~0.6.1"
+	},
     "license": "NetCommons License",
     "authors": [
         {
