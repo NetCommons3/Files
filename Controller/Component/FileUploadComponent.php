@@ -24,32 +24,35 @@ class FileUploadComponent extends Component {
  * Before the controller action
  *
  * @param Controller $controller Controller with components
+ * @param string $field Request parameter name.
  * @return void
  */
-	public function upload(Controller $controller) {
-		if (! isset($controller->data['File'][FileModel::INPUT_NAME]) ||
-				$controller->data['File'][FileModel::INPUT_NAME]['name'] === '') {
+	public function upload(Controller $controller, $modelName, $field) {
+		if (! isset($controller->data[$modelName][$field]) ||
+				$controller->data[$modelName][$field]['name'] === '') {
 			return array();
 		}
 
 		$slug = Security::hash(
-			$controller->data['File'][FileModel::INPUT_NAME]['name'] . mt_rand() . microtime(), 'md5'
+			$controller->data[$modelName][$field]['name'] . mt_rand() . microtime(), 'md5'
 		);
 
-		$data = Hash::merge(array(
-				'name' => $controller->data['File'][FileModel::INPUT_NAME]['name'],
+		$data['File'] = Hash::merge(array(
+				//'name' => $controller->data['File'][$field]['name'],
 				'slug' => $slug,
-				'extension' => pathinfo($controller->data['File'][FileModel::INPUT_NAME]['name'], PATHINFO_EXTENSION),
+				'extension' => pathinfo($controller->data[$modelName][$field]['name'], PATHINFO_EXTENSION),
 				'original_name' => $slug,
-				'size' => $controller->data['File'][FileModel::INPUT_NAME]['size'],
-				'mimetype' => $controller->data['File'][FileModel::INPUT_NAME]['type'],
+				//'size' => $controller->data['File'][$field]['size'],
+				'mimetype' => $controller->data[$modelName][$field]['type'],
 			),
-			$controller->data['File']
+			$controller->data[$modelName][$field]
 		);
-		if (preg_match('/^image/', $controller->data['File'][FileModel::INPUT_NAME]['type']) === 1 ||
-				preg_match('/^video/', $controller->data['File'][FileModel::INPUT_NAME]['type']) === 1) {
-			$data['alt'] = $data['name'];
+		if (preg_match('/^image/', $data['File']['type']) === 1 ||
+				preg_match('/^video/', $data['File']['type']) === 1) {
+			$data['File']['alt'] = $data['File']['name'];
 		}
+
+		//CakeLog::debug('FileUploadComponent::upload() $data=' . print_r($data, true));
 
 		return $data;
 	}

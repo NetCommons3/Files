@@ -18,27 +18,6 @@ App::uses('Folder', 'Utility');
 class FileModel extends FilesAppModel {
 
 /**
- * File Base URL
- *
- * @var string
- */
-	const FILE_BASE_URL = '/files/files/download/';
-
-/**
- * upload dir
- *
- * @var string
- */
-	const UPLOAD_DIR = 'uploads';
-
-/**
- * input name
- *
- * @var string
- */
-	const INPUT_NAME = 'upload';
-
-/**
  * Custom database table name
  *
  * @var string
@@ -78,26 +57,7 @@ class FileModel extends FilesAppModel {
  * @link http://book.cakephp.org/2.0/en/models/behaviors.html#using-behaviors
  */
 	public $actsAs = array(
-		'Files.YAUpload' => array(
-			'fileBaseUrl' => self::FILE_BASE_URL,
-			'uploadDir' => self::UPLOAD_DIR,
-			'thumbnailSizes' => array(
-				'big' => '800ml',
-				'medium' => '450ml',
-				'small' => '250ml',
-				'thumbnail' => '100ml',
-			),
-			self::INPUT_NAME => array(
-				'maxSize' => 200097152,
-				'minSize' => 8,
-				'fields' => [
-					'type' => 'mimetype',
-					'dir' => 'path',
-				],
-				'thumbnailPrefixStyle' => false,
-				'nameCallback' => 'nameCallback',
-			)
-		)
+		'Files.YAUpload'
 	);
 
 /**
@@ -111,12 +71,12 @@ class FileModel extends FilesAppModel {
  */
 	public function beforeValidate($options = array()) {
 		$this->validate = Hash::merge($this->validate, array(
-			self::INPUT_NAME => array(
-				'uploadError' => array(
-					'rule' => array('uploadError'),
-					'message' => array('Error uploading file')
-				),
-			),
+			//'upload' => array(
+			//	'uploadError' => array(
+			//		'rule' => array('uploadError'),
+			//		'message' => array('Error uploading file')
+			//	),
+			//),
 			'name' => array(
 				'notEmpty' => array(
 					'rule' => array('notEmpty'),
@@ -190,6 +150,32 @@ class FileModel extends FilesAppModel {
 
 		return parent::beforeValidate($options);
 	}
+
+/**
+ * Called after each successful save operation.
+ *
+ * @param boolean $created True if this save created a new record
+ * @param array $options Options passed from Model::save().
+ * @return void
+ * @link http://book.cakephp.org/2.0/en/models/callback-methods.html#aftersave
+ * @see Model::save()
+ */
+//	public function afterSave($created, $options = array()) {
+//		CakeLog::debug('FileModel::afterSave()');
+//		CakeLog::debug('FileModel::afterSave() $this->data=' . print_r($this->data, true));
+//
+//		if ($created && isset($this->data[$this->alias]['path'])) {
+//			$db = $this->getDataSource();
+//			$this->updateAll(
+//				array(
+//					$this->alias . '.path' => $db->value($this->data[$this->alias]['path'] . $this->id . '{DS}')
+//				),
+//				array(
+//					$this->alias . '.' . $this->primaryKey => $this->id
+//				)
+//			);
+//		}
+//	}
 
 /**
  * save file
