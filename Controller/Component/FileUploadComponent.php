@@ -24,35 +24,34 @@ class FileUploadComponent extends Component {
  * Before the controller action
  *
  * @param Controller $controller Controller with components
+ * @param string $model Model name.
  * @param string $field Request parameter name.
  * @return void
  */
-	public function upload(Controller $controller, $modelName, $field) {
-		if (! isset($controller->data[$modelName][$field]) ||
-				$controller->data[$modelName][$field]['name'] === '') {
+	public function upload(Controller $controller, $model, $field) {
+		if (! isset($controller->data[$model][$field]) ||
+				$controller->data[$model][$field]['name'] === '') {
 			return array();
 		}
 
 		$slug = Security::hash(
-			$controller->data[$modelName][$field]['name'] . mt_rand() . microtime(), 'md5'
+			$controller->data[$model][$field]['name'] . mt_rand() . microtime(), 'md5'
 		);
 
-		$data['File'] = Hash::merge(array(
-				//'name' => $controller->data['File'][$field]['name'],
+		$data = Hash::merge(
+			$controller->data[$field]['File'],
+			array(
 				'slug' => $slug,
-				'extension' => pathinfo($controller->data[$modelName][$field]['name'], PATHINFO_EXTENSION),
+				'extension' => pathinfo($controller->data[$model][$field]['name'], PATHINFO_EXTENSION),
 				'original_name' => $slug,
-				//'size' => $controller->data['File'][$field]['size'],
-				'mimetype' => $controller->data[$modelName][$field]['type'],
+				'mimetype' => $controller->data[$model][$field]['type'],
 			),
-			$controller->data[$modelName][$field]
+			$controller->data[$model][$field]
 		);
-		if (preg_match('/^image/', $data['File']['type']) === 1 ||
-				preg_match('/^video/', $data['File']['type']) === 1) {
-			$data['File']['alt'] = $data['File']['name'];
+		if (preg_match('/^image/', $data['type']) === 1 ||
+				preg_match('/^video/', $data['type']) === 1) {
+			$data['alt'] = $data['name'];
 		}
-
-		//CakeLog::debug('FileUploadComponent::upload() $data=' . print_r($data, true));
 
 		return $data;
 	}

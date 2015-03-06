@@ -152,32 +152,6 @@ class FileModel extends FilesAppModel {
 	}
 
 /**
- * Called after each successful save operation.
- *
- * @param boolean $created True if this save created a new record
- * @param array $options Options passed from Model::save().
- * @return void
- * @link http://book.cakephp.org/2.0/en/models/callback-methods.html#aftersave
- * @see Model::save()
- */
-//	public function afterSave($created, $options = array()) {
-//		CakeLog::debug('FileModel::afterSave()');
-//		CakeLog::debug('FileModel::afterSave() $this->data=' . print_r($this->data, true));
-//
-//		if ($created && isset($this->data[$this->alias]['path'])) {
-//			$db = $this->getDataSource();
-//			$this->updateAll(
-//				array(
-//					$this->alias . '.path' => $db->value($this->data[$this->alias]['path'] . $this->id . '{DS}')
-//				),
-//				array(
-//					$this->alias . '.' . $this->primaryKey => $this->id
-//				)
-//			);
-//		}
-//	}
-
-/**
  * save file
  *
  * @param array $data received post data

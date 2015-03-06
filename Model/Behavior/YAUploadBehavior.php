@@ -94,8 +94,6 @@ class YAUploadBehavior extends UploadBehavior {
  * @return void
  */
 	public function setup(Model $model, $config = array()) {
-		CakeLog::debug('YAUploadBefavior::setup()');
-
 		if (isset($config['fileBaseUrl'])) {
 			$this->fileBaseUrl = $config['fileBaseUrl'];
 			unset($config['fileBaseUrl']);
@@ -127,8 +125,6 @@ class YAUploadBehavior extends UploadBehavior {
 			$config[$field] = Hash::merge($this->__default, $config[$field]);
 		}
 
-		//CakeLog::debug('YAUploadBefavior::setup() $config=' . print_r($config, true));
-
 		parent::setup($model, $config);
 	}
 
@@ -143,12 +139,6 @@ class YAUploadBehavior extends UploadBehavior {
  * @return string file name
  */
 	public function nameCallback(Model $model, $field, $currentName, $data, $options) {
-		CakeLog::debug('YAUploadBefavior::nameCallback()');
-		//CakeLog::debug('YAUploadBefavior::nameCallback() $field=' . print_r($field, true));
-		//CakeLog::debug('YAUploadBefavior::nameCallback() $currentName=' . print_r($currentName, true));
-		//CakeLog::debug('YAUploadBefavior::nameCallback() $data=' . print_r($data, true));
-		//CakeLog::debug('YAUploadBefavior::nameCallback() $options=' . print_r($options, true));
-
 		return $data[$field]['File']['slug'] . '.' . pathinfo($currentName, PATHINFO_EXTENSION);
 	}
 
@@ -160,32 +150,26 @@ class YAUploadBehavior extends UploadBehavior {
  * @return void
  */
 	protected function _updateRecord(Model $model, $data) {
-//		CakeLog::debug('YAUploadBefavior::_updateRecord()');
-//		CakeLog::debug('YAUploadBefavior::_updateRecord() $data=' . print_r($data, true));
-//		CakeLog::debug('YAUploadBefavior::_updateRecord() $model->data=' . print_r($model->data, true));
-////		if ($model->FileModel) {
-//			CakeLog::debug('YAUploadBefavior::_updateRecord() $model->FileModel->id=' . print_r($model->FileModel->id, true));
-//		} else {
-//			CakeLog::debug('YAUploadBefavior::_updateRecord() $model->FileModel=' . print_r('none', true));
-//		}
-//		CakeLog::debug('YAUploadBefavior::_updateRecord() $this->settings=' . print_r($this->settings, true));
-//		CakeLog::debug('YAUploadBefavior::_updateRecord() $this->runtime=' . print_r($this->runtime, true));
-//		CakeLog::debug('YAUploadBefavior::_updateRecord() $model->alias=' . print_r($model->alias, true));
-//		CakeLog::debug('YAUploadBefavior::_updateRecord() id=' . print_r($model->id, true));
+		if (! $this->runtime) {
+			return;
+		}
 
-//		$db = $model->getDataSource();
+		$db = $model->getDataSource();
 
-//		$fields = array_keys($this->settings[$model->alias]);
-//		foreach ($fields as $field) {
-//			if (isset($model->data[$field]['File']['path']) && $model->data[$field]['File']['path'] !== '') {
-//				$data = array(
-//					'path' => $db->value($model->data[$field]['File']['path'] . $model->id . '{DS}', 'string')
-//				);
-//				$model->FileModel->updateAll($data, array(
-//					$model->FileModel->alias . '.' . $model->FileModel->primaryKey => (int)$model->data[$model->alias][$field]
-//				));
-//			}
-//		}
+		$fields = array_keys($this->runtime[$model->alias]);
+		foreach ($fields as $field) {
+			if (isset($model->data[$field][$model->FileModel->alias]['path']) && $model->data[$field][$model->FileModel->alias]['path'] !== '') {
+				$path = $model->data[$field][$model->FileModel->alias]['path'] . $model->id . '{DS}';
+				$model->FileModel->updateAll(
+					array(
+						'path' => $db->value($path, 'string')
+					),
+					array(
+						$model->FileModel->primaryKey => (int)$model->data[$field][$model->FileModel->alias]['id']
+					)
+				);
+			}
+		}
 	}
 
 /**
@@ -198,22 +182,14 @@ class YAUploadBehavior extends UploadBehavior {
  * @return bool
  */
 	public function beforeSave(Model $model, $options = array()) {
-		CakeLog::debug('YAUploadBefavior::beforeSave()');
-		//CakeLog::debug('YAUploadBefavior::beforeSave() $options=' . print_r($options, true));
-
 		$fields = array_keys($this->settings[$model->alias]);
 		foreach ($fields as $field) {
-			CakeLog::debug('YAUploadBefavior::beforeSave() $field=' . print_r($field, true));
 			if (isset($model->data[$field]['File']['path']) && $model->data[$field]['File']['path'] !== '') {
 				$newPath = $this->__realPath($model->data[$field]['File']['path']);
-				//CakeLog::debug('YAUploadBefavior::beforeSave() $newPath=' . print_r($newPath, true));
-
 				$this->uploadSettings($model, $field, 'path', $newPath);
 				$this->uploadSettings($model, $field, 'thumbnailPath', $newPath);
 			}
 		}
-
-		//CakeLog::debug('YAUploadBefavior::beforeSave() $this->settings=' . print_r($this->settings, true));
 		return parent::beforeSave($model, $options);
 	}
 
@@ -227,15 +203,13 @@ class YAUploadBehavior extends UploadBehavior {
  * @SuppressWarnings(PHPMD.BooleanArgumentFlag)
  */
 	public function afterFind(Model $model, $results, $primary = false) {
-		CakeLog::debug('YAUploadBefavior::afterFind()');
-
 		foreach ($results as $key => &$row) {
 			if (! isset($row['File']['path'])) {
 				continue;
 			}
 
 			//物理パスの設定
-			$results[$key]['File']['path'] = $this->__realPath($row['File']['path'] . $row[$model->alias]['id'] . '{DS}');
+			$results[$key]['File']['path'] = $this->__realPath($row['File']['path']);
 
 			//URLの設定
 			$url = $this->fileBaseUrl . $results[$key]['File']['slug'];
@@ -257,8 +231,6 @@ class YAUploadBehavior extends UploadBehavior {
 				}
 			}
 		}
-
-		//CakeLog::debug('YAUploadBefavior::afterFind() $results=' . print_r($results, true));
 		return $results;
 	}
 
