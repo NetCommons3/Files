@@ -110,7 +110,7 @@ class YAUploadBehavior extends UploadBehavior {
 			$this->rootDir = $config['rootDir'];
 			unset($config['rootDir']);
 		} else {
-			$this->rootDir = ROOT . DS . APP_DIR . DS . $this->uploadDir . DS;
+			$this->rootDir = APP . DS . $this->uploadDir . DS;
 		}
 
 		$fields = array_keys($config);
