@@ -9,8 +9,6 @@
  * @copyright Copyright 2014, NetCommons Project
  */
 
-App::uses('Folder', 'Utility');
-
 /**
  * FileFixture
  */
@@ -77,8 +75,6 @@ class FileFixture extends CakeTestFixture {
  * @return void
  */
 	public function init() {
-		$folder = new Folder();
-
 		foreach ($this->records as $i => $recode) {
 			$this->records[$i]['path'] = TMP . 'tests' . DS . 'test' . DS . $recode['id'] . DS;
 		}
