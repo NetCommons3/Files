@@ -12,7 +12,7 @@
         "cakephp/debug_kit":            "~2.2",
         "cakedc/migrations":            "~2.2",
         "components/jquery":            "~2.1",
-		"josegonzalez/cakephp-upload":  "~1.1",
+        "josegonzalez/cakephp-upload":  "~1.1",
         "phpunit/phpunit":              "~3.7.38",
         "sebastian/phpcpd":             "~2.0",
         "twbs/bootstrap":               "~3.1"
@@ -33,8 +33,8 @@
         "netcommons/rooms":             "dev-master",
         "netcommons/pages":             "dev-master",
         "netcommons/users":             "dev-master",
-		"satooshi/php-coveralls":       "~0.6.1"
-	},
+        "satooshi/php-coveralls":       "~0.6.1"
+    },
     "license": "NetCommons License",
     "authors": [
         {
