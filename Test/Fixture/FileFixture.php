@@ -11,6 +11,7 @@
 
 /**
  * FileFixture
+ * @codeCoverageIgnore
  */
 class FileFixture extends CakeTestFixture {
 
