@@ -21,32 +21,41 @@ App::uses('FileModel', 'Files.Model');
 class FileUploadComponent extends Component {
 
 /**
+ * Called before the Controller::beforeFilter().
+ *
+ * @param Controller $controller Instantiating controller
+ * @return void
+ */
+	public function initialize(Controller $controller) {
+		$this->controller = $controller;
+	}
+
+/**
  * Before the controller action
  *
- * @param Controller $controller Controller with components
  * @param string $model Model name.
  * @param string $field Request parameter name.
  * @return void
  */
-	public function upload(Controller $controller, $model, $field) {
-		if (! isset($controller->data[$model][$field]) ||
-				$controller->data[$model][$field]['name'] === '') {
+	public function upload($model, $field) {
+		if (! isset($this->controller->data[$model][$field]) ||
+				$this->controller->data[$model][$field]['name'] === '') {
 			return array();
 		}
 
 		$slug = Security::hash(
-			$controller->data[$model][$field]['name'] . mt_rand() . microtime(), 'md5'
+			$this->controller->data[$model][$field]['name'] . mt_rand() . microtime(), 'md5'
 		);
 
 		$data = Hash::merge(
-			$controller->data[$field]['File'],
+			$this->controller->data[$field]['File'],
 			array(
 				'slug' => $slug,
-				'extension' => pathinfo($controller->data[$model][$field]['name'], PATHINFO_EXTENSION),
+				'extension' => pathinfo($this->controller->data[$model][$field]['name'], PATHINFO_EXTENSION),
 				'original_name' => $slug,
-				'mimetype' => $controller->data[$model][$field]['type'],
+				'mimetype' => $this->controller->data[$model][$field]['type'],
 			),
-			$controller->data[$model][$field]
+			$this->controller->data[$model][$field]
 		);
 		if (preg_match('/^image/', $data['type']) === 1 ||
 				preg_match('/^video/', $data['type']) === 1) {
