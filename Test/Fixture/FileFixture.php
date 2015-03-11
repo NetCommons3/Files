@@ -34,7 +34,7 @@ class FileFixture extends CakeTestFixture {
 		'role_type' => array('type' => 'string', 'null' => false, 'default' => null, 'collate' => 'utf8_general_ci', 'comment' => 'role type | ロールタイプ | | e.g.) room_file_role, user_file_role, registoration_file_role', 'charset' => 'utf8', 'after' => 'description'),
 		//'number_of_downloads' => array('type' => 'integer', 'null' => false, 'default' => '0', 'comment' => 'number of downloads | ダウンロード数 |  | ', 'after' => 'type'),
 		'download_password' => array('type' => 'string', 'null' => true, 'collate' => 'utf8_general_ci', 'comment' => 'download password | ダウンロードパスワード |  | ', 'charset' => 'utf8', 'after' => 'number_of_downloads'),
-		//'status' => array('type' => 'integer', 'null' => true, 'default' => '0', 'comment' => 'status | ステータス | 0:未確定, 1:公開中, 2:利用中止 | ', 'after' => 'download_password'),
+		'status' => array('type' => 'integer', 'null' => true, 'default' => '0', 'comment' => 'status | ステータス | 0:未確定, 1:公開中, 2:利用中止 | ', 'after' => 'download_password'),
 		'created_user' => array('type' => 'integer', 'null' => true, 'default' => '0', 'comment' => 'created user | 作成者 | users.id | '),
 		'created' => array('type' => 'datetime', 'null' => true, 'default' => null, 'comment' => 'created datetime | 作成日時 |  | '),
 		'modified_user' => array('type' => 'integer', 'null' => true, 'default' => '0', 'comment' => 'modified user | 更新者 | users.id | '),
@@ -63,6 +63,7 @@ class FileFixture extends CakeTestFixture {
 			'alt' => 'logo.gif',
 			'description' => '',
 			'role_type' => 'room_file_role',
+			'status' => 1,
 			'created_user' => 1,
 			'created' => '2015-01-25 07:41:07',
 			'modified_user' => 1,
@@ -77,8 +78,9 @@ class FileFixture extends CakeTestFixture {
  */
 	public function init() {
 		foreach ($this->records as $i => $recode) {
-			$this->records[$i]['path'] = TMP . 'tests' . DS . 'test' . DS . $recode['id'] . DS;
+			$this->records[$i]['path'] = TMP . 'tests' . DS . Inflector::variable($this->name) . DS . $recode['id'] . DS;
 		}
 		parent::init();
 	}
+
 }

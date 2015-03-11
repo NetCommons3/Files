@@ -71,12 +71,6 @@ class FileModel extends FilesAppModel {
  */
 	public function beforeValidate($options = array()) {
 		$this->validate = Hash::merge($this->validate, array(
-			//'upload' => array(
-			//	'uploadError' => array(
-			//		'rule' => array('uploadError'),
-			//		'message' => array('Error uploading file')
-			//	),
-			//),
 			'name' => array(
 				'notEmpty' => array(
 					'rule' => array('notEmpty'),

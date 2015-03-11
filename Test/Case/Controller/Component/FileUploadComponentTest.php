@@ -64,6 +64,7 @@ class FileUploadComponentTest extends CakeTestCase {
 		//コンポーネント読み込み
 		$Collection = new ComponentCollection();
 		$this->FileUpload = new FileUploadComponent($Collection);
+		$this->FileUpload->initialize($this->TestController);
 		$this->FileUpload->viewSetting = false;
 	}
 
@@ -103,7 +104,7 @@ class FileUploadComponentTest extends CakeTestCase {
 			)
 		);
 
-		$result = $this->FileUpload->upload($this->TestController, 'Test', 'field');
+		$result = $this->FileUpload->upload('Test', 'field');
 
 		$this->assertArrayHasKey('name', $result);
 		$this->assertTextEquals($result['name'], $this->TestController->data['Test']['field']['name']);
@@ -128,7 +129,7 @@ class FileUploadComponentTest extends CakeTestCase {
 			'Test' => array(),
 		);
 
-		$result = $this->FileUpload->upload($this->TestController, 'Test', 'field');
+		$result = $this->FileUpload->upload('Test', 'field');
 
 		$this->assertCount(0, $result);
 	}
@@ -155,7 +156,7 @@ class FileUploadComponentTest extends CakeTestCase {
 			)
 		);
 
-		$result = $this->FileUpload->upload($this->TestController, 'Test', 'field');
+		$result = $this->FileUpload->upload('Test', 'field');
 
 		$this->assertArrayHasKey('name', $result);
 		$this->assertTextEquals($result['name'], $this->TestController->data['Test']['field']['name']);
@@ -192,7 +193,7 @@ class FileUploadComponentTest extends CakeTestCase {
 			)
 		);
 
-		$result = $this->FileUpload->upload($this->TestController, 'Test', 'field');
+		$result = $this->FileUpload->upload('Test', 'field');
 
 		$this->assertArrayHasKey('name', $result);
 		$this->assertTextEquals($result['name'], $this->TestController->data['Test']['field']['name']);

@@ -28,11 +28,11 @@ class YAUploadBehaviorModel extends FileModel {
  * List of behaviors
  * @var array
  */
-	//public $actsAs = array(
-	//	'Files.YAUpload' => array(
-	//		'userModel' => 'YAUploadBehaviorModel',
-	//	),
-	//);
+	public $actsAs = array(
+		'Files.YAUpload' => array(
+			'userModel' => 'YAUploadBehaviorModel',
+		),
+	);
 
 /**
  * List of hasOne associations
@@ -77,14 +77,14 @@ class YAUploadBehaviorTest extends CakeTestCase {
  */
 	public function setUp() {
 		/* ClassRegistry::flush(); */
-		$this->model = ClassRegistry::init('YAUploadBehaviorModel');
+		//$this->model = ClassRegistry::init('YAUploadBehaviorModel');
 		/* $this->model = ClassRegistry::init('Users.User', true); */
 		/* if ($this->model->useDbConfig !== 'test') { */
 		/* 	$this->model->setDataSource('master'); */
 		/* } */
 		/* $this->loadModels(['model' => 'Users.User']); */
 		/* $this->model->setDataSource('test'); */
-		$this->model->Behaviors->load('Files.YAUpload');
+		//$this->model->Behaviors->load('Files.YAUpload');
 	}
 
 /**
