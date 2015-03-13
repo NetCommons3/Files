@@ -46,46 +46,6 @@ class FilesController extends FilesAppController {
 	}
 
 /**
- * index action
- *
- * @return void
- */
-	public function index() {
-	}
-
-/**
- * view action
- *
- * @return void
- */
-	public function view() {
-	}
-
-/**
- * add action
- *
- * @return void
- */
-	public function add() {
-	}
-
-/**
- * edit action
- *
- * @return void
- */
-	public function edit() {
-	}
-
-/**
- * delete action
- *
- * @return void
- */
-	public function delete() {
-	}
-
-/**
  * download action
  *
  * @param string $fileName File name
@@ -95,11 +55,11 @@ class FilesController extends FilesAppController {
 	public function download($fileName = null) {
 		$this->autoRender = false;
 
-		list($slug, ) = explode('_', pathinfo($fileName, PATHINFO_BASENAME));
+		$fileInfo = explode('_', pathinfo($fileName, PATHINFO_FILENAME));
 
 		if (! $file = $this->FileModel->find('first', [
 			'recursive' => -1,
-			'conditions' => ['slug' => $slug],
+			'conditions' => ['slug' => $fileInfo[0]],
 		])) {
 			// @codeCoverageIgnoreStart
 			throw new NotFoundException(__d('files', 'Not Found file.'));
@@ -108,14 +68,18 @@ class FilesController extends FilesAppController {
 
 		//権限チェック
 
-		$filePath = $file[$this->FileModel->alias]['path'] . $fileName . '.' . $file[$this->FileModel->alias]['extension'];
+		$filePath = $file[$this->FileModel->alias]['path'] .
+					$file[$this->FileModel->alias]['original_name'] .
+					(isset($fileInfo[1]) ? '_' . $fileInfo[1] : '') .
+					'.' . $file[$this->FileModel->alias]['extension'];
+
 		if (file_exists($filePath)) {
-			$this->response->file($filePath);
+			$this->response->file($filePath, array('name' => $file[$this->FileModel->alias]['name']));
 
 			// 単にダウンロードさせる場合はこれを使う
 			//$this->response->download($file[$this->FileModel->alias]['name']);
 
-			$this->response->body($file[$this->FileModel->alias]['name']);
+			//$this->response->body($file[$this->FileModel->alias]['name']);
 		}
 	}
 

@@ -179,11 +179,7 @@ class FileModel extends FilesAppModel {
 				// @codeCoverageIgnoreEnd
 			}
 
-			if (! $this->saveFileAssociated($file)) {
-				// @codeCoverageIgnoreStart
-				throw new InternalErrorException(__d('net_commons', 'Internal Server Error'));
-				// @codeCoverageIgnoreEnd
-			}
+			$this->saveFileAssociated($file);
 
 			//トランザクションCommit
 			$dataSource->commit();
@@ -236,6 +232,7 @@ class FileModel extends FilesAppModel {
  *
  * @param array $data received post data
  * @return bool True on success, false on error
+ * @throws InternalErrorException
  */
 	public function saveFileAssociated($data) {
 		foreach (['FilesPlugin', 'FilesRoom', 'FilesUser'] as $model) {
@@ -244,7 +241,9 @@ class FileModel extends FilesAppModel {
 			}
 			$this->$model->data[$model]['file_id'] = $data[$this->alias]['id'];
 			if (! $this->$model->save(null, false)) {
-				return false;
+				// @codeCoverageIgnoreStart
+				throw new InternalErrorException(__d('net_commons', 'Internal Server Error'));
+				// @codeCoverageIgnoreEnd
 			}
 		}
 		return true;
@@ -284,11 +283,7 @@ class FileModel extends FilesAppModel {
 			}
 
 			//関連データ削除
-			if (! $this->deleteFileAssociated($fileIds)) {
-				// @codeCoverageIgnoreStart
-				throw new InternalErrorException(__d('net_commons', 'Internal Server Error'));
-				// @codeCoverageIgnoreEnd
-			}
+			$this->deleteFileAssociated($fileIds);
 
 			//物理ファイルの削除
 			$folder = new Folder();
@@ -328,7 +323,7 @@ class FileModel extends FilesAppModel {
 		//削除チェック
 		foreach ($files as $file) {
 			//権限チェック
-			CakeLog::debug(print_r($file, true));
+			//CakeLog::debug(print_r($file, true));
 		}
 
 		return $files;
@@ -339,12 +334,15 @@ class FileModel extends FilesAppModel {
  *
  * @param array $fileIds delete file id(s)
  * @return bool True on success, false on error
+ * @throws InternalErrorException
  */
 	public function deleteFileAssociated($fileIds) {
 		//削除処理
 		foreach (['FilesPlugin', 'FilesRoom', 'FilesUser'] as $model) {
 			if (! $this->$model->deleteAll([$this->$model->alias . '.file_id' => $fileIds], true, false)) {
-				return false;
+				// @codeCoverageIgnoreStart
+				throw new InternalErrorException(__d('net_commons', 'Internal Server Error'));
+				// @codeCoverageIgnoreEnd
 			}
 		}
 		return true;

@@ -78,7 +78,7 @@ class FileFixture extends CakeTestFixture {
  */
 	public function init() {
 		foreach ($this->records as $i => $recode) {
-			$this->records[$i]['path'] = TMP . 'tests' . DS . Inflector::variable($this->name) . DS . $recode['id'] . DS;
+			$this->records[$i]['path'] = TMP . 'tests' . DS . 'file' . DS . $recode['id'] . DS;
 		}
 		parent::init();
 	}
