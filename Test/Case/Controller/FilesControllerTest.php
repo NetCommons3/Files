@@ -10,7 +10,7 @@
  */
 
 App::uses('FilesController', 'Files.Controller');
-App::uses('FilesControllerTestBase', 'Files.Test/Case/Controller');
+App::uses('FilesControllerTestCase', 'Files.Test/Case/Controller');
 
 /**
  * FilesController Test Case
@@ -18,7 +18,7 @@ App::uses('FilesControllerTestBase', 'Files.Test/Case/Controller');
  * @author Shohei Nakajima <nakajimashouhei@gmail.com>
  * @package NetCommons\Files\Test\Case\Controller
  */
-class FilesControllerTest extends FilesControllerTestBase {
+class FilesControllerTest extends FilesControllerTestCase {
 
 /**
  * Expect download action
@@ -37,7 +37,6 @@ class FilesControllerTest extends FilesControllerTestBase {
 		$file->copy(TMP . 'tests' . DS . 'file' . DS . '1' . DS . 'logo_hash_small.gif');
 		$file->copy(TMP . 'tests' . DS . 'file' . DS . '1' . DS . 'logo_hash_thumbnail.gif');
 		$file->close();
-
 
 		ob_start();
 		$this->testAction(

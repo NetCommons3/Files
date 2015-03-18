@@ -9,14 +9,14 @@
  * @copyright Copyright 2014, NetCommons Project
  */
 
-App::uses('FilesModelTestBase', 'Files.Test/Case/Model');
+App::uses('FilesModelTestCase', 'Files.Test/Case/Model');
 App::uses('Folder', 'Utility');
 App::uses('File', 'Utility');
 
 /**
  * FileModel Test Case
  */
-class FileModelTest extends FilesModelTestBase {
+class FileModelTest extends FilesModelTestCase {
 
 /**
  * Expect FileModel->saveFile() on success

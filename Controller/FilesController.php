@@ -66,7 +66,7 @@ class FilesController extends FilesAppController {
 			// @codeCoverageIgnoreEnd
 		}
 
-		//権限チェック
+		//権限チェック(後で追加)
 
 		$filePath = $file[$this->FileModel->alias]['path'] .
 					$file[$this->FileModel->alias]['original_name'] .

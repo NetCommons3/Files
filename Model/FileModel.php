@@ -320,11 +320,11 @@ class FileModel extends FilesAppModel {
 			return false;
 		}
 
-		//削除チェック
-		foreach ($files as $file) {
+		//削除チェック(後で追加)
+		//foreach ($files as $file) {
 			//権限チェック
 			//CakeLog::debug(print_r($file, true));
-		}
+		//}
 
 		return $files;
 	}
