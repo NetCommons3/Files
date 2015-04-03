@@ -29,7 +29,7 @@ class FilesControllerTestCase extends YAControllerTestCase {
  * @var array
  */
 	public $fixtures = array(
-		'site_setting',
+		'plugin.net_commons.site_setting',
 		'plugin.blocks.block_role_permission',
 		'plugin.boxes.boxes_page',
 		'plugin.containers.container',
