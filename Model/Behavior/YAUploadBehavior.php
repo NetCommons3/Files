@@ -203,31 +203,33 @@ class YAUploadBehavior extends UploadBehavior {
  * @SuppressWarnings(PHPMD.BooleanArgumentFlag)
  */
 	public function afterFind(Model $model, $results, $primary = false) {
-		foreach ($results as $key => &$row) {
-			if (! isset($row['File']['path'])) {
-				continue;
-			}
+		foreach ($results as $key => &$rows) {
+			foreach ($rows as $alias => $row) {
+				if (! isset($row['path'])) {
+					continue;
+				}
 
-			//物理パスの設定
-			$results[$key]['File']['path'] = $this->__realPath($row['File']['path']);
+				//物理パスの設定
+				$results[$key][$alias]['path'] = $this->__realPath($row['path']);
 
-			//URLの設定
-			$url = $this->fileBaseUrl . $results[$key]['File']['slug'];
-			$results[$key]['File']['url'] =
-					$url . '.' . $results[$key]['File']['extension'];
+				//URLの設定
+				$url = $this->fileBaseUrl . $results[$key][$alias]['slug'];
+				$results[$key][$alias]['url'] =
+					$url . '.' . $results[$key][$alias]['extension'];
 
-			$types = array_keys($this->thumbnailSizes);
-			foreach ($types as $type) {
-				$filePath = $results[$key]['File']['path'] .
-							$results[$key]['File']['original_name'] . '_' . $type;
+				$types = array_keys($this->thumbnailSizes);
+				foreach ($types as $type) {
+					$filePath = $results[$key][$alias]['path'] .
+						$results[$key][$alias]['original_name'] . '_' . $type;
 
-				if (file_exists($filePath . '.' . $results[$key]['File']['extension'])) {
-					$results[$key]['File']['url_' . $type] =
-							$url . '_' . $type . '.' . $results[$key]['File']['extension'];
+					if (file_exists($filePath . '.' . $results[$key][$alias]['extension'])) {
+						$results[$key][$alias]['url_' . $type] =
+							$url . '_' . $type . '.' . $results[$key][$alias]['extension'];
 
-				} elseif (file_exists($filePath . '.png')) {
-					$results[$key]['File']['url_' . $type] =
+					} elseif (file_exists($filePath . '.png')) {
+						$results[$key][$alias]['url_' . $type] =
 							$url . '_' . $type . '.png';
+					}
 				}
 			}
 		}
