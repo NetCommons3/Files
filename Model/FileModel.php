@@ -251,55 +251,40 @@ class FileModel extends FilesAppModel {
 
 /**
  * delete file
+ * Please do the transaction and validation in the caller.
  *
  * @param array $fileIds received delete data
- * @return mixed On success Model::$data if its not empty or true, false on failure
+ * @return mixed True on success, false on failure
  * @throws InternalErrorException
  */
 	public function deleteFiles($fileIds) {
-		$models = [
+		$this->loadModels([
 			'FileModel' => 'Files.FileModel',
 			'FilesPlugin' => 'Files.FilesPlugin',
 			'FilesRoom' => 'Files.FilesRoom',
 			'FilesUser' => 'Files.FilesUser',
-		];
-		$this->loadModels($models);
+		]);
 
-		//トランザクションBegin
-		$dataSource = $this->getDataSource();
-		$dataSource->begin();
+		//削除ファイルのデータ取得
+		$files = $this->find('all', array(
+			'recursive' => -1,
+			'conditions' => array('id' => $fileIds),
+		));
 
-		try {
-			//削除validate
-			if (! $files = $this->validateDeletedFiles($fileIds)) {
-				return false;
-			}
+		//データ削除
+		if (! $this->deleteAll([$this->alias . '.id' => $fileIds], true, false)) {
+			// @codeCoverageIgnoreStart
+			throw new InternalErrorException(__d('net_commons', 'Internal Server Error'));
+			// @codeCoverageIgnoreEnd
+		}
 
-			//データ削除
-			if (! $this->deleteAll([$this->alias . '.id' => $fileIds], true, false)) {
-				// @codeCoverageIgnoreStart
-				throw new InternalErrorException(__d('net_commons', 'Internal Server Error'));
-				// @codeCoverageIgnoreEnd
-			}
+		//関連データ削除
+		$this->deleteFileAssociated($fileIds);
 
-			//関連データ削除
-			$this->deleteFileAssociated($fileIds);
-
-			//物理ファイルの削除
-			$folder = new Folder();
-			foreach ($files as $file) {
-				$folder->delete($file[$this->alias]['path']);
-			}
-
-			//トランザクションCommit
-			$dataSource->commit();
-
-		} catch (Exception $ex) {
-			//トランザクションRollback
-			$dataSource->rollback();
-			//エラー出力
-			CakeLog::error($ex);
-			throw $ex;
+		//物理ファイルの削除
+		$folder = new Folder();
+		foreach ($files as $file) {
+			$folder->delete($file[$this->alias]['path']);
 		}
 
 		return true;
