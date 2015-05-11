@@ -33,7 +33,7 @@
         "netcommons/rooms":             "dev-master",
         "netcommons/pages":             "dev-master",
         "netcommons/users":             "dev-master",
-        "satooshi/php-coveralls":       "~0.6.1"
+        "satooshi/php-coveralls":       "dev-master"
     },
     "license": "NetCommons License",
     "authors": [
