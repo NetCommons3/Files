@@ -199,12 +199,22 @@ class FileModel extends FilesAppModel {
  * validate edumap
  *
  * @param array $data received post data
+ * @param array $contains Optional validate sets
  * @return bool True on success, false on error
  */
-	public function validateFile($data) {
+	public function validateFile($data, $contains = []) {
 		$this->set($data);
 		$this->validates();
-		return $this->validationErrors ? false : true;
+		if ($this->validationErrors) {
+			return false;
+		}
+
+		if (in_array('associated', $contains, true)) {
+			if (! $this->validateFileAssociated($data)) {
+				return false;
+			}
+		}
+		return true;
 	}
 
 /**
@@ -224,7 +234,10 @@ class FileModel extends FilesAppModel {
 				$this->validationErrors = Hash::merge($this->validationErrors, $this->$model->validationErrors);
 			}
 		}
-		return $this->validationErrors ? false : true;
+		if ($this->validationErrors) {
+			return false;
+		}
+		return true;
 	}
 
 /**
