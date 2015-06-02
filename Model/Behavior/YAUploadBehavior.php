@@ -29,7 +29,14 @@ class YAUploadBehavior extends UploadBehavior {
  *
  * @var string
  */
-	const FILE_BASE_URL = '/files/files/download/';
+	const FILE_BASE_URL = '/files/files/view/';
+
+/**
+ * File Download URL
+ *
+ * @var string
+ */
+	const FILE_DOWNLOAD_URL = '/files/files/download/';
 
 /**
  * upload dir
@@ -51,6 +58,13 @@ class YAUploadBehavior extends UploadBehavior {
  * @var array
  */
 	public $fileBaseUrl = self::FILE_BASE_URL;
+
+/**
+ * fileDownloadUrl variable
+ *
+ * @var array
+ */
+	public $fileDownloadUrl = self::FILE_DOWNLOAD_URL;
 
 /**
  * upload dir variable
@@ -97,6 +111,10 @@ class YAUploadBehavior extends UploadBehavior {
 		if (isset($config['fileBaseUrl'])) {
 			$this->fileBaseUrl = $config['fileBaseUrl'];
 			unset($config['fileBaseUrl']);
+		}
+		if (isset($config['fileDownloadUrl'])) {
+			$this->fileDownloadUrl = $config['fileDownloadUrl'];
+			unset($config['fileDownloadUrl']);
 		}
 		if (isset($config['uploadDir'])) {
 			$this->uploadDir = $config['uploadDir'];
@@ -216,6 +234,11 @@ class YAUploadBehavior extends UploadBehavior {
 				$url = $this->fileBaseUrl . $results[$key][$alias]['slug'];
 				$results[$key][$alias]['url'] =
 					$url . '.' . $results[$key][$alias]['extension'];
+
+				//Downloadの設定
+				$downloadUrl = $this->fileDownloadUrl . $results[$key][$alias]['slug'];
+				$results[$key][$alias]['download'] =
+					$downloadUrl . '.' . $results[$key][$alias]['extension'];
 
 				$types = array_keys($this->thumbnailSizes);
 				foreach ($types as $type) {
