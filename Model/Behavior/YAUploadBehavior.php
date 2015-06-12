@@ -98,6 +98,7 @@ class YAUploadBehavior extends UploadBehavior {
 		],
 		'thumbnailPrefixStyle' => false,
 		'nameCallback' => 'nameCallback',
+		'mode' => 0755,
 	);
 
 /**
