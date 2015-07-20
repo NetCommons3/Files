@@ -31,6 +31,7 @@ class FilesControllerTestCase extends YAControllerTestCase {
 	public $fixtures = array(
 		'plugin.net_commons.site_setting',
 		'plugin.blocks.block_role_permission',
+		'plugin.boxes.box',
 		'plugin.boxes.boxes_page',
 		'plugin.containers.container',
 		'plugin.containers.containers_page',
@@ -38,19 +39,18 @@ class FilesControllerTestCase extends YAControllerTestCase {
 		'plugin.files.files_plugin',
 		'plugin.files.files_room',
 		'plugin.files.files_user',
-		'plugin.files.plugin',
-		'plugin.files.user',
-		'plugin.files.user_attributes_user',
-		'plugin.frames.box',
 		'plugin.m17n.language',
-		'plugin.pages.page',
 		'plugin.pages.languages_page',
+		'plugin.pages.page',
 		'plugin.pages.space',
-		'plugin.rooms.room',
-		'plugin.rooms.roles_rooms_user',
+		'plugin.plugin_manager.plugin',
 		'plugin.roles.default_role_permission',
 		'plugin.rooms.roles_room',
+		'plugin.rooms.roles_rooms_user',
+		'plugin.rooms.room',
 		'plugin.rooms.room_role_permission',
+		'plugin.users.user',
+		'plugin.users.user_attributes_user',
 	);
 
 /**

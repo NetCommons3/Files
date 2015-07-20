@@ -27,11 +27,11 @@ class FilesModelTestCase extends CakeTestCase {
 		'plugin.files.files_plugin',
 		'plugin.files.files_room',
 		'plugin.files.files_user',
-		'plugin.files.plugin',
-		'plugin.files.user',
-		'plugin.files.user_attributes_user',
 		'plugin.m17n.language',
+		'plugin.plugin_manager.plugin',
 		'plugin.rooms.room',
+		'plugin.users.user',
+		'plugin.users.user_attributes_user',
 	);
 
 /**
