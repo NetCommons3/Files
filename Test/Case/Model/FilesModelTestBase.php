@@ -11,11 +11,12 @@
 
 App::uses('FileModel', 'Files.Model');
 App::uses('FileFixture', 'Files.Test/FileFixture');
+App::uses('YACakeTestCase', 'NetCommons.TestSuite');
 
 /**
  * FileModel Test Case
  */
-class FilesModelTestCase extends CakeTestCase {
+class FilesModelTestBase extends YACakeTestCase {
 
 /**
  * Fixtures

@@ -21,7 +21,7 @@ App::uses('YAControllerTestCase', 'NetCommons.TestSuite');
  * @package NetCommons\Files\Test\Case\Controller
  * @SuppressWarnings(PHPMD.LongVariable)
  */
-class FilesControllerTestCase extends YAControllerTestCase {
+class FilesControllerTestBase extends YAControllerTestCase {
 
 /**
  * Fixtures
