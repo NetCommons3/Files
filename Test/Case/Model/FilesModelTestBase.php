@@ -28,11 +28,6 @@ class FilesModelTestBase extends YACakeTestCase {
 		'plugin.files.files_plugin',
 		'plugin.files.files_room',
 		'plugin.files.files_user',
-		//'plugin.m17n.language',
-		//'plugin.plugin_manager.plugin',
-		//'plugin.rooms.room',
-		//'plugin.users.user',
-		//'plugin.users.user_attributes_user',
 	);
 
 /**
