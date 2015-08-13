@@ -21,7 +21,7 @@ App::uses('YAControllerTestCase', 'NetCommons.TestSuite');
  * @package NetCommons\Files\Test\Case\Controller
  * @SuppressWarnings(PHPMD.LongVariable)
  */
-class FilesControllerTestCase extends YAControllerTestCase {
+class FilesControllerTestBase extends YAControllerTestCase {
 
 /**
  * Fixtures
@@ -29,28 +29,10 @@ class FilesControllerTestCase extends YAControllerTestCase {
  * @var array
  */
 	public $fixtures = array(
-		'plugin.net_commons.site_setting',
-		'plugin.blocks.block_role_permission',
-		'plugin.boxes.box',
-		'plugin.boxes.boxes_page',
-		'plugin.containers.container',
-		'plugin.containers.containers_page',
 		'plugin.files.file',
 		'plugin.files.files_plugin',
 		'plugin.files.files_room',
 		'plugin.files.files_user',
-		'plugin.m17n.language',
-		'plugin.pages.languages_page',
-		'plugin.pages.page',
-		'plugin.pages.space',
-		'plugin.plugin_manager.plugin',
-		'plugin.roles.default_role_permission',
-		'plugin.rooms.roles_room',
-		'plugin.rooms.roles_rooms_user',
-		'plugin.rooms.room',
-		'plugin.rooms.room_role_permission',
-		'plugin.users.user',
-		'plugin.users.user_attributes_user',
 	);
 
 /**
