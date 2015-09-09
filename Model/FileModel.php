@@ -72,24 +72,24 @@ class FileModel extends FilesAppModel {
 	public function beforeValidate($options = array()) {
 		$this->validate = Hash::merge($this->validate, array(
 			'name' => array(
-				'notEmpty' => array(
-					'rule' => array('notEmpty'),
+				'notBlank' => array(
+					'rule' => array('notBlank'),
 					'message' => __d('net_commons', 'Invalid request.'),
 					'allowEmpty' => false,
 					'required' => true,
 				),
 			),
 			'slug' => array(
-				'notEmpty' => array(
-					'rule' => array('notEmpty'),
+				'notBlank' => array(
+					'rule' => array('notBlank'),
 					'message' => __d('net_commons', 'Invalid request.'),
 					'allowEmpty' => false,
 					'required' => true,
 				),
 			),
 			'path' => array(
-				'notEmpty' => array(
-					'rule' => array('notEmpty'),
+				'notBlank' => array(
+					'rule' => array('notBlank'),
 					'message' => __d('net_commons', 'Invalid request.'),
 					'allowEmpty' => false,
 					//'required' => true,
@@ -97,16 +97,16 @@ class FileModel extends FilesAppModel {
 				),
 			),
 			'extension' => array(
-				'notEmpty' => array(
-					'rule' => array('notEmpty'),
+				'notBlank' => array(
+					'rule' => array('notBlank'),
 					'message' => __d('net_commons', 'Invalid request.'),
 					'allowEmpty' => false,
 					'required' => true,
 				),
 			),
 			'mimetype' => array(
-				'notEmpty' => array(
-					'rule' => array('notEmpty'),
+				'notBlank' => array(
+					'rule' => array('notBlank'),
 					'message' => __d('net_commons', 'Invalid request.'),
 					'allowEmpty' => false,
 					//'required' => true,
@@ -121,8 +121,8 @@ class FileModel extends FilesAppModel {
 				),
 			),
 			'role_type' => array(
-				'notEmpty' => array(
-					'rule' => array('notEmpty'),
+				'notBlank' => array(
+					'rule' => array('notBlank'),
 					'message' => __d('net_commons', 'Invalid request.'),
 					'allowEmpty' => false,
 					'required' => true,
