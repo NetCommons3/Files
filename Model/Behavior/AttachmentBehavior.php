@@ -45,7 +45,9 @@ class AttachmentBehavior extends ModelBehavior {
 	public function beforeSave(Model $model, $options = array()) {
 		foreach($this->_settings[$model->alias]['fileFields'] as $fieldName){
 			$fileData = $model->data[$model->alias][$fieldName] ;
-			$uploadFile['UploadFile']['original_name'] = $fileData; // TODO 元ファイル名を保存するフィールドを指定する
+			$uploadFile['UploadFile']['original_name'] = $fileData['name']; //
+			$uploadFile['UploadFile']['real_file_name'] = $fileData; // TODO 元ファイル名を保存するフィールドを指定する
+			$this->UploadFile->create();
 			$this->UploadFile->save($uploadFile);
 		}
 		return true;
