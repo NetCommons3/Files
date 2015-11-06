@@ -19,18 +19,21 @@ class UploadFile extends FilesAppModel {
 	//var $useTable = 'attachments'; // TODO 実験用
 
 	public $actsAs = [
-		'Upload.Upload' => [
-			'real_file_name' => array(
-				'thumbnailSizes' => array(
-					'xvga' => '1024x768',
-					'vga' => '640x480',
-					'thumb' => '80x80',
-				),
-				'nameCallback' => 'nameCallback',
-			),
-
-
-		],
+				'Upload.Upload' => [
+					'real_file_name' => array(
+							'thumbnailSizes' => array(
+									'xvga' => '1024x768',
+									'vga' => '640x480',
+									'thumb' => '80x80',
+							),
+							'nameCallback' => 'nameCallback',
+							'fields' => [
+									'dir' => 'path',
+									'type' => 'mimetype',
+									'size' => 'size'
+							]
+					),
+			],
 	];
 
 /**
@@ -54,7 +57,6 @@ class UploadFile extends FilesAppModel {
  */
 	public function afterSave($created, $options= array()) {
 		// TODO UploadビヘイビアのaftereSave後に処理が必要なら実装する
-		debug($created);
 	}
 }
 

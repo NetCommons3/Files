@@ -19,7 +19,7 @@ class UploadFilesContentFixture extends CakeTestFixture {
  */
 	public $fields = array(
 		'id' => array('type' => 'integer', 'null' => false, 'default' => null, 'unsigned' => false, 'key' => 'primary'),
-		'model' => array('type' => 'string', 'null' => false, 'default' => null, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
+		'plugin_key' => array('type' => 'string', 'null' => false, 'default' => null, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
 		'content_id' => array('type' => 'integer', 'null' => false, 'default' => null, 'length' => 45, 'unsigned' => false),
 		'upload_file_id' => array('type' => 'integer', 'null' => false, 'default' => null, 'length' => 45, 'unsigned' => false),
 		'created_user' => array('type' => 'integer', 'null' => true, 'default' => null, 'unsigned' => false, 'comment' => 'created user | 作成者 | users.id | '),
@@ -40,8 +40,8 @@ class UploadFilesContentFixture extends CakeTestFixture {
 	public $records = array(
 		array(
 			'id' => 1,
-			'model' => 'Lorem ipsum dolor sit amet',
-			'content_id' => 1,
+			'plugin_key' => 'net_commons',
+			'content_id' => 2,
 			'upload_file_id' => 1,
 			'created_user' => 1,
 			'created' => '2015-10-29 08:50:56',
