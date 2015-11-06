@@ -123,8 +123,12 @@ class AttachmentBehavior extends ModelBehavior {
 					// 新たにアップロードされてる
 				} else {
 					// 同じfield_nameでアップロードされてなければ以前のファイルへの関連レコードを入れる
-					$uploadFileId = $uploadFile['id'];
-					$this->_saveUploadFilesContent($model, $uploadFileId);
+					if (isset($model->data[$model->alias][$uploadFile['field_name']]['remove'])) {
+						// ファイル削除なのでリンクしない
+					}else{
+						$uploadFileId = $uploadFile['id'];
+						$this->_saveUploadFilesContent($model, $uploadFileId);
+					}
 				}
 			}
 		}
