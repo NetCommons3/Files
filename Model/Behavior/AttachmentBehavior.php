@@ -47,6 +47,32 @@ class AttachmentBehavior extends ModelBehavior {
 	}
 
 /**
+ * After find callback. Can be used to modify any results returned by find.
+ *
+ * @param Model $model Model using this behavior
+ * @param mixed $results The results of the find operation
+ * @param bool $primary Whether this model is being queried directly (vs. being queried as an association)
+ * @return mixed An array value will replace the value of $results - any other value will be ignored.
+ * @SuppressWarnings(PHPMD.BooleanArgumentFlag)
+ */
+	public function afterFind(Model $model, $results, $primary = false) {
+		foreach ($results as $key => $content) {
+			if(isset($content[$model->alias]['id'])){
+				$contentId = $content[$model->alias]['id'];
+				$conditions = [
+						'UploadFilesContent.plugin_key' => Inflector::underscore($model->plugin),
+						'UploadFilesContent.content_id' => $contentId,
+				];
+				$uploadFiles = $this->UploadFilesContent->find('all', ['conditions' => $conditions]);
+				foreach ($uploadFiles as $uploadFile) {
+					$results[$key]['UploadFile'][] = $uploadFile['UploadFile'];
+				}
+			}
+		}
+		return $results;
+	}
+
+/**
  * Before save method. Called before all saves
  *
  * Handles setup of file uploads
@@ -71,7 +97,7 @@ class AttachmentBehavior extends ModelBehavior {
 
 				// TODO 例外処理
 
-				$this->_uploadedFiles[] = $this->UploadFile->save($uploadFile);
+				$this->_uploadedFiles[$fieldName] = $this->UploadFile->save($uploadFile);
 			}
 		}
 
@@ -88,21 +114,43 @@ class AttachmentBehavior extends ModelBehavior {
  */
 	public function afterSave(Model $model, $created, $options = array())
 	{
-		// アップロードがなかったら？以前の
+		// アップロードがなかったら以前のデータを挿入する
+		// formからhiddenで UploadFile.0.id 形式でデータが渡ってくる
+		if (isset($model->data['UploadFile'])) {
+			foreach($model->data['UploadFile'] as $uploadFile){
+				// 同じfield_nameでアップロードされてるなら以前のファイルへの関連レコードは不要
+				if(isset($this->_uploadedFiles[$uploadFile['field_name']])){
+					// 新たにアップロードされてる
+				} else {
+					// 同じfield_nameでアップロードされてなければ以前のファイルへの関連レコードを入れる
+					$uploadFileId = $uploadFile['id'];
+					$this->_saveUploadFilesContent($model, $uploadFileId);
+				}
+			}
+		}
 		// 関連テーブルの挿入
 		foreach ($this->_uploadedFiles as $uploadedFile) {
-			$contentId = $model->data[$model->alias]['id'];
 			$uploadFileId = $uploadedFile['UploadFile']['id'];
-			$data = [
+			$this->_saveUploadFilesContent($model, $uploadFileId);
+		}
+	}
+
+	/**
+	 * @param Model $model
+	 * @param $uploadFileId
+	 * @return array
+	 */
+	protected function _saveUploadFilesContent(Model $model, $uploadFileId) {
+		$contentId = $model->data[$model->alias]['id'];
+		$data = [
 				'content_id' => $contentId,
 				'upload_file_id' => $uploadFileId,
 				'plugin_key' => Inflector::underscore($model->plugin),
-			];
-			CakeLog::debug(var_export($data, true));
-			$data = $this->UploadFilesContent->create($data);
-			CakeLog::debug(var_export($data, true));
-			// TODO 例外処理
-			$this->UploadFilesContent->save($data);
-		}
+		];
+		$data = $this->UploadFilesContent->create($data);
+		CakeLog::debug(var_export($data, true));
+		// TODO 例外処理
+		$this->UploadFilesContent->save($data);
+		return array($contentId, $data);
 	}
 }

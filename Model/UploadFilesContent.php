@@ -56,5 +56,19 @@ class UploadFilesContent extends FilesAppModel {
 	);
 
 	//The Associations below have been created with all possible keys, those that are not needed can be removed
+/**
+ * belongsTo associations
+ *
+ * @var array
+ */
+	public $belongsTo = array(
+		'UploadFile' => array(
+			'className' => 'Files.UploadFile',
+			'foreignKey' => 'upload_file_id',
+			'conditions' => '',
+			'fields' => '',
+			'order' => ''
+		),
+	);
 
 }

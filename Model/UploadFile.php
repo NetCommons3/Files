@@ -58,5 +58,6 @@ class UploadFile extends FilesAppModel {
 	public function afterSave($created, $options= array()) {
 		// TODO UploadビヘイビアのaftereSave後に処理が必要なら実装する
 	}
+
 }
 

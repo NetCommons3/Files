@@ -38,7 +38,7 @@ class AttachmentBehaviorTest extends NetCommonsCakeTestCase {
 		// ε(　　　　 v ﾟωﾟ)　＜テストのためにとりあえずSiteSetting使ってる。ちゃんとダミーのモデルにしたい
 		$this->SiteSetting = ClassRegistry::init('NetCommons.SiteSetting');
 		//$this->TestCreateProfile->Behaviors->load('NetCommons.OriginalKey', ['photo']);
-		$this->SiteSetting->Behaviors->load('Files.Attachment', ['photo']);
+		$this->SiteSetting->Behaviors->load('Files.Attachment', ['photo', 'pdf']);
 
 		copy(APP . 'Plugin/Files/Test/Fixture/logo.gif', TMP . '/test.gif');
 
@@ -80,7 +80,15 @@ class AttachmentBehaviorTest extends NetCommonsCakeTestCase {
 						'tmp_name' => TMP . '/test.gif',
 						'error' => 0,
 						'size' => 442850,
+				],
+				'pdf' => [
+						'name' => '',
+						'type' => "",
+						'tmp_name' => '',
+						'error' => UPLOAD_ERR_NO_FILE,
+						'size' => 0,
 				]
+
 		];
 		// TODO Uploadプラグインをアンロードしてテスト でないと本番アップ先にファイルいれちゃうので
 
@@ -95,6 +103,13 @@ class AttachmentBehaviorTest extends NetCommonsCakeTestCase {
 		CakeLog::debug(var_export($link, true));
 		$this->assertInternalType('array', $link);
 		$this->assertNotEmpty($link);
+	}
+
+
+	public function testAfterFind() {
+		// afterFindで添付されてるファイル情報をくっつける
+		$content = $this->SiteSetting->findById(2);
+		$this->assertEquals(1, $content['UploadFile'][0]['id']);
 	}
 
 	public function testEditContentWithNoFile() {
@@ -115,10 +130,18 @@ class AttachmentBehaviorTest extends NetCommonsCakeTestCase {
 			'error' => UPLOAD_ERR_NO_FILE,
 			'size' => '',
 		];
+		$data['SiteSetting']['pdf'] = [
+				'name' => '',
+				'type' => '',
+				'tmp_name' => '',
+				'error' => UPLOAD_ERR_NO_FILE,
+				'size' => '',
+		];
+		$data['UploadFile'][0]['id'] = 1;
 
-		$this->SiteSetting->save($data); // 同じキーで新規レコード登録（NC3での編集時の保存処理）
+		$savedData = $this->SiteSetting->save($data); // 同じキーで新規レコード登録（NC3での編集時の保存処理）
 
-		$link = $UploadFilesContent->findByPluginKeyAndContentIdAndUploadFileId('net_commons', 3, 1);
+		$link = $UploadFilesContent->findByPluginKeyAndContentIdAndUploadFileId('net_commons', $savedData['SiteSetting']['id'], 1);
 		$this->assertNotEmpty($link);
 
 
