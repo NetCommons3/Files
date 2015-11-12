@@ -143,7 +143,43 @@ class AttachmentBehaviorTest extends NetCommonsCakeTestCase {
 
 		$link = $UploadFilesContent->findByPluginKeyAndContentIdAndUploadFileId('net_commons', $savedData['SiteSetting']['id'], 1);
 		$this->assertNotEmpty($link);
+	}
 
+	public function testWrapValidator() {
+		$this->SiteSetting->validate['photo'] = [
+				'rule' => array('isValidExtension', array('pdf'), true),
+				'message' => 'pdf only'
+		];
+		$data = $this->SiteSetting->findById(2);
+		unset($data['SiteSetting']['id']);
+		$result = $this->SiteSetting->save($data);
+		$this->assertInternalType('array', $result);
+
+
+		$data = [
+				'key' => 1,
+				'photo' => [
+						'name' => 'photofile.gif',
+						'type' => "image/gif",
+						'tmp_name' => TMP . '/test.gif',
+						'error' => 0,
+						'size' => 442850,
+				],
+				'pdf' => [
+						'name' => 'photofile.gif',
+						'type' => "image/gif",
+						'tmp_name' => TMP . '/test.gif',
+						'error' => 0,
+						'size' => 442850,
+				],
+		];
+
+		$newData = $this->SiteSetting->create($data);
+		$resultFalse = $this->SiteSetting->save($newData);
+
+		$this->assertFalse($resultFalse);
+		$this->assertNotEmpty($this->SiteSetting->validationErrors);
+		debug($this->SiteSetting->validationErrors);
 
 	}
 
