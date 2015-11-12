@@ -16,8 +16,6 @@ App::uses('Folder', 'Utility');
 
 class UploadFile extends FilesAppModel {
 
-	//var $useTable = 'attachments'; // TODO 実験用
-
 	public $actsAs = [
 				'Upload.Upload' => [
 					'real_file_name' => array(
@@ -49,15 +47,33 @@ class UploadFile extends FilesAppModel {
 		return Security::hash($currentName);
 	}
 
+/**
+ * beforeSave
+ *
+ * ファイルの保存先を設定
+ *
+ * @param array $options オプション
+ * @return void
+ */
+	public function beforeSave($options = array()) {
+		$roomId = Current::read('Room.id');
+		$path = WWW_ROOT . DS . 'files' . DS . 'upload_file' . DS . 'real_file_name' . DS . $roomId . DS;
+		$this->uploadSettings('real_file_name', 'path', $path);
+		$this->uploadSettings('real_file_name', 'thumbnailPath', $path);
+	}
 
-	/**
+
+/**
  * After Save
  *
- * @param boolean $created 新規のときtrue
+ * @param bool $created 新規のときtrue
+ * @param array $options オプション
+ * @return void
  */
 	public function afterSave($created, $options= array()) {
 		// TODO UploadビヘイビアのaftereSave後に処理が必要なら実装する
 	}
 
 }
+
 
