@@ -44,7 +44,7 @@ class UploadFile extends FilesAppModel {
  * @return string file name
  */
 	public function nameCallback($field, $currentName, $data, $options) {
-		return Security::hash($currentName);
+		return Security::hash($currentName) . '.' . pathinfo($currentName, PATHINFO_EXTENSION);
 	}
 
 /**
