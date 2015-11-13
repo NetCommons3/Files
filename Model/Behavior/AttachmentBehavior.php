@@ -125,7 +125,7 @@ class AttachmentBehavior extends ModelBehavior {
 					// 新たにアップロードされてる
 				} else {
 					// 同じfield_nameでアップロードされてなければ以前のファイルへの関連レコードを入れる
-					if (isset($model->data[$model->alias][$uploadFile['field_name']]['remove'])) {
+					if (Hash::get($model->data[$model->alias][$uploadFile['field_name']], 'remove', false)) {
 						// ファイル削除なのでリンクしない
 					}else{
 						$uploadFileId = $uploadFile['id'];
