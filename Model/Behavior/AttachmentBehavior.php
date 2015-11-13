@@ -41,7 +41,14 @@ class AttachmentBehavior extends ModelBehavior {
 			throw new CakeException($error);
 		};
 
-		$this->_settings[$model->alias]['fileFields'] = $config;
+		foreach ($config as $filed => $options) {
+			if (is_int($filed)) {
+				$filed = $options;
+				$options = array();
+			}
+			$this->_settings[$model->alias]['fileFields'][$filed] = $options;
+		}
+
 		$this->UploadFile = ClassRegistry::init('Files.UploadFile');
 		$this->UploadFilesContent = ClassRegistry::init('Files.UploadFilesContent');
 	}
@@ -82,7 +89,7 @@ class AttachmentBehavior extends ModelBehavior {
  * @return bool
  */
 	public function beforeSave(Model $model, $options = array()) {
-		foreach ($this->_settings[$model->alias]['fileFields'] as $fieldName) {
+		foreach ($this->_settings[$model->alias]['fileFields'] as $fieldName => $filedOptions) {
 
 			if(isset($model->data[$model->alias][$fieldName])){
 				$fileData = $model->data[$model->alias][$fieldName];
@@ -96,8 +103,9 @@ class AttachmentBehavior extends ModelBehavior {
 					$uploadFile['UploadFile']['extension'] = $pathInfo['extension'];
 					$uploadFile['UploadFile']['real_file_name'] = $fileData;
 
+					// TODO フィールド毎にオプションを設定しなおしてsave実行
+					$this->UploadFile->setOptions($filedOptions);
 					// TODO 例外処理
-
 					$this->_uploadedFiles[$fieldName] = $this->UploadFile->save($uploadFile);
 				}
 			}
@@ -127,6 +135,8 @@ class AttachmentBehavior extends ModelBehavior {
 					// 同じfield_nameでアップロードされてなければ以前のファイルへの関連レコードを入れる
 					if (Hash::get($model->data[$model->alias][$uploadFile['field_name']], 'remove', false)) {
 						// ファイル削除なのでリンクしない
+						// 今のコンテンツIDで関連テーブルのレコードがあったら、ユーザモデルのように履歴のないモデルなのでそのときは関連テーブルを消す
+						$this->UploadFile->removeFile($model->id, $uploadFile['id']);
 					}else{
 						$uploadFileId = $uploadFile['id'];
 						$this->_saveUploadFilesContent($model, $uploadFileId);

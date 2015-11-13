@@ -20,8 +20,10 @@ class UploadFile extends FilesAppModel {
 				'Upload.Upload' => [
 					'real_file_name' => array(
 							'thumbnailSizes' => array(
-									'xvga' => '1024x768',
-									'vga' => '640x480',
+								// NC2 800 , 640, 480だった
+									'big' => '800ml',
+									'medium' => '400ml',
+									'small' => '200ml',
 									'thumb' => '80x80',
 							),
 							'nameCallback' => 'nameCallback',
@@ -33,6 +35,25 @@ class UploadFile extends FilesAppModel {
 					),
 			],
 	];
+
+	public function setOptions($options) {
+		$this->uploadSettings('real_file_name', $options);
+	}
+
+	public function removeFile($contentId, $fileId) {
+		$UploadFilesContents = ClassRegistry::init('Files.UploadFilesContents');
+		$link = $UploadFilesContents->findByContentIdAndUploadFileId($contentId, $fileId);
+		if($link){
+			// 関連レコードみつかったら削除する
+			$UploadFilesContents->delete($link['UploadFilesContents']['id'], false);
+			// ファイルIDの関連テーブルが他に見つからなかったらファイルも削除する
+			$count = $UploadFilesContents->find('count', ['conditions' => ['upload_file_id' => $fileId]]);
+			if($count == 0){
+				// 他に関連レコード無ければファイル削除
+				$this->delete($fileId, false);
+			}
+		}
+	}
 
 /**
  * nameCallback method
