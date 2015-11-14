@@ -25,6 +25,7 @@ class AttachmentBehaviorTest extends NetCommonsCakeTestCase {
 		'plugin.files.upload_file',
 		'plugin.files.upload_files_content',
 	];
+
 /**
  * setUp method
  *
@@ -37,7 +38,7 @@ class AttachmentBehaviorTest extends NetCommonsCakeTestCase {
 
 		// ε(　　　　 v ﾟωﾟ)　＜テストのためにとりあえずSiteSetting使ってる。ちゃんとダミーのモデルにしたい
 		$this->SiteSetting = ClassRegistry::init('NetCommons.SiteSetting');
-		//$this->TestCreateProfile->Behaviors->load('NetCommons.OriginalKey', ['photo']);
+		$this->SiteSetting->Behaviors->load('NetCommons.OriginalKey');
 		$this->SiteSetting->Behaviors->load('Files.Attachment', ['photo', 'pdf']);
 
 		copy(APP . 'Plugin/Files/Test/Fixture/logo.gif', TMP . '/test.gif');
@@ -45,6 +46,11 @@ class AttachmentBehaviorTest extends NetCommonsCakeTestCase {
 		$this->_setupUploadBehaviorMock();
 	}
 
+/**
+ * Uploadビヘイビアをモックに差し替え
+ *
+ * @return void
+ */
 	protected function _setupUploadBehaviorMock() {
 		$uploadBehaviorMock = $this->getMock('UploadBehavior', ['handleUploadedFile', '_createThumbnails']);
 
@@ -71,6 +77,12 @@ class AttachmentBehaviorTest extends NetCommonsCakeTestCase {
 		parent::tearDown();
 	}
 
+/**
+ * UploadFileに添付ファイルのレコードできてるか
+ *
+ * @throws Exception
+ * @return void
+ */
 	public function testUpload() {
 		$data = [
 				'key' => 1,
@@ -94,13 +106,13 @@ class AttachmentBehaviorTest extends NetCommonsCakeTestCase {
 
 		$newData = $this->SiteSetting->create($data);
 		$savedData = $this->SiteSetting->save($newData);
-		CakeLog::debug(var_export($savedData, true));
+		//CakeLog::debug(var_export($savedData, true));
 
 		// UploadFileと SiteSettingレコードの関連テーブルができてること。
 
 		$UploadFilesContent = ClassRegistry::init('Files.UploadFilesContent');
 		$link = $UploadFilesContent->findByContentId($savedData['SiteSetting']['id']);
-		CakeLog::debug(var_export($link, true));
+		//CakeLog::debug(var_export($link, true));
 		$this->assertInternalType('array', $link);
 		$this->assertNotEmpty($link);
 	}
@@ -145,9 +157,30 @@ class AttachmentBehaviorTest extends NetCommonsCakeTestCase {
 		$this->assertNotEmpty($link);
 	}
 
+/**
+ * 実装実験テスト(^^;
+ *
+ * @return void
+ */
+	public function testHashGet() {
+		$data = [
+			'BlogEntry' => [
+				'photo' => [
+					'name' => 'file.jpg'
+				]
+			]
+		];
+		$fileName = Hash::get($data, 'BlogEntry.photo.name');
+		$this->assertEquals('file.jpg', $fileName);
+
+		$data2 = [];
+		$emptyString = Hash::get($data2, 'BlogEntry.photo.name', '');
+		$this->assertEquals('', $emptyString);
+	}
+
 	public function testWrapValidator() {
-		$this->SiteSetting->validate['photo'] = [
-				'rule' => array('isValidExtension', array('pdf'), true),
+		$this->SiteSetting->validate['pdf'] = [
+				'rule' => array('isValidExtension', array('pdf'), false),
 				'message' => 'pdf only'
 		];
 		$data = $this->SiteSetting->findById(2);

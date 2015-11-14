@@ -6,14 +6,15 @@
  * @link http://www.netcommons.org NetCommons Project
  * @license http://www.netcommons.org/license.txt NetCommons License
  */
-// TODO UploadBehaviorを継承した方が使いやすいのか要検討
+
 /**
  * Class AttachmentBehavior
  */
 class AttachmentBehavior extends ModelBehavior {
-//class AttachmentBehavior extends UploadBehavior {
 
-
+/**
+ * @var array モデル毎のAttachmentビヘイビア設定
+ */
 	protected $_settings = array();
 
 /**
@@ -21,14 +22,20 @@ class AttachmentBehavior extends ModelBehavior {
  */
 	public $UploadFile = null;
 
+/**
+ * @var UploadFilesContent 関連テーブルのモデル
+ */
 	public $UploadFilesContent = null;
 
+/**
+ * @var array アップロードされたファイル情報
+ */
 	protected $_uploadedFiles = array();
 
 /**
- * SetUp Upload behavior
+ * SetUp Attachment behavior
  *
- * @param object $model instance of model
+ * @param Model $model instance of model
  * @param array $config array of configuration settings.
  * @throws CakeException 先にOriginalKeyが登録されてないと例外
  * @return void
@@ -42,11 +49,7 @@ class AttachmentBehavior extends ModelBehavior {
 		};
 
 		foreach ($config as $filed => $options) {
-			if (is_int($filed)) {
-				$filed = $options;
-				$options = array();
-			}
-			$this->_settings[$model->alias]['fileFields'][$filed] = $options;
+			$this->uploadSettings($model, $filed, $options);
 		}
 
 		$this->UploadFile = ClassRegistry::init('Files.UploadFile');
@@ -64,7 +67,7 @@ class AttachmentBehavior extends ModelBehavior {
  */
 	public function afterFind(Model $model, $results, $primary = false) {
 		foreach ($results as $key => $content) {
-			if(isset($content[$model->alias]['id'])){
+			if (isset($content[$model->alias]['id'])) {
 				$contentId = $content[$model->alias]['id'];
 				$conditions = [
 						'UploadFilesContent.plugin_key' => Inflector::underscore($model->plugin),
@@ -103,7 +106,7 @@ class AttachmentBehavior extends ModelBehavior {
 					$uploadFile['UploadFile']['extension'] = $pathInfo['extension'];
 					$uploadFile['UploadFile']['real_file_name'] = $fileData;
 
-					// TODO フィールド毎にオプションを設定しなおしてsave実行
+					// フィールド毎にオプションを設定しなおしてsave実行
 					$this->UploadFile->setOptions($filedOptions);
 					// TODO 例外処理
 					$this->_uploadedFiles[$fieldName] = $this->UploadFile->save($uploadFile);
@@ -117,27 +120,28 @@ class AttachmentBehavior extends ModelBehavior {
 /**
  * afterSave
  *
- * @param Model $model
- * @param bool $created
- * @param array $options
+ * @param Model $model モデル
+ * @param bool $created 新規作成
+ * @param array $options オプション
  * @throws Exception
+ * @return void
  */
-	public function afterSave(Model $model, $created, $options = array())
-	{
+	public function afterSave(Model $model, $created, $options = array()) {
 		// アップロードがなかったら以前のデータを挿入する
 		// formからhiddenで UploadFile.0.id 形式でデータが渡ってくる
 		if (isset($model->data['UploadFile'])) {
-			foreach($model->data['UploadFile'] as $uploadFile){
+			foreach ($model->data['UploadFile'] as $uploadFile) {
 				// 同じfield_nameでアップロードされてるなら以前のファイルへの関連レコードは不要
-				if(isset($this->_uploadedFiles[$uploadFile['field_name']])){
+				if (isset($this->_uploadedFiles[$uploadFile['field_name']])) {
 					// 新たにアップロードされてる
 				} else {
 					// 同じfield_nameでアップロードされてなければ以前のファイルへの関連レコードを入れる
-					if (Hash::get($model->data[$model->alias][$uploadFile['field_name']], 'remove', false)) {
+					//if (Hash::get($model->data[$model->alias][$uploadFile['field_name']], 'remove', false)) {
+					if (Hash::get($model->data, $model->alias . '.' . $uploadFile['field_name'] . '.remove', false)) {
 						// ファイル削除なのでリンクしない
 						// 今のコンテンツIDで関連テーブルのレコードがあったら、ユーザモデルのように履歴のないモデルなのでそのときは関連テーブルを消す
 						$this->UploadFile->removeFile($model->id, $uploadFile['id']);
-					}else{
+					} else {
 						$uploadFileId = $uploadFile['id'];
 						$this->_saveUploadFilesContent($model, $uploadFileId);
 					}
@@ -152,8 +156,26 @@ class AttachmentBehavior extends ModelBehavior {
 	}
 
 /**
- * @param Model $model
- * @param $uploadFileId
+ * アップロードフィールドの設定
+ *
+ * @param Model $model モデル
+ * @param string $filed フィールド名
+ * @param array $options オプション
+ * @return void
+ */
+	public function uploadSettings(Model $model, $filed, $options = array()) {
+		if (is_int($filed)) {
+			$filed = $options;
+			$options = array();
+		}
+		$this->_settings[$model->alias]['fileFields'][$filed] = $options;
+	}
+
+/**
+ * コンテンツとアップロードファイルの関連テーブルを保存
+ *
+ * @param Model $model モデル
+ * @param int $uploadFileId アップロードファイルID
  * @return array
  */
 	protected function _saveUploadFilesContent(Model $model, $uploadFileId) {
@@ -169,6 +191,8 @@ class AttachmentBehavior extends ModelBehavior {
 		$this->UploadFilesContent->save($data);
 		return array($contentId, $data);
 	}
+
+	// ===== 以下 UploadBehavior のバリデータをラップ ====
 
 /**
  * Check that the file does not exceed the max
@@ -235,6 +259,7 @@ class AttachmentBehavior extends ModelBehavior {
  * @param mixed $check Value to check
  * @param bool $requireUpload Whether or not to require a file upload
  * @return bool Success
+ * @SuppressWarnings(PHPMD.BooleanArgumentFlag)
  */
 	public function tempDirExists(Model $model, $check, $requireUpload = true) {
 		return $this->UploadFile->tempDirExists($check, $requireUpload);
@@ -247,6 +272,7 @@ class AttachmentBehavior extends ModelBehavior {
  * @param mixed $check Value to check
  * @param bool $requireUpload Whether or not to require a file upload
  * @return bool Success
+ * @SuppressWarnings(PHPMD.BooleanArgumentFlag)
  */
 	public function isSuccessfulWrite(Model $model, $check, $requireUpload = true) {
 		return $this->UploadFile->isSuccessfulWrite($check, $requireUpload);
@@ -259,6 +285,7 @@ class AttachmentBehavior extends ModelBehavior {
  * @param mixed $check Value to check
  * @param bool $requireUpload Whether or not to require a file upload
  * @return bool Success
+ * @SuppressWarnings(PHPMD.BooleanArgumentFlag)
  */
 	public function noPhpExtensionErrors(Model $model, $check, $requireUpload = true) {
 		return $this->UploadFile->noPhpExtensionErrors($check, $requireUpload);
@@ -272,6 +299,7 @@ class AttachmentBehavior extends ModelBehavior {
  * @param array $mimetypes file mimetypes to allow
  * @param bool $requireUpload Whether or not to require a file upload
  * @return bool Success
+ * @SuppressWarnings(PHPMD.BooleanArgumentFlag)
  */
 	public function isValidMimeType(Model $model, $check, $mimetypes = array(), $requireUpload = true) {
 		return $this->UploadFile->isValidMimeType($check, $mimetypes, $requireUpload);
@@ -284,6 +312,7 @@ class AttachmentBehavior extends ModelBehavior {
  * @param mixed $check Value to check
  * @param bool $requireUpload Whether or not to require a file upload
  * @return bool Success
+ * @SuppressWarnings(PHPMD.BooleanArgumentFlag)
  */
 	public function isWritable(Model $model, $check, $requireUpload = true) {
 		return $this->UploadFile->isWritable($check, $requireUpload);
@@ -296,6 +325,7 @@ class AttachmentBehavior extends ModelBehavior {
  * @param mixed $check Value to check
  * @param bool $requireUpload Whether or not to require a file upload
  * @return bool Success
+ * @SuppressWarnings(PHPMD.BooleanArgumentFlag)
  */
 	public function isValidDir(Model $model, $check, $requireUpload = true) {
 		return $this->UploadFile->isValidDir($check, $requireUpload);
@@ -309,6 +339,7 @@ class AttachmentBehavior extends ModelBehavior {
  * @param int $size Maximum file size
  * @param bool $requireUpload Whether or not to require a file upload
  * @return bool Success
+ * @SuppressWarnings(PHPMD.BooleanArgumentFlag)
  */
 	public function isBelowMaxSize(Model $model, $check, $size = null, $requireUpload = true) {
 		return $this->UploadFile->isValidDir($check, $size, $requireUpload);
@@ -322,6 +353,7 @@ class AttachmentBehavior extends ModelBehavior {
  * @param int $size Minimum file size
  * @param bool $requireUpload Whether or not to require a file upload
  * @return bool Success
+ * @SuppressWarnings(PHPMD.BooleanArgumentFlag)
  */
 	public function isAboveMinSize(Model $model, $check, $size = null, $requireUpload = true) {
 		return $this->UploadFile->isAboveMinSize($check, $size, $requireUpload);
@@ -335,6 +367,7 @@ class AttachmentBehavior extends ModelBehavior {
  * @param array $extensions file extenstions to allow
  * @param bool $requireUpload Whether or not to require a file upload
  * @return bool Success
+ * @SuppressWarnings(PHPMD.BooleanArgumentFlag)
  */
 	public function isValidExtension(Model $model, $check, $extensions = array(), $requireUpload = true) {
 		return $this->UploadFile->isValidExtension($check, $extensions, $requireUpload);
@@ -348,6 +381,7 @@ class AttachmentBehavior extends ModelBehavior {
  * @param int $height Height of Image
  * @param bool $requireUpload Whether or not to require a file upload
  * @return bool Success
+ * @SuppressWarnings(PHPMD.BooleanArgumentFlag)
  */
 	public function isAboveMinHeight(Model $model, $check, $height = null, $requireUpload = true) {
 		return $this->UploadFile->isAboveMinHeight($check, $height, $requireUpload);
@@ -361,6 +395,7 @@ class AttachmentBehavior extends ModelBehavior {
  * @param int $height Height of Image
  * @param bool $requireUpload Whether or not to require a file upload
  * @return bool Success
+ * @SuppressWarnings(PHPMD.BooleanArgumentFlag)
  */
 	public function isBelowMaxHeight(Model $model, $check, $height = null, $requireUpload = true) {
 		return $this->UploadFile->isBelowMaxHeight($check, $height, $requireUpload);
@@ -374,6 +409,7 @@ class AttachmentBehavior extends ModelBehavior {
  * @param int $width Width of Image
  * @param bool $requireUpload Whether or not to require a file upload
  * @return bool Success
+ * @SuppressWarnings(PHPMD.BooleanArgumentFlag)
  */
 	public function isAboveMinWidth(Model $model, $check, $width = null, $requireUpload = true) {
 		return $this->UploadFile->isAboveMinWidth($check, $width, $requireUpload);
@@ -387,6 +423,7 @@ class AttachmentBehavior extends ModelBehavior {
  * @param int $width Width of Image
  * @param bool $requireUpload Whether or not to require a file upload
  * @return bool Success
+ * @SuppressWarnings(PHPMD.BooleanArgumentFlag)
  */
 	public function isBelowMaxWidth(Model $model, $check, $width = null, $requireUpload = true) {
 		return $this->UploadFile->isBelowMaxWidth($check, $width, $requireUpload);
