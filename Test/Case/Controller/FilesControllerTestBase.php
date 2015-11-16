@@ -9,10 +9,10 @@
  * @copyright Copyright 2014, NetCommons Project
  */
 
-App::uses('NetCommonsFrameComponent', 'NetCommons.Controller/Component');
-App::uses('NetCommonsBlockComponent', 'NetCommons.Controller/Component');
-App::uses('NetCommonsRoomRoleComponent', 'NetCommons.Controller/Component');
-App::uses('YAControllerTestCase', 'NetCommons.TestSuite');
+//App::uses('NetCommonsFrameComponent', 'NetCommons.Controller/Component');
+//App::uses('NetCommonsBlockComponent', 'NetCommons.Controller/Component');
+//App::uses('NetCommonsRoomRoleComponent', 'NetCommons.Controller/Component');
+App::uses('NetCommonsControllerTestCase', 'NetCommons.TestSuite');
 
 /**
  * FilesController Test Case
@@ -21,7 +21,7 @@ App::uses('YAControllerTestCase', 'NetCommons.TestSuite');
  * @package NetCommons\Files\Test\Case\Controller
  * @SuppressWarnings(PHPMD.LongVariable)
  */
-class FilesControllerTestBase extends YAControllerTestCase {
+class FilesControllerTestBase extends NetCommonsControllerTestCase {
 
 /**
  * Fixtures
