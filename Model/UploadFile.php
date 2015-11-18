@@ -33,7 +33,7 @@ class UploadFile extends FilesAppModel {
 							),
 							'nameCallback' => 'nameCallback',
 							'fields' => [
-									'dir' => 'path',
+									//'dir' => 'path',
 									'type' => 'mimetype',
 									'size' => 'size'
 							]
@@ -96,9 +96,29 @@ class UploadFile extends FilesAppModel {
  */
 	public function beforeSave($options = array()) {
 		$roomId = Current::read('Room.id');
-		$path = WWW_ROOT . DS . 'files' . DS . 'upload_file' . DS . 'real_file_name' . DS . $roomId . DS;
+		$path = WWW_ROOT . 'files' . DS . 'upload_file' . DS . 'real_file_name' . DS . $roomId . DS;
+
+		// ID以外のpathを保存 WWW_ROOTも除外する
+		$path = substr($path, strlen(WWW_ROOT));
+		$this->data['UploadFile']['path'] = $path;
+
 		$this->uploadSettings('real_file_name', 'path', $path);
 		$this->uploadSettings('real_file_name', 'thumbnailPath', $path);
+		return true;
+	}
+
+	public function getFile($pluginKey, $contentId, $fieldName) {
+		$options = [
+			'conditions' => [
+				'UploadFilesContent.plugin_key' => $pluginKey,
+				'UploadFilesContent.content_id' => $contentId,
+				'UploadFile.field_name' => $fieldName
+			]
+		];
+
+		$UploadFilesContent = ClassRegistry::init('Files.UploadFilesContent');
+		$file = $UploadFilesContent->find('first', $options);
+		return $file;
 	}
 }
 
