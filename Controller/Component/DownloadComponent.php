@@ -61,9 +61,13 @@ class DownloadComponent extends Component {
 			}
 		}
 
-		// TODO size対応
+		// size対応
+		$filename = $file['UploadFile']['real_file_name'];
+		if($size !== null){
+			$filename = $size . '_' . $filename;
+		}
 
-		$filePath = WWW_ROOT . $file['UploadFile']['path'] . $file['UploadFile']['id'] . '/' .  $file['UploadFile']['real_file_name'];
+		$filePath = WWW_ROOT . $file['UploadFile']['path'] . $file['UploadFile']['id'] . '/' . $filename ;
 
 		$this->controller->response->file($filePath, array('name' => $file['UploadFile']['original_name']));
 		return $this->controller->response;
