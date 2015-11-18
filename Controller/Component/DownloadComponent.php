@@ -20,26 +20,31 @@ App::uses('FileModel', 'Files.Model');
  */
 class DownloadComponent extends Component {
 
-	/**
-	 * Called before the Controller::beforeFilter().
-	 *
-	 * @param Controller $controller Instantiating controller
-	 * @return void
-	 */
+/**
+ * Called before the Controller::beforeFilter().
+ *
+ * @param Controller $controller Instantiating controller
+ * @return void
+ */
 	public function initialize(Controller $controller) {
 		$this->controller = $controller;
 	}
 
+/**
+ * ダウンロード実行
+ *
+ * @param int $contentId コンテンツID
+ * @param array $options オプション field : ダウンロードのフィールド名, size: nullならオリジナル thubm, small, medium, big
+ * @return mixed
+ */
+	public function doDownload($contentId, $options = array()) {
 
-	/**
-	 * ダウンロード
-	 *
-	 * @param $contentId
-	 * @param $fieldName
-	 * @param null $size
-	 * @return mixed
-	 */
-	public function doDownload($contentId, $fieldName, $size = null) {
+		$fieldName = $this->controller->params['pass'][2];
+		$size = Hash::get($this->controller->params['pass'], 3, null);
+
+		$fieldName = Hash::get($options, 'field', $fieldName);
+		$size = Hash::get($options, 'size', $size);
+
 
 		// ファイル情報取得 plugin_keyとコンテンツID、フィールドの情報が必要
 		$UploadFile = ClassRegistry::init('Files.UploadFile');
@@ -56,7 +61,7 @@ class DownloadComponent extends Component {
 			// block_keyによるガード
 			$Block = ClassRegistry::init('Blocks.Block');
 			$block = $Block->findByKeyAndLanguageId($file['UploadFile']['block_key'], Current::read('Language.id'));
-			if($this->isVisibleBlock($block) === false){
+			if($Block->isVisible($block) === false){
 				throw new ForbiddenException();
 			}
 		}
@@ -71,33 +76,5 @@ class DownloadComponent extends Component {
 
 		$this->controller->response->file($filePath, array('name' => $file['UploadFile']['original_name']));
 		return $this->controller->response;
-	}
-
-
-	// TODO Blockモデルへ
-	public function isVisibleBlock($block) {
-		switch($block['Block']['public_type']){
-			case 0:
-				// 非表示
-				return false;
-				break;
-			case 1:
-				// 表示
-				return true;
-				break;
-			case 2:
-				// 期間限定
-				$now = NetCommonsTime::getNowDatetime();
-				$start = $block['Block']['from'];
-				$end = $block['Block']['to'];
-				if($start !== null && $start > $now){
-					return false;
-				}
-				if($end !== null && $end < $now){
-					return false;
-				}
-				return true;
-				break;
-		}
 	}
 }
