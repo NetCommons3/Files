@@ -16,6 +16,11 @@ App::uses('Folder', 'Utility');
 
 class UploadFile extends FilesAppModel {
 
+/**
+ * ビヘイビア
+ *
+ * @var array
+ */
 	public $actsAs = [
 				'Upload.Upload' => [
 					'real_file_name' => array(

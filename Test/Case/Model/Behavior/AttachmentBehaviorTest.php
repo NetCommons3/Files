@@ -19,6 +19,11 @@ App::uses('NetCommonsControllerTestCase', 'NetCommons.TestSuite');
  */
 class AttachmentBehaviorTest extends NetCommonsCakeTestCase {
 
+/**
+ * Fixtures
+ *
+ * @var array
+ */
 	public $fixtures = [
 		//'plugin.files.file',
 		'plugin.net_commons.site_setting',
