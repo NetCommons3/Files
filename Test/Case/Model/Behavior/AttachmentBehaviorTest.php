@@ -102,7 +102,6 @@ class AttachmentBehaviorTest extends NetCommonsCakeTestCase {
 				]
 
 		];
-		// TODO Uploadプラグインをアンロードしてテスト でないと本番アップ先にファイルいれちゃうので
 
 		$newData = $this->SiteSetting->create($data);
 		$savedData = $this->SiteSetting->save($newData);
@@ -117,13 +116,23 @@ class AttachmentBehaviorTest extends NetCommonsCakeTestCase {
 		$this->assertNotEmpty($link);
 	}
 
-
+/**
+ * test afterFind
+ *
+ * @return void
+ */
 	public function testAfterFind() {
 		// afterFindで添付されてるファイル情報をくっつける
 		$content = $this->SiteSetting->findById(2);
 		$this->assertEquals(1, $content['UploadFile'][0]['id']);
 	}
 
+/**
+ * test コンテンツ編集時にファイル添付しなかったケースのテスト
+ *
+ * @throws Exception
+ * @return void
+ */
 	public function testEditContentWithNoFile() {
 		// contentId = 2のコンテンツと fileId =1 のファイルがつながっている
 		// contentId =2のコンテンツを更新する。NC3としては複製された新切れコード contentId=3がセーブされる
@@ -178,6 +187,12 @@ class AttachmentBehaviorTest extends NetCommonsCakeTestCase {
 		$this->assertEquals('', $emptyString);
 	}
 
+/**
+ * Uploadプラグインのvalidatorをラップできてるかのテスト
+ *
+ * @throws Exception
+ * @return void
+ */
 	public function testWrapValidator() {
 		$this->SiteSetting->validate['pdf'] = [
 				'rule' => array('isValidExtension', array('pdf'), false),
@@ -187,7 +202,6 @@ class AttachmentBehaviorTest extends NetCommonsCakeTestCase {
 		unset($data['SiteSetting']['id']);
 		$result = $this->SiteSetting->save($data);
 		$this->assertInternalType('array', $result);
-
 
 		$data = [
 				'key' => 1,
@@ -213,14 +227,5 @@ class AttachmentBehaviorTest extends NetCommonsCakeTestCase {
 		$this->assertFalse($resultFalse);
 		$this->assertNotEmpty($this->SiteSetting->validationErrors);
 		debug($this->SiteSetting->validationErrors);
-
-	}
-
-	public function xtestEditContentRemoveFile() {
-		// contentId = 2のコンテンツと fileId =1 のファイルがつながっている
-		// contentId =2のコンテンツを更新する。NC3としては複製された新切れコード contentId=3がセーブされる
-		// その時、ファイル削除のチェックが入っていたら、添付されていたファイルは無くなる（関連が切れる）
-		// 関連が切れるだけで元ファイルは履歴のために引き続き残る。
-
 	}
 }
