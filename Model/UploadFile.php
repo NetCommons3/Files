@@ -107,6 +107,14 @@ class UploadFile extends FilesAppModel {
 		return true;
 	}
 
+/**
+ * ファイル情報取得
+ *
+ * @param string $pluginKey プラグインキー
+ * @param int $contentId コンテンツID
+ * @param string $fieldName フィールド名
+ * @return array|false
+ */
 	public function getFile($pluginKey, $contentId, $fieldName) {
 		$options = [
 			'conditions' => [
