@@ -101,6 +101,7 @@ class FilesModelTestBase extends YACakeTestCase {
  * @param mixed $value array or string, number
  * @param array $result result data
  * @return void
+ * @SuppressWarnings(PHPMD.DevelopmentCodeFragment)
  */
 	protected function _assertArray($key, $value, $result) {
 		if ($key !== null) {
