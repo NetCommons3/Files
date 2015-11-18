@@ -96,7 +96,7 @@ class AttachmentBehavior extends ModelBehavior {
 	public function beforeSave(Model $model, $options = array()) {
 		foreach ($this->_settings[$model->alias]['fileFields'] as $fieldName => $filedOptions) {
 
-			if(isset($model->data[$model->alias][$fieldName])){
+			if (isset($model->data[$model->alias][$fieldName])) {
 				$fileData = $model->data[$model->alias][$fieldName];
 				if ($fileData['name']) {
 					$uploadFile = $this->UploadFile->create();
@@ -110,7 +110,7 @@ class AttachmentBehavior extends ModelBehavior {
 
 					// フィールド毎にオプションを設定しなおしてsave実行
 					$this->UploadFile->setOptions($filedOptions);
-					// TODO 例外処理
+					// ε(　　　　 v ﾟωﾟ)　＜ 例外処理
 					$this->_uploadedFiles[$fieldName] = $this->UploadFile->save($uploadFile);
 				}
 			}
@@ -189,7 +189,7 @@ class AttachmentBehavior extends ModelBehavior {
 		];
 		$data = $this->UploadFilesContent->create($data);
 		CakeLog::debug(var_export($data, true));
-		// TODO 例外処理
+		// ε(　　　　 v ﾟωﾟ)　＜ 例外処理
 		$this->UploadFilesContent->save($data);
 		return array($contentId, $data);
 	}

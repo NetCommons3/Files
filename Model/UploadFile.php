@@ -36,19 +36,32 @@ class UploadFile extends FilesAppModel {
 			],
 	];
 
+/**
+ * ビヘイビア設定
+ *
+ * @param array $options オプション
+ * @return void
+ */
 	public function setOptions($options) {
 		$this->uploadSettings('real_file_name', $options);
 	}
 
+/**
+ * アップロードファイルとコンテンツとの関連づけ削除
+ *
+ * @param int $contentId コンテンツID
+ * @param int $fileId アップロードファイルID
+ * @return void
+ */
 	public function removeFile($contentId, $fileId) {
 		$UploadFilesContents = ClassRegistry::init('Files.UploadFilesContents');
 		$link = $UploadFilesContents->findByContentIdAndUploadFileId($contentId, $fileId);
-		if($link){
+		if ($link) {
 			// 関連レコードみつかったら削除する
 			$UploadFilesContents->delete($link['UploadFilesContents']['id'], false);
 			// ファイルIDの関連テーブルが他に見つからなかったらファイルも削除する
 			$count = $UploadFilesContents->find('count', ['conditions' => ['upload_file_id' => $fileId]]);
-			if($count == 0){
+			if ($count == 0) {
 				// 他に関連レコード無ければファイル削除
 				$this->delete($fileId, false);
 			}
@@ -82,19 +95,6 @@ class UploadFile extends FilesAppModel {
 		$this->uploadSettings('real_file_name', 'path', $path);
 		$this->uploadSettings('real_file_name', 'thumbnailPath', $path);
 	}
-
-
-/**
- * After Save
- *
- * @param bool $created 新規のときtrue
- * @param array $options オプション
- * @return void
- */
-	public function afterSave($created, $options= array()) {
-		// TODO UploadビヘイビアのaftereSave後に処理が必要なら実装する
-	}
-
 }
 
 
