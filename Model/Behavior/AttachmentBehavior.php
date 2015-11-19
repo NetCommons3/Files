@@ -102,7 +102,8 @@ class AttachmentBehavior extends ModelBehavior {
 					$uploadFile = $this->UploadFile->create();
 					$pathInfo = pathinfo($fileData['name']);
 					$uploadFile['UploadFile']['plugin_key'] = Inflector::underscore($model->plugin);
-					$uploadFile['UploadFile']['content_key'] = $model->data[$model->alias]['key'];
+					$keyField = Hash::get($filedOptions, 'contentKeyFieldName', 'key');
+					$uploadFile['UploadFile']['content_key'] = $model->data[$model->alias][$keyField];
 					$uploadFile['UploadFile']['field_name'] = $fieldName;
 					$uploadFile['UploadFile']['original_name'] = $fileData['name'];
 					$uploadFile['UploadFile']['extension'] = $pathInfo['extension'];
