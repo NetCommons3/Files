@@ -73,6 +73,10 @@ class DownloadComponent extends Component {
 		$filePath = WWW_ROOT . $file['UploadFile']['path'] . $file['UploadFile']['id'] . '/' . $filename;
 
 		$this->_controller->response->file($filePath, array('name' => $file['UploadFile']['original_name']));
+
+		// Download カウントアップ
+		$UploadFile->countUp($file);
+
 		return $this->_controller->response;
 	}
 }
