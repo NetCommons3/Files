@@ -90,6 +90,7 @@ class UploadFile extends FilesAppModel {
  * beforeSave
  *
  * ファイルの保存先を設定
+ * トータルダウンロード数を設定
  *
  * @param array $options オプション
  * @return void
@@ -104,6 +105,22 @@ class UploadFile extends FilesAppModel {
 
 		$this->uploadSettings('real_file_name', 'path', $path);
 		$this->uploadSettings('real_file_name', 'thumbnailPath', $path);
+
+		// トータルダウンロード数設定
+		$this->virtualFields['total'] = 'sum(download_count)';
+		$options = [
+				'fields' => ['total'],
+				'conditions' => [
+						'plugin_key' => $this->data['UploadFile']['plugin_key'],
+						'content_key' => $this->data['UploadFile']['content_key'],
+						'field_name' => $this->data['UploadFile']['field_name'],
+				]
+		];
+		if (Hash::get($this->data, 'UploadFile.id', false) === false) {
+			// 新規の時だけトータルをセット
+			$result = $this->find('first', $options);
+			$this->data['UploadFile']['total_download_count'] = $result['UploadFile']['total'];
+		}
 		return true;
 	}
 
@@ -127,6 +144,29 @@ class UploadFile extends FilesAppModel {
 		$UploadFilesContent = ClassRegistry::init('Files.UploadFilesContent');
 		$file = $UploadFilesContent->find('first', $options);
 		return $file;
+	}
+
+/**
+ * ダウンロードカウントアップ
+ *
+ * @param array $data UploadFileデータ
+ * @throws Exception
+ */
+	public function countUp($data) {
+		//$sql = sprintf('UPDATE %s SET download_count=download_count+1, total_download_count=total_download_count+1 WHERE id=%d',
+		//$this->tablePrefix . $this->table,
+		//$data[$this->alias]['id']
+		//);
+		//$this->begin();
+		//$this->query($sql);
+		//$this->commit();
+		$data[$this->alias]['download_count'] = $data[$this->alias]['download_count'] + 1;
+		$data[$this->alias]['total_download_count'] = $data[$this->alias]['total_download_count'] + 1;
+		// plugin_key, content_key, field_nameが同じだったら
+		$this->create();
+		$this->begin();
+		$this->save($data, ['callbacks' => false]);
+		$this->commit();
 	}
 }
 
