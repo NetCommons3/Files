@@ -17,11 +17,11 @@ App::uses('TemporaryFolder', 'Files.Utility');
  */
 class TemporaryFolderTest extends NetCommonsCakeTestCase {
 
-	/**
-	 * Fixtures
-	 *
-	 * @var array
-	 */
+/**
+ * Fixtures
+ *
+ * @var array
+ */
 	public $fixtures = [];
 
 	public function testCreate() {
