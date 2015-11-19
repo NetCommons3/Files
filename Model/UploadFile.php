@@ -151,6 +151,7 @@ class UploadFile extends FilesAppModel {
  *
  * @param array $data UploadFileデータ
  * @throws Exception
+ * @return void
  */
 	public function countUp($data) {
 		//$sql = sprintf('UPDATE %s SET download_count=download_count+1, total_download_count=total_download_count+1 WHERE id=%d',

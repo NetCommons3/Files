@@ -104,7 +104,7 @@ class YAUploadBehavior extends UploadBehavior {
 /**
  * SetUp Upload behavior
  *
- * @param object $model instance of model
+ * @param Model $model instance of model
  * @param array $config array of configuration settings.
  * @return void
  */
