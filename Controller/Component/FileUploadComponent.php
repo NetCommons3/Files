@@ -20,6 +20,7 @@ App::uses('FileModel', 'Files.Model');
  */
 class FileUploadComponent extends Component {
 
+	protected $_files = array();
 /**
  * Called before the Controller::beforeFilter().
  *
@@ -28,6 +29,13 @@ class FileUploadComponent extends Component {
  */
 	public function initialize(Controller $controller) {
 		$this->controller = $controller;
+		//$this->_grab();
+	}
+
+	public function getFile($fieldName) {
+		$file = Hash::get($this->controller->request->data, $fieldName);
+		$fileObject = new InputFile($file);
+		return $fileObject;
 	}
 
 /**
@@ -64,4 +72,72 @@ class FileUploadComponent extends Component {
 
 		return $data;
 	}
+
+//	protected function _grab(){
+//		if(Hash::get($_FILES, 'data', false)){
+//			// ファイルアップロードがある。
+//			// 名前を取得する
+//			// $this->Form->create(false, ['type' => 'file']);
+//			// $this->Form->input('import_csv', ['type' => 'file']); したときに$_FILESの形式
+//			//array(
+//			//		'data' => array(
+//			//				'name' => array(
+//			//						'import_csv' => '',
+//			//						'import_photo' => ''
+//			//				),
+//			//				'type' => array(
+//			//						'import_csv' => '',
+//			//						'import_photo' => ''
+//			//				),
+//			//				'tmp_name' => array(
+//			//						'import_csv' => '',
+//			//						'import_photo' => ''
+//			//				),
+//			//				'error' => array(
+//			//						'import_csv' => (int) 4,
+//			//						'import_photo' => (int) 4
+//			//				),
+//			//				'size' => array(
+//			//						'import_csv' => (int) 0,
+//			//						'import_photo' => (int) 0
+//			//				)
+//			//		)
+//			//);// [data][name][import_csv]
+//			// モデルがあると
+//			// [data][name][ModelName][import_csv]
+//			$fields = array_keys($_FILES['data']['name']);
+//			foreach($fields as $field){
+//				$tmp_name = $this->request->data[$field]['tmp_name'];
+//				$this->_files[] = new InputFile($tmp_name);
+//			}
+//		}
+//
+//debug($_FILES);
+//	}
+}
+App::uses('File', 'Utility');
+App::uses('TemporaryFolder', 'Files.Utility');
+class InputFile extends File {
+
+	//public $name;
+	public $type;
+	public $error;
+	public $size;
+	public $tmpFolder;
+
+	public function __construct($file) {
+		$this->tmpFolder = new TemporaryFolder();
+		$path = $file['tmp_name'];
+		move_uploaded_file($path, $this->tmpFolder->path);
+		//$this->name = $file['name'];
+		//$this->name = $file['name'];
+		$this->type = $file['type'];
+		$this->error = $file['error'];
+		$this->size = $file['size'];
+		parent::__construct($this->tmpFolder->path . '/'.$file['name']);
+
+		$this->ext();
+		// TODO uploadビヘイビアをくっつけた、テーブルを使わないモデルつくったほうがよくね？
+	}
+
 }
