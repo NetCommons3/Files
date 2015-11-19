@@ -77,7 +77,7 @@ class AttachmentBehavior extends ModelBehavior {
 				];
 				$uploadFiles = $this->UploadFilesContent->find('all', ['conditions' => $conditions]);
 				foreach ($uploadFiles as $uploadFile) {
-					$results[$key]['UploadFile'][] = $uploadFile['UploadFile'];
+					$results[$key]['UploadFile'][$uploadFile['UploadFile']['field_name']] = $uploadFile['UploadFile'];
 				}
 			}
 		}
