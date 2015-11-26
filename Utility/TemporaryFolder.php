@@ -11,6 +11,8 @@ App::uses('Folder', 'Utility');
 /**
  * Class TemporaryFolder
  *
+ * インタンス破棄で自動的にフォルダを削除するクラス
+ *
  * 使い方
  * ```
  * $tempFolder = new TemporaryFolder();
@@ -27,14 +29,15 @@ class TemporaryFolder extends Folder {
 	public function __construct() {
 		$path = TMP;
 		$path .= Security::hash(mt_rand() . microtime(), 'md5');
-
-		$mode = '0775'; // ε(　　　　 v ﾟωﾟ)　＜パーミッションいくつが適切だ？
-
+		//$mode = '0775'; // ε(　　　　 v ﾟωﾟ)　＜パーミッションいくつが適切だ？
+		$mode = false; // とりあえずデフォルトのまま
 		parent::__construct($path, true, $mode);
 	}
 
 /**
  * デストラクタ
+ *
+ * @return void
  */
 	public function __destruct() {
 		$this->delete();

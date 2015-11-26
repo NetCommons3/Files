@@ -11,6 +11,7 @@
 
 App::uses('Component', 'Controller');
 App::uses('FileModel', 'Files.Model');
+App::uses('TemporaryUploadFile', 'Files.Utility');
 
 /**
  * FileUpload Component
@@ -32,9 +33,15 @@ class FileUploadComponent extends Component {
 		//$this->_grab();
 	}
 
-	public function getFile($fieldName) {
+/**
+ * アップロードされたテンポラリファイルを得る。
+ *
+ * @param string $fieldName フォームのフィールド名
+ * @return TemporaryUploadFile
+ */
+	public function getTemporaryUploadFile($fieldName) {
 		$file = Hash::get($this->controller->request->data, $fieldName);
-		$fileObject = new InputFile($file);
+		$fileObject = new TemporaryUploadFile($file);
 		return $fileObject;
 	}
 
@@ -108,36 +115,10 @@ class FileUploadComponent extends Component {
 //			$fields = array_keys($_FILES['data']['name']);
 //			foreach($fields as $field){
 //				$tmp_name = $this->request->data[$field]['tmp_name'];
-//				$this->_files[] = new InputFile($tmp_name);
+//				$this->_files[] = new TemporaryUploadFile($tmp_name);
 //			}
 //		}
 //
 //debug($_FILES);
 //	}
-}
-App::uses('File', 'Utility');
-App::uses('TemporaryFolder', 'Files.Utility');
-class InputFile extends File {
-
-	//public $name;
-	public $type;
-	public $error;
-	public $size;
-	public $tmpFolder;
-
-	public function __construct($file) {
-		$this->tmpFolder = new TemporaryFolder();
-		$path = $file['tmp_name'];
-		move_uploaded_file($path, $this->tmpFolder->path);
-		//$this->name = $file['name'];
-		//$this->name = $file['name'];
-		$this->type = $file['type'];
-		$this->error = $file['error'];
-		$this->size = $file['size'];
-		parent::__construct($this->tmpFolder->path . '/'.$file['name']);
-
-		$this->ext();
-		// TODO uploadビヘイビアをくっつけた、テーブルを使わないモデルつくったほうがよくね？
-	}
-
 }
