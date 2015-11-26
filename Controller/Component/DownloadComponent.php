@@ -58,8 +58,8 @@ class DownloadComponent extends Component {
 		if ($file['UploadFile']['block_key']) {
 			// block_keyによるガード
 			$Block = ClassRegistry::init('Blocks.Block');
-			$block = $Block->findByKeyAndLanguageId($file['UploadFile']['block_key'], Current::read('Language.id'));
-			if ($Block->isVisible($block) === false) {
+			$uploadFileBlock = $Block->findByKeyAndLanguageId($file['UploadFile']['block_key'], Current::read('Language.id'));
+			if ($Block->isVisible($uploadFileBlock) === false) {
 				throw new ForbiddenException();
 			}
 		}
