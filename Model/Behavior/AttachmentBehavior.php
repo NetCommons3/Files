@@ -189,10 +189,34 @@ class AttachmentBehavior extends ModelBehavior {
 				'plugin_key' => Inflector::underscore($model->plugin),
 		];
 		$data = $this->UploadFilesContent->create($data);
-		CakeLog::debug(var_export($data, true));
 		// ε(　　　　 v ﾟωﾟ)　＜ 例外処理
 		$this->UploadFilesContent->save($data);
 		return array($contentId, $data);
+	}
+
+
+	/**
+	 * コンテンツに、物理ファイルを添付する処理
+	 *
+	 * @param Model $model
+	 * @param $data
+	 * @param $fieldName
+	 * @param File $file
+	 */
+	public function attachFile(Model $model, $data, $fieldName, $file, $keyFiledName = 'key') {
+		if(!is_a($file, 'File')){
+			// $fileがpathのとき
+			$file = new File($file);
+		}
+		// UploadFileへ登録
+		$uploadFile = $this->UploadFile->registByFile($file,
+				Inflector::underscore($model->plugin),
+				$data[$model->alias][$keyFiledName],
+				$fieldName
+				);
+		// 関連テーブル登録
+		$this->UploadFile->makeLink($model->plugin, $data[$model->alias]['id'], $uploadFile['UploadFile']['id']);
+
 	}
 
 	// ===== 以下 UploadBehavior のバリデータをラップ ====

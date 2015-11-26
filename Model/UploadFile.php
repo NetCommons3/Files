@@ -170,6 +170,52 @@ class UploadFile extends FilesAppModel {
 		$this->save($data, ['callbacks' => false]);
 		$this->commit();
 	}
+
+	/**
+	 * @param File $file
+	 * @param array $data plugin_key, content_key, field_name, を指定してください。
+	 * @return array
+	 * @throws Exception
+	 */
+	public function registByFile(File $file, $pluginKey, $contentKey, $fieldName) {
+		// データの登録
+		$data = $this->create();
+		// TODO $dataにアサイン
+		$data['UploadFile']['plugin_key'] = $pluginKey;
+		$data['UploadFile']['content_key'] = $contentKey;
+		$data['UploadFile']['field_name'] = $fieldName;
+		$data['UploadFile']['original_name'] = $file->name;
+		$data['UploadFile']['extension'] = pathinfo($file->name, PATHINFO_EXTENSION);
+		$data['UploadFile']['real_file_name'] = [
+			'name' => $file->name,
+			'type' => $file->mime(),
+			'tmp_name' => $file->path,
+			'error' => 0,
+			'size' => $file->size(),
+		];
+		$data = $this->save($data); // あれ？普通にsaveするとUploadビヘイビアが動く？
+		// TODO コンテンツへの関連レコードも入れる必要あるな
+		// TODO ファイル配置 配置先はIDで決まる。
+
+		return $data;
+	}
+
+	public function registByFilePath($filePath, $pluginKey, $contentKey, $fieldName) {
+		$file = new File($filePath);
+		return $this->registByFile($file, $pluginKey, $contentKey, $fieldName);
+	}
+
+	public function makeLink($pluginKey, $contentId, $uploadFileId) {
+		$data = [
+				'content_id' => $contentId,
+				'upload_file_id' => $uploadFileId,
+				'plugin_key' => Inflector::underscore($pluginKey),
+		];
+		$UploadFilesContent = ClassRegistry::init('Files.UploadFilesContent');
+		$data = $UploadFilesContent->create($data);
+		// ε(　　　　 v ﾟωﾟ)　＜ 例外処理
+		$UploadFilesContent->save($data);
+	}
 }
 
 
