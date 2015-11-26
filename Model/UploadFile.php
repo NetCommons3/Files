@@ -194,8 +194,6 @@ class UploadFile extends FilesAppModel {
 			'size' => $file->size(),
 		];
 		$data = $this->save($data); // あれ？普通にsaveするとUploadビヘイビアが動く？
-		// TODO コンテンツへの関連レコードも入れる必要あるな
-		// TODO ファイル配置 配置先はIDで決まる。
 
 		return $data;
 	}
