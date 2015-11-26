@@ -24,7 +24,7 @@ class FileUploadComponent extends Component {
 /**
  * @var Controller 呼び出し元コントローラ
  */
-	protected $_controller;
+	public $controller;
 
 /**
  * Called before the Controller::beforeFilter().
@@ -33,7 +33,7 @@ class FileUploadComponent extends Component {
  * @return void
  */
 	public function initialize(Controller $controller) {
-		$this->_controller = $controller;
+		$this->controller = $controller;
 	}
 
 /**
@@ -43,7 +43,7 @@ class FileUploadComponent extends Component {
  * @return TemporaryUploadFile
  */
 	public function getTemporaryUploadFile($fieldName) {
-		$file = Hash::get($this->_controller->request->data, $fieldName);
+		$file = Hash::get($this->controller->request->data, $fieldName);
 		$fileObject = new TemporaryUploadFile($file);
 		return $fileObject;
 	}
