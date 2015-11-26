@@ -9,6 +9,8 @@
 // ε(　　　　 v ﾟωﾟ)　＜ 改行コードCR（Excel for Mac）への対応
 // ε(　　　　 v ﾟωﾟ)　＜最後に空行までよみこまれちゃうことをへの対処
 
+App::uses('NetCommonsFile', 'Files.Utility');
+
 class CsvFileReader extends SplFileObject{
 
 	protected $_tmpFile;
@@ -17,16 +19,8 @@ class CsvFileReader extends SplFileObject{
 		if (is_a($filePath, 'File')){
 			$filePath = $filePath->path;
 		}
-		// コンストラクタから別メソッド呼ぶと "The parent constructor was not called: the object is in an invalid state" になるのでここにベタ書き。
-		// ε(　　　　 v ﾟωﾟ)　＜一度メモリに全データ読みこむのが気になる。 別解としてはcurrentで文字コード変換かな
-		$data = file_get_contents($filePath);
-		$data = mb_convert_encoding($data, 'UTF-8', 'sjis-win'); // ε(　　　　 v ﾟωﾟ)　＜コード固定でいいのか？
-		$this->_tmpFile = tmpfile();
-		$meta = stream_get_meta_data($this->_tmpFile);
-		fwrite($this->_tmpFile, $data);
-		rewind($this->_tmpFile);
-		$path = $meta['uri'];
-
+		$tmp = NetCommonsFile::convertSjisWin2Utf8($filePath);
+		$path = $tmp->path;
 		parent::__construct($path);
 		$this->setFlags(SplFileObject::READ_CSV);
 	}
@@ -43,9 +37,5 @@ class CsvFileReader extends SplFileObject{
 		}
 		return true;
 	}
-
-	public function __destruct() {
-		fclose($this->_tmpFile);
-	}
-
 }
+
