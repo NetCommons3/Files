@@ -24,6 +24,11 @@ class TemporaryFolderTest extends NetCommonsCakeTestCase {
  */
 	public $fixtures = [];
 
+/**
+ * test create
+ *
+ * @return void
+ */
 	public function testCreate() {
 		$tempFolder = new TemporaryFolder();
 		debug($tempFolder->path);
@@ -32,6 +37,11 @@ class TemporaryFolderTest extends NetCommonsCakeTestCase {
 		$this->assertEquals(TMP, substr($path, 0, strlen(TMP)));
 	}
 
+/**
+ * test delete
+ *
+ * @return void
+ */
 	public function testDelete() {
 		$tempFolder = new TemporaryFolder();
 		$path = $tempFolder->path;

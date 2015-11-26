@@ -105,7 +105,6 @@ class FileUploadComponentTest extends CakeTestCase {
 		);
 
 		$result = $this->FileUpload->upload('Test', 'field');
-
 		$this->assertArrayHasKey('name', $result);
 		$this->assertTextEquals($result['name'], $this->TestController->data['Test']['field']['name']);
 

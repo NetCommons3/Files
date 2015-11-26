@@ -11,6 +11,7 @@
 
 App::uses('Component', 'Controller');
 App::uses('FileModel', 'Files.Model');
+App::uses('TemporaryUploadFile', 'Files.Utility');
 
 /**
  * FileUpload Component
@@ -21,6 +22,11 @@ App::uses('FileModel', 'Files.Model');
 class FileUploadComponent extends Component {
 
 /**
+ * @var Controller 呼び出し元コントローラ
+ */
+	public $controller;
+
+/**
  * Called before the Controller::beforeFilter().
  *
  * @param Controller $controller Instantiating controller
@@ -28,6 +34,18 @@ class FileUploadComponent extends Component {
  */
 	public function initialize(Controller $controller) {
 		$this->controller = $controller;
+	}
+
+/**
+ * アップロードされたテンポラリファイルを得る。
+ *
+ * @param string $fieldName フォームのフィールド名
+ * @return TemporaryUploadFile
+ */
+	public function getTemporaryUploadFile($fieldName) {
+		$file = Hash::get($this->controller->request->data, $fieldName);
+		$fileObject = new TemporaryUploadFile($file);
+		return $fileObject;
 	}
 
 /**
