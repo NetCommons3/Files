@@ -6,6 +6,9 @@
  * Time: 14:37
  */
 
+// ε(　　　　 v ﾟωﾟ)　＜ 改行コードCR（Excel for Mac）への対応
+// ε(　　　　 v ﾟωﾟ)　＜最後に空行までよみこまれちゃうことをへの対処
+
 class CsvFileReader extends SplFileObject{
 
 	protected $_tmpFile;
@@ -28,7 +31,21 @@ class CsvFileReader extends SplFileObject{
 		$this->setFlags(SplFileObject::READ_CSV);
 	}
 
+	/**
+	 * valid SplFileObjectでCSVフィルを読ませると最終行の空配列で返るのでそれの抑止
+	 *
+	 * @return bool
+	 */
+	public function valid() {
+		$var = parent::current();
+		if($var === array(null)){
+			return false;
+		}
+		return true;
+	}
+
 	public function __destruct() {
 		fclose($this->_tmpFile);
 	}
+
 }
