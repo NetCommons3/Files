@@ -129,7 +129,7 @@ class AttachmentBehaviorTest extends NetCommonsCakeTestCase {
 	public function testAfterFind() {
 		// afterFindで添付されてるファイル情報をくっつける
 		$content = $this->SiteSetting->findById(2);
-		$this->assertEquals(1, $content['UploadFile'][0]['id']);
+		$this->assertEquals(1, $content['UploadFile']['photo']['id']);
 	}
 
 /**
@@ -163,7 +163,7 @@ class AttachmentBehaviorTest extends NetCommonsCakeTestCase {
 				'error' => UPLOAD_ERR_NO_FILE,
 				'size' => '',
 		];
-		$data['UploadFile'][0]['id'] = 1;
+		$data['UploadFile']['photo']['id'] = 1;
 
 		$savedData = $this->SiteSetting->save($data); // 同じキーで新規レコード登録（NC3での編集時の保存処理）
 
