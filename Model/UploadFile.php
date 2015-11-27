@@ -119,8 +119,9 @@ class UploadFile extends FilesAppModel {
 		if (Hash::get($this->data, 'UploadFile.id', false) === false) {
 			// 新規の時だけトータルをセット
 			$result = $this->find('first', $options);
-			$this->data['UploadFile']['total_download_count'] = $result['UploadFile']['total'];
+			$this->data['UploadFile']['total_download_count'] = ($result['UploadFile']['total'] !== null) ? $result['UploadFile']['total'] : 0;
 		}
+		unset($this->virtualFields['total']);
 		return true;
 	}
 
