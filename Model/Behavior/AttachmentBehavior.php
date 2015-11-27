@@ -195,10 +195,32 @@ class AttachmentBehavior extends ModelBehavior {
 				'plugin_key' => Inflector::underscore($model->plugin),
 		];
 		$data = $this->UploadFilesContent->create($data);
-		CakeLog::debug(var_export($data, true));
 		// ε(　　　　 v ﾟωﾟ)　＜ 例外処理
 		$this->UploadFilesContent->save($data);
 		return array($contentId, $data);
+	}
+
+/**
+ * コンテンツに、物理ファイルを添付する処理
+ *
+ * @param Model $model 元モデル
+ * @param array $data コンテンツデータ
+ * @param string $fieldName 添付するフィールド名
+ * @param File|string $file 添付するファイルのFileインスタンスかファイルパス
+ * @param string $keyFieldName コンテンツキーのフィールド名 省略可能 デフォルト key
+ * @return void
+ */
+	public function attachFile(Model $model, $data, $fieldName, $file, $keyFieldName = 'key') {
+		if (!is_a($file, 'File')) {
+			// $fileがpathのとき
+			$file = new File($file);
+		}
+
+		$pluginKey = Inflector::underscore($model->plugin);
+		$contentKey = $data[$model->alias][$keyFieldName];
+		$contentId = $data[$model->alias]['id'];
+
+		$this->UploadFile->attach($pluginKey, $contentKey, $contentId, $fieldName, $file);
 	}
 
 	// ===== 以下 UploadBehavior のバリデータをラップ ====
@@ -437,5 +459,4 @@ class AttachmentBehavior extends ModelBehavior {
 	public function isBelowMaxWidth(Model $model, $check, $width = null, $requireUpload = true) {
 		return $this->UploadFile->isBelowMaxWidth($check, $width, $requireUpload);
 	}
-
 }
