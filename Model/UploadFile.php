@@ -17,6 +17,11 @@ App::uses('Folder', 'Utility');
 class UploadFile extends FilesAppModel {
 
 /**
+ * @var int recursiveはデフォルトアソシエーションなしに
+ */
+	public $recursive = -1;
+
+/**
  * ビヘイビア
  *
  * @var array
@@ -39,6 +44,17 @@ class UploadFile extends FilesAppModel {
 							]
 					),
 			],
+	];
+
+/**
+ * hasMany
+ *
+ * @var array
+ */
+	public $hasMany = [
+			'UploadFilesContent' => array(
+					'className' => 'Files.UploadFilesContent',
+			),
 	];
 
 /**
@@ -155,13 +171,6 @@ class UploadFile extends FilesAppModel {
  * @return void
  */
 	public function countUp($data) {
-		//$sql = sprintf('UPDATE %s SET download_count=download_count+1, total_download_count=total_download_count+1 WHERE id=%d',
-		//$this->tablePrefix . $this->table,
-		//$data[$this->alias]['id']
-		//);
-		//$this->begin();
-		//$this->query($sql);
-		//$this->commit();
 		$data[$this->alias]['download_count'] = $data[$this->alias]['download_count'] + 1;
 		$data[$this->alias]['total_download_count'] = $data[$this->alias]['total_download_count'] + 1;
 		// plugin_key, content_key, field_nameが同じだったら
@@ -169,6 +178,138 @@ class UploadFile extends FilesAppModel {
 		$this->begin();
 		$this->save($data, ['callbacks' => false]);
 		$this->commit();
+	}
+
+/**
+ * FileインスタンスのファイルをUplodFileに登録する
+ *
+ * @param File $file 登録するファイルのFileインスタンス
+ * @param string $pluginKey プラグインキー
+ * @param string $contentKey コンテンツキー
+ * @param string $fieldName フィールド名
+ * @return array
+ * @throws Exception
+ */
+	public function registByFile(File $file, $pluginKey, $contentKey, $fieldName) {
+		// データの登録
+		$data = $this->create();
+		// $dataにアサイン
+		$data['UploadFile']['plugin_key'] = $pluginKey;
+		$data['UploadFile']['content_key'] = $contentKey;
+		$data['UploadFile']['field_name'] = $fieldName;
+		$data['UploadFile']['original_name'] = $file->name;
+		$data['UploadFile']['extension'] = pathinfo($file->name, PATHINFO_EXTENSION);
+		$data['UploadFile']['real_file_name'] = [
+			'name' => $file->name,
+			'type' => $file->mime(),
+			'tmp_name' => $file->path,
+			'error' => 0,
+			'size' => $file->size(),
+		];
+		$data = $this->save($data); // あれ？普通にsaveするとUploadビヘイビアが動く？
+
+		return $data;
+	}
+
+/**
+ * 指定されたパスのファイルをUploadFileに登録する
+ *
+ * このメソッドではコンテンツとの関連テーブルに関連レコードは挿入されないことに注意
+ * コンテンツと関連づけたい場合はAttachmentBehavior::attachFile()推奨
+ *
+ * @param string $filePath 登録するファイルのファイルパス
+ * @param string $pluginKey プラグインキー
+ * @param string $contentKey コンテンツキー
+ * @param string $fieldName フィールド名
+ * @return array 登録されたUploadFileレコード
+ */
+	public function registByFilePath($filePath, $pluginKey, $contentKey, $fieldName) {
+		$file = new File($filePath);
+		return $this->registByFile($file, $pluginKey, $contentKey, $fieldName);
+	}
+
+/**
+ * 関連テーブルにコンテンツとUploadFileとの関連データを作成
+ *
+ * @param string $pluginKey プラグインキー
+ * @param int $contentId コンテンツID
+ * @param int $uploadFileId アップロードファイルID
+ * @return void
+ */
+	public function makeLink($pluginKey, $contentId, $uploadFileId) {
+		$data = [
+				'content_id' => $contentId,
+				'upload_file_id' => $uploadFileId,
+				'plugin_key' => $pluginKey,
+		];
+		$UploadFilesContent = ClassRegistry::init('Files.UploadFilesContent');
+		$data = $UploadFilesContent->create($data);
+		// ε(　　　　 v ﾟωﾟ)　＜ 例外処理
+		$UploadFilesContent->save($data);
+	}
+
+/**
+ * 関連テーブルデータの削除
+ *
+ * @param string $pluginKey プラグインキー
+ * @param int $contentId コンテンツID
+ * @param string $fieldName フィールド名
+ * @return void
+ */
+	public function deleteLink($pluginKey, $contentId, $fieldName) {
+		$conditions = [
+			'UploadFilesContent.plugin_key' => $pluginKey,
+			'UploadFilesContent.content_id' => $contentId,
+			'UploadFile.field_name' => $fieldName,
+		];
+		$result = $this->UploadFilesContent->find('all', ['conditions' => $conditions]);
+		foreach ($result as $link) {
+			$this->_deleteNoRelationUploadFile($link);
+		}
+	}
+
+/**
+ * 関連テーブルデータがひとつもないUploadFileレコードを削除する
+ *
+ * @param array $link UploadFilesContent関連レコードのデータ
+ * @return void
+ */
+	protected function _deleteNoRelationUploadFile($link) {
+		$this->UploadFilesContent->delete($link['UploadFilesContent']['id']);
+		// このリンク以外にリンクがなければUploadFileレコードを削除する
+		$conditions = [
+				'UploadFilesContent.upload_file_id' => $link['UploadFile']['id'],
+
+		];
+		$count = $this->UploadFilesContent->find('count', ['conditions' => $conditions]);
+		if ($count == 0) {
+			$this->delete($link['UploadFile']['id']);
+		}
+	}
+
+/**
+ * 添付ファイルをDBに登録する
+ *
+ * @param string $pluginKey 登録するプラグイン名
+ * @param string $contentKey コンテンツキー
+ * @param int $contentId コンテンツID
+ * @param string $fieldName フィールド名
+ * @param File $file 登録するファイルのFileインスタンス
+ *
+ * @return void
+ */
+	public function attach($pluginKey, $contentKey, $contentId, $fieldName, $file) {
+		// UploadFileへ登録
+		$uploadFile = $this->registByFile(
+				$file,
+				$pluginKey,
+				$contentKey,
+				$fieldName
+		);
+
+		$this->deleteLink($pluginKey, $contentId, $fieldName);
+		// 関連テーブル登録
+		$this->makeLink($pluginKey, $contentId, $uploadFile['UploadFile']['id']);
 	}
 }
 
