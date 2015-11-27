@@ -1,9 +1,10 @@
 <?php
 /**
- * Created by PhpStorm.
- * User: ryuji
- * Date: 2015/11/26
- * Time: 14:44
+ * CsvFileReaderTest
+ *
+ * @author   Ryuji AMANO <ryuji@ryus.co.jp>
+ * @link http://www.netcommons.org NetCommons Project
+ * @license http://www.netcommons.org/license.txt NetCommons License
  */
 
 App::uses('NetCommonsCakeTestCase', 'NetCommons.TestSuite');
@@ -17,18 +18,23 @@ App::uses('CsvFileReader', 'Files.Utility');
  */
 class CsvFileReaderTest extends NetCommonsCakeTestCase {
 
-	/**
-	 * Fixtures
-	 *
-	 * @var array
-	 */
+/**
+ * Fixtures
+ *
+ * @var array
+ */
 	public $fixtures = [];
 
+/**
+ * test read
+ *
+ * @return void
+ */
 	public function testRead() {
 		$csvFilePath = dirname(dirname(__DIR__)) . '/Fixture/sample_csv_excel2010.csv';
 		$csvReader = new CsvFileReader($csvFilePath);
 
-		foreach($csvReader as $line){
+		foreach ($csvReader as $line) {
 			debug($line);
 		}
 	}
