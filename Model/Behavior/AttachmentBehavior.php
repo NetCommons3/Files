@@ -137,6 +137,12 @@ class AttachmentBehavior extends ModelBehavior {
 				// 同じfield_nameでアップロードされてるなら以前のファイルへの関連レコードは不要
 				if (isset($this->_uploadedFiles[$uploadFile['field_name']])) {
 					// 新たにアップロードされてる
+					// 履歴のないモデル（is_latest, is_activeカラムがない）だったら、以前のファイルを削除する
+					// 履歴のないモデルか？
+					if (!$model->hasField('is_latest')) {
+						// 以前のファイルを削除
+						$this->UploadFile->removeFile($model->id, $uploadFile['id']);
+					}
 				} else {
 					// 同じfield_nameでアップロードされてなければ以前のファイルへの関連レコードを入れる
 					//if (Hash::get($model->data[$model->alias][$uploadFile['field_name']], 'remove', false)) {
