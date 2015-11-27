@@ -52,8 +52,8 @@ class TemporaryUploadFile extends File {
 				PATHINFO_EXTENSION
 			);
 
-		move_uploaded_file($path, $this->temporaryFolder->path . '/' . $destFileName);
+		move_uploaded_file($path, $this->temporaryFolder->path . DS . $destFileName);
 		$this->error = $file['error'];
-		parent::__construct($this->temporaryFolder->path . '/' . $destFileName);
+		parent::__construct($this->temporaryFolder->path . DS . $destFileName);
 	}
 }

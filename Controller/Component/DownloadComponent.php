@@ -70,7 +70,7 @@ class DownloadComponent extends Component {
 			$filename = $size . '_' . $filename;
 		}
 
-		$filePath = WWW_ROOT . $file['UploadFile']['path'] . $file['UploadFile']['id'] . '/' . $filename;
+		$filePath = WWW_ROOT . $file['UploadFile']['path'] . $file['UploadFile']['id'] . DS . $filename;
 
 		$this->_controller->response->file($filePath, array('name' => $file['UploadFile']['original_name']));
 
