@@ -8,7 +8,6 @@
  */
 
 // ε(　　　　 v ﾟωﾟ)　＜ 改行コードCR（Excel for Mac）への対応
-// ε(　　　　 v ﾟωﾟ)　＜最後に空行までよみこまれちゃうことをへの対処
 
 App::uses('NetCommonsFile', 'Files.Utility');
 
