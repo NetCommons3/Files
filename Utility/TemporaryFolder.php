@@ -31,6 +31,7 @@ class TemporaryFolder extends Folder {
 		$path .= Security::hash(mt_rand() . microtime(), 'md5');
 		//$mode = '0775'; // ε(　　　　 v ﾟωﾟ)　＜パーミッションいくつが適切だ？
 		$mode = false; // とりあえずデフォルトのまま
+		register_shutdown_function(array($this, 'delete'));
 		parent::__construct($path, true, $mode);
 	}
 
@@ -39,7 +40,7 @@ class TemporaryFolder extends Folder {
  *
  * @return void
  */
-	public function __destruct() {
-		$this->delete();
-	}
+	//public function __destruct() {
+	//	$this->delete();
+	//}
 }

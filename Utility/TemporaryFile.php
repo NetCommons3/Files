@@ -30,6 +30,9 @@ class TemporaryFile extends File {
 			$folderPath = $this->_tmpFolder->path;
 		}
 		$fileName = Security::hash(mt_rand() . microtime(), 'md5');
+
+		register_shutdown_function(array($this, 'delete'));
+
 		parent::__construct($folderPath . DS . $fileName, true);
 	}
 }
