@@ -39,11 +39,10 @@ class CsvFileWriterTest extends NetCommonsCakeTestCase {
 		}
 
 		$writer = new CsvFileWriter();
-		foreach($lines as $line){
+		foreach ($lines as $line) {
 			$writer->add($line);
 		}
 		$writer->close();
-
 
 		$csvReader = new CsvFileReader($writer->path);
 		foreach ($csvReader as $line) {
