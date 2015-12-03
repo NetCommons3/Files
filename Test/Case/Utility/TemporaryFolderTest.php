@@ -48,9 +48,10 @@ class TemporaryFolderTest extends NetCommonsCakeTestCase {
 		$tempFolder->delete();
 		$this->assertFalse(file_exists($path));
 
-		$tempFolder2 = new TemporaryFolder();
-		$path2 = $tempFolder2->path;
-		unset($tempFolder2);
-		$this->assertFalse(file_exists($path2));
+		//デストラクタ廃止したのでこのテストも廃止
+		//$tempFolder2 = new TemporaryFolder();
+		//$path2 = $tempFolder2->path;
+		//unset($tempFolder2);
+		//$this->assertFalse(file_exists($path2));
 	}
 }
