@@ -38,9 +38,9 @@ class CsvFileWriterTest extends NetCommonsCakeTestCase {
 			$lines[] = $line;
 		}
 
-		$writer = new CsvFileWriter(null, ['header' => false]);
+		$writer = new CsvFileWriter();
 		foreach($lines as $line){
-			$writer->put($line);
+			$writer->add($line);
 		}
 		$writer->close();
 
