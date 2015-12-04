@@ -43,11 +43,13 @@ class CsvFileReader extends SplFileObject {
  * @return bool
  */
 	public function valid() {
+		$parentValid = parent::valid();
+
 		$var = parent::current();
 		if ($var === array(null)) {
 			return false;
 		}
-		return true;
+		return $parentValid;
 	}
 }
 
