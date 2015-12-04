@@ -24,7 +24,6 @@ class CsvFileWriter extends TemporaryFile {
 	public function __construct($options = array()) {
 		$folderPath = Hash::get($options, 'folder', null);
 		parent::__construct($folderPath);
-		$this->_splFileObject = new SplFileObject($this->path, 'w');
 		$this->_options = $options;
 		if (Hash::get($this->_options, 'header', false)) {
 			// headerオプションが指定されてたらヘッダ出力
@@ -39,8 +38,16 @@ class CsvFileWriter extends TemporaryFile {
  * @return void
  */
 	public function add(array $line) {
-		mb_convert_variables('SJIS-win', 'UTF-8', $line); // ε(　　　　 v ﾟωﾟ)　＜ SJIS-win決め打ちなのをなんとかしたいか
-		$this->_splFileObject->fputcsv($line);
+		$fp = fopen('php://temp', 'w+');
+		fputcsv($fp, $line);
+		rewind($fp);
+		$csvLine = '';
+		while (feof($fp) === false) {
+			$csvLine .= fgets($fp);
+		}
+		fclose($fp);
+		$convertLine = mb_convert_encoding($csvLine, 'SJIS-win', 'UTF-8'); // ε(　　　　 v ﾟωﾟ)　＜ SJIS-win決め打ちなのをなんとかしたいか
+		$this->append($convertLine);
 	}
 
 /**
