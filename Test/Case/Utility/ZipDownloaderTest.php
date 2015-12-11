@@ -58,7 +58,7 @@ class ZipDownloaderTest extends NetCommonsCakeTestCase {
  *
  * @return void
  */
-	public function testCreateZipWithPassword() {
+	public function XXtestCreateZipWithPassword() {
 		$zip = new ZipDownloader();
 		//$tmpFolder = new Folder(TMP . 'test', true);
 		//$zipPath = $tmpFolder->path . DS . 'test.zip';
