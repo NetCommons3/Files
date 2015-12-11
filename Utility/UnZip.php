@@ -87,7 +87,11 @@ class UnZip {
 			return true;
 		} else {
 			$zip = new ZipArchive();
-			$zip->open($this->_zipPath);
+			debug($this->_zipPath);
+			$result = $zip->open($this->_zipPath);
+			if($result !== true){
+				debug($result);
+			}
 			if ($this->_password) {
 				$zip->setPassword($this->_password);
 			}
