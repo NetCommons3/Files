@@ -79,6 +79,9 @@ class ZipDownloaderTest extends NetCommonsCakeTestCase {
 		$unzipFolder = $unzip->extract();
 		$this->assertNotEquals(false, $unzipFolder);
 
+		$tree = $unzipFolder->tree();
+		debug($tree);
+
 		$this->assertFileExists($unzipFolder->path . DS . 'logo.gif');
 		$fileSize = filesize($unzipFolder->path . DS . 'logo.gif');
 		$this->assertTrue($fileSize > 0);
