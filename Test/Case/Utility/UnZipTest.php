@@ -10,6 +10,7 @@
 App::uses('NetCommonsCakeTestCase', 'NetCommons.TestSuite');
 App::uses('NetCommonsControllerTestCase', 'NetCommons.TestSuite');
 App::uses('TemporaryFolder', 'Files.Utility');
+App::uses('TemporaryFile', 'Files.Utility');
 App::uses('UnZip', 'Files.Utility');
 /**
  * Summary for CsvFileWriter Test Case
@@ -75,5 +76,23 @@ class UnZipTest extends NetCommonsCakeTestCase {
 		$zip->setPassword('no match password');
 		$resultFalse = $zip->extract();
 		$this->assertFalse($resultFalse);
+	}
+
+	public function testPhp56() {
+		$tmp = new TemporaryFile();
+
+		chdir($tmp->Folder->path);
+		$cmd = sprintf('zip -r -e -P %s %s %s', 'pass', 'test.zip', '*');
+		passthru($cmd);
+		$this->assertFileExists($tmp->Folder->path . DS . 'test.zip');
+
+		$zip = new ZipArchive();
+		$zip->open($tmp->Folder->path . DS . 'test.zip');
+		$zip->setPassword('pass');
+		$unzipFolder = new TemporaryFolder();
+		$zip->extractTo($unzipFolder->path);
+		$tree = $unzipFolder->tree();
+		debug($tree);
+
 	}
 }
