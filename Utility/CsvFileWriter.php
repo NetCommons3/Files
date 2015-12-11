@@ -8,7 +8,7 @@
  */
 
 App::uses('TemporaryFile', 'Files.Utility');
-App::uses('NetCommonsZip', 'Files.Utility');
+App::uses('ZipDownloader', 'Files.Utility');
 
 /**
  * Class CsvFileWriter
@@ -94,9 +94,7 @@ class CsvFileWriter extends TemporaryFile {
 		// csvファイルを$csvFilenameへリネーム
 		$this->_rename($csvFilename);
 		// zipFile作成
-		$zip = new NetCommonsZip();
-		$tmpFolder = new TemporaryFolder();
-		$zip->open($tmpFolder->path . DS . $zipFilename, true);
+		$zip = new ZipDownloader();
 		$zip->addFile($this->path);
 		// zipのダウンロードを実行
 		if($password){
