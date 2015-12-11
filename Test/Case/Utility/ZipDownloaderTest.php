@@ -24,21 +24,18 @@ App::uses('UnZip', 'Files.Utility');
  */
 class ZipDownloaderTest extends NetCommonsCakeTestCase {
 
+/**
+ * @var array fixture
+ */
 	public $fixtures = [];
-
 
 /**
  * test create zip no password
- * TODO ZipArchiver使う
+ *
  * @return void
  */
 	public function testCreateZipNoPassword() {
 		$zip = new ZipDownloader();
-		//$tmpFolder = new TemporaryFolder();
-		//$tmpFolder = new Folder(TMP . 'test', true);
-		//$zipPath = $tmpFolder->path . DS . 'test.zip';
-
-		//$zip->open($zipPath, ZipArchive::CREATE);
 		$addFile = dirname(dirname(__DIR__)) . DS . 'Fixture' . DS . 'logo.gif';
 
 		$zip->addFile($addFile);
@@ -91,15 +88,6 @@ class ZipDownloaderTest extends NetCommonsCakeTestCase {
  * @return void
  */
 	public function testAddFolder() {
-		//$zip = new ZipArchive();
-		//$zip->open(TMP  . 'test.zip', ZipArchive::CREATE);
-		//$zip->addEmptyDir('hoge/hogehoge/hogehogehoge');
-		//$zip->addFromString('foo/bar/hoge', 'test');
-		//$zip->addFromString('test', 'test');
-		//$zip->close();
-		//exit();
-
-
 		$zip = new ZipDownloader();
 		$addFolder = dirname(dirname(__DIR__)) . DS . 'Fixture';
 
@@ -137,14 +125,17 @@ class ZipDownloaderTest extends NetCommonsCakeTestCase {
 		$this->assertEquals('foo', $contents[0]);
 	}
 
-	public function XtestRisou() {
+/**
+ * ZIPダウンロードの利用例
+ *
+ * @return CakeResponse
+ */
+	public function useZipDownloadExample() {
 		$zip = new ZipDownloader();
-		// アーカイブ先を指定する必要はない
 		$zip->addFromString('foo.txt', 'foo');
 		$folderPath = TMP . 'log';
 		$zip->addFolder($folderPath);
 		$zip->setPassword('password');
 		return $zip->download('file.zip');
-
 	}
 }

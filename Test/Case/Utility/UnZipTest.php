@@ -23,6 +23,9 @@ App::uses('UnZip', 'Files.Utility');
  */
 class UnZipTest extends NetCommonsCakeTestCase {
 
+/**
+ * @var array fixture
+ */
 	public $fixtures = [];
 
 /**
@@ -43,11 +46,11 @@ class UnZipTest extends NetCommonsCakeTestCase {
 		$this->assertEquals('hogehoge file', $contents[0]);
 	}
 
-	/**
-	 * test unzip with password
-	 *
-	 * @return void
-	 */
+/**
+ * test unzip with password
+ *
+ * @return void
+ */
 	public function testUnzipWithPassword() {
 		$zip = new UnZip(dirname(dirname(__DIR__)) . DS . 'Fixture/test_with_password.zip');
 		$zip->setPassword('password');
@@ -62,128 +65,15 @@ class UnZipTest extends NetCommonsCakeTestCase {
 		$this->assertEquals('hogehoge file', $contents[0]);
 	}
 
-	public function testUnZipFailed(){
+/**
+ * test unzip failed
+ *
+ * @return void
+ */
+	public function testUnZipFailed() {
 		$zip = new UnZip(dirname(dirname(__DIR__)) . DS . 'Fixture/test_with_password.zip');
 		$zip->setPassword('no match password');
 		$resultFalse = $zip->extract();
 		$this->assertFalse($resultFalse);
-
 	}
-
-///**
-// * test create zip no password
-// *
-// * @return void
-// */
-//	public function testCreateZipNoPassword() {
-//		$zip = new NetCommonsZip();
-//		$tmpFolder = new TemporaryFolder();
-//		//$tmpFolder = new Folder(TMP . 'test', true);
-//		$zipPath = $tmpFolder->path . DS . 'test.zip';
-//
-//		$zip->open($zipPath, ZipArchive::CREATE);
-//		$addFile = dirname(dirname(__DIR__)) . DS . 'Fixture' . DS . 'logo.gif';
-//
-//		$zip->addFile($addFile);
-//		$zip->close();
-//
-//		$this->assertFileExists($zipPath);
-//
-//		$unzip = new ZipArchive();
-//		$unzip->open($zipPath);
-//		$unzipFolder = new TemporaryFolder();
-//		$unzip->extractTo($unzipFolder->path);
-//
-//		$this->assertFileExists($unzipFolder->path . DS . 'logo.gif');
-//		$fileSize = filesize($unzipFolder->path . DS . 'logo.gif');
-//		$this->assertTrue($fileSize > 0);
-//	}
-//
-///**
-// * test creat zip with password
-// *
-// * @return void
-// */
-//	public function testCreateZipWithPassword() {
-//		$zip = new NetCommonsZip();
-//		$tmpFolder = new TemporaryFolder();
-//		//$tmpFolder = new Folder(TMP . 'test', true);
-//		$zipPath = $tmpFolder->path . DS . 'test.zip';
-//
-//		$zip->open($zipPath, ZipArchive::CREATE);
-//		$addFile = dirname(dirname(__DIR__)) . DS . 'Fixture' . DS . 'logo.gif';
-//
-//		$zip->addFile($addFile);
-//
-//		$zip->setPassword('test');
-//
-//		$zip->close();
-//
-//		$this->assertFileExists($zipPath);
-//
-//		$unzip = new NetCommonsZip();
-//		$unzip->open($zipPath);
-//		$unzipFolder = new TemporaryFolder();
-//		$unzip->setPassword('test');
-//		$unzip->extractTo($unzipFolder->path);
-//
-//		$this->assertFileExists($unzipFolder->path . DS . 'logo.gif');
-//		$fileSize = filesize($unzipFolder->path . DS . 'logo.gif');
-//		$this->assertTrue($fileSize > 0);
-//		//sleep(60);
-//	}
-//
-///**
-// * test add folder
-// *
-// * @return void
-// */
-//	public function testAddFolder() {
-//		$zip = new NetCommonsZip();
-//		$tmpFolder = new TemporaryFolder();
-//		//$tmpFolder = new Folder(TMP . 'test', true);
-//		$zipPath = $tmpFolder->path . DS . 'test.zip';
-//
-//		$zip->open($zipPath, ZipArchive::CREATE);
-//
-//		$addFolder = dirname(dirname(__DIR__)) . DS . 'Fixture';
-//
-//		$zip->addFolder($addFolder);
-//		$zip->close();
-//		$this->assertFileExists($zipPath);
-//	}
-//
-///**
-// * test add from string
-// *
-// * @return void
-// */
-//	public function testAddFromString() {
-//		$zip = new NetCommonsZip();
-//		$tmpFolder = new TemporaryFolder();
-//		$zip->open($tmpFolder->path . DS . 'test.zip', true);
-//
-//		$zip->addFromString('foo.txt', 'foo');
-//
-//		$zip->close();
-//
-//		$unzip = new NetCommonsZip();
-//		$unzip->open($tmpFolder->path . DS . 'test.zip');
-//		$unzipFolder = new TemporaryFolder();
-//		$unzip->extractTo($unzipFolder->path);
-//
-//		$contents = file($unzipFolder->path . DS . 'foo.txt');
-//		$this->assertEquals('foo', $contents[0]);
-//	}
-//
-//	public function XtestRisou() {
-//		$zip = new ZipDownloader();
-//		// アーカイブ先を指定する必要はない
-//		$zip->addFromString('foo.txt', 'foo');
-//		$folderPath = TMP . 'log';
-//		$zip->addFolder($folderPath);
-//		$zip->setPassword('password');
-//		return $zip->download('file.zip');
-//
-//	}
 }

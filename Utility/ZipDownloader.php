@@ -10,12 +10,10 @@
 
 App::uses('TemporaryFolder', 'Files.Utility');
 App::uses('TemporaryFile', 'Files.Utility');
+
 /**
  * Class NetCommonsZip
- * TODO 利用ケースのコードを書いて、使いやすい書き方にする
  * 基本的な利用シーンはZipしてダウンロードするテンポラリな使い方
- * TODO 自動削除
- * TODO パスワード無しなら zipコマンド無しOKにする
  */
 class ZipDownloader {
 
@@ -39,13 +37,21 @@ class ZipDownloader {
  */
 	protected $_open = false;
 
+/**
+ * ZipDownloader constructor.
+ */
 	public function __construct() {
 		$this->_tmpFolder = new TemporaryFolder();
 		$this->_open = true;
 		register_shutdown_function(array($this, 'delete'));
 	}
 
-	public function delete(){
+/**
+ * zipファイルの削除
+ *
+ * @return void
+ */
+	public function delete() {
 		// zip本体の削除
 		unlink($this->path);
 	}
@@ -85,13 +91,13 @@ class ZipDownloader {
 			chdir($this->_tmpFolder->path);
 
 			list($folders, $files) = $this->_tmpFolder->tree();
-			foreach($folders as $folder){
-				if($folder !== $this->_tmpFolder->path){
+			foreach ($folders as $folder) {
+				if ($folder !== $this->_tmpFolder->path) {
 					$relativePath = str_replace($this->_tmpFolder->path . DS, '', $folder);
 					$zip->addEmptyDir($relativePath);
 				}
 			}
-			foreach($files as $file){
+			foreach ($files as $file) {
 				$relativePath = str_replace($this->_tmpFolder->path . DS, '', $file);
 				$zip->addFile($relativePath);
 			}
@@ -109,6 +115,7 @@ class ZipDownloader {
  * @param string|null $localname  ZIPに追加するときのファイル名
  *
  * @return void
+ * @throws InternalErrorException
  */
 	public function addFile($filePath, $localname = null) {
 		// ファイルをlocalnameにしてコピー
@@ -142,6 +149,7 @@ class ZipDownloader {
  * @param string $folderPath zipに追加するフォルダのパス
  *
  * @return void
+ * @throws InternalErrorException
  */
 	public function addFolder($folderPath) {
 		$folder = new Folder($folderPath);
@@ -149,7 +157,6 @@ class ZipDownloader {
 			throw new InternalErrorException('NetCommonsZip File IO Error');
 		}
 	}
-
 
 /**
  * set password
@@ -170,7 +177,7 @@ class ZipDownloader {
  */
 	public function download($filename) {
 		// closeされてなかったらcloseする
-		if($this->_open){
+		if ($this->_open) {
 			$this->close();
 		}
 		$response = new CakeResponse();

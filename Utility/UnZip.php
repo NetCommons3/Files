@@ -1,4 +1,11 @@
 <?php
+/**
+ * UnZip
+ *
+ * @author   Ryuji AMANO <ryuji@ryus.co.jp>
+ * @link http://www.netcommons.org NetCommons Project
+ * @license http://www.netcommons.org/license.txt NetCommons License
+ */
 
 /**
  * UnZip
@@ -15,13 +22,20 @@ class UnZip {
 	protected $_password = null;
 
 /**
- * @var string zip filepath
+ * @var string zip file path
  */
 	protected $_zipPath;
 
+/**
+ * @var string 解凍先フォルダパス
+ */
 	public $path;
 
-
+/**
+ * UnZip constructor.
+ *
+ * @param string $zipFilePath 解凍するZIPファイルパス
+ */
 	public function __construct($zipFilePath) {
 		$this->_zipPath = $zipFilePath;
 	}
@@ -67,6 +81,7 @@ class UnZip {
 			exec($cmd, $output, $returnVar);
 			if ($returnVar > 0) {
 				// エラー
+				CakeLog::warning('Unzip Error:output=' . json_encode($output) . ', return_var=' . $returnVar);
 				return false;
 			}
 			return true;
