@@ -117,4 +117,13 @@ class NetCommonsZip {
 		$this->_password = $password;
 
 	}
+
+	public function download($filename) {
+		// TODO closeされてなかったらcloseする
+		// TODO
+		$response = new CakeResponse();
+		$response->type('application/zip');
+		$response->file($this->_zipPath, ['name' => $filename, 'download' => 'true']);
+		return $response;
+	}
 }
