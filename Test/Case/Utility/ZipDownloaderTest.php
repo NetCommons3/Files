@@ -77,21 +77,10 @@ class ZipDownloaderTest extends NetCommonsCakeTestCase {
 		$unzipFolder1 = new TemporaryFolder();
 		$cmd = sprintf('unzip -P %s %s -d %s', 'test', $zip->path, $unzipFolder1->path);
 		exec($cmd, $output, $returnVar);
-		debug($output);
-		debug($returnVar);
-		$tree = $unzipFolder1->tree();
-		debug($tree);
+		$this->assertEquals(0, $returnVar);
 
-		$unzip = new UnZip($zip->path);
-		$unzip->setPassword('test');
-		$unzipFolder = $unzip->extract();
-		$this->assertNotEquals(false, $unzipFolder);
-
-		$tree = $unzipFolder->tree();
-		debug($tree);
-
-		$this->assertFileExists($unzipFolder->path . DS . 'logo.gif');
-		$fileSize = filesize($unzipFolder->path . DS . 'logo.gif');
+		$this->assertFileExists($unzipFolder1->path . DS . 'logo.gif');
+		$fileSize = filesize($unzipFolder1->path . DS . 'logo.gif');
 		$this->assertTrue($fileSize > 0);
 	}
 
