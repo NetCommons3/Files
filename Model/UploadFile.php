@@ -99,7 +99,8 @@ class UploadFile extends FilesAppModel {
  * @return string file name
  */
 	public function nameCallback($field, $currentName, $data, $options) {
-		return Security::hash($currentName) . '.' . pathinfo($currentName, PATHINFO_EXTENSION);
+		//return Security::hash(mt_rand() . microtime(), 'md5')
+		return Security::hash($currentName, 'md5') . '.' . pathinfo($currentName, PATHINFO_EXTENSION);
 	}
 
 /**
