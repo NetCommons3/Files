@@ -8,6 +8,7 @@
  */
 
 App::uses('TemporaryFile', 'Files.Utility');
+App::uses('ZipDownloader', 'Files.Utility');
 
 /**
  * Class CsvFileWriter
@@ -86,5 +87,39 @@ class CsvFileWriter extends TemporaryFile {
 		$response->type('text/csv');
 		$response->file($this->path, ['name' => $filename, 'download' => 'true']);
 		return $response;
+	}
+
+/**
+ * zip download
+ *
+ * @param string $zipFilename Zipファイル名
+ * @param string $csvFilename ZipされるCsvファイル名
+ * @param string|null $password Zipにつけるパスワード
+ * @return CakeResponse
+ */
+	public function zipDownload($zipFilename, $csvFilename, $password = null) {
+		// csvファイルを$csvFilenameへリネーム
+		$this->_rename($csvFilename);
+		// zipFile作成
+		$zip = new ZipDownloader();
+		$zip->addFile($this->path);
+		// zipのダウンロードを実行
+		if ($password) {
+			$zip->setPassword($password);
+		}
+		$zip->close();
+		return $zip->download($zipFilename);
+	}
+
+/**
+ * リネーム
+ *
+ * @param string $toFilename 変更後のファイル名
+ * @return void
+ */
+	protected function _rename($toFilename) {
+		// ε(　　　　 v ﾟωﾟ)　＜ $toFilenameがフルパスかファイル名のみかで処理分ける
+		rename($this->path, dirname($this->path) . DS . $toFilename);
+		$this->path = dirname($this->path) . DS . $toFilename;
 	}
 }
