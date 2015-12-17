@@ -68,6 +68,10 @@ class AttachmentBehavior extends ModelBehavior {
  * @SuppressWarnings(PHPMD.BooleanArgumentFlag)
  */
 	public function afterFind(Model $model, $results, $primary = false) {
+		// Recursiveと連動 @see https://github.com/NetCommons3/NetCommons3/issues/68
+		if ($model->recursive < 0) {
+			return $results;
+		}
 		foreach ($results as $key => $content) {
 			if (isset($content[$model->alias]['id'])) {
 				$contentId = $content[$model->alias]['id'];
