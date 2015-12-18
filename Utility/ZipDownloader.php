@@ -68,9 +68,9 @@ class ZipDownloader {
 		//$zipSaveFolder = new TemporaryFolder();
 		//$this->path = $zipSaveFolder->path . DS . 'download.zip';
 		$zipFile = new TemporaryFile();
-		$this->path = $zipFile->path;
+		$this->path = $zipFile->path . '.zip';
 
-		if ($this->_password) {
+		if (strlen($this->_password)) {
 			// パスワードを使う
 			$cmd = 'zip';
 			$execCmd = sprintf(
@@ -80,9 +80,17 @@ class ZipDownloader {
 				escapeshellarg($this->path),
 				'*'
 			);
+
 			chdir($this->_tmpFolder->path);
 			// コマンドを実行する
-			exec(($execCmd));
+			//exec(($execCmd));
+			exec($execCmd, $output, $returnVar);
+			CakeLog::debug($execCmd);
+			if ($returnVar > 0) {
+				CakeLog::debug(' Error:output=' . json_encode($output) . ', return_var=' . $returnVar);
+				return false;
+			}
+
 		} else {
 			// パスワード無しZIP
 			// ZipArchiverを使う
