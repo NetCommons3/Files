@@ -10,6 +10,7 @@
 
 App::uses('TemporaryFolder', 'Files.Utility');
 App::uses('TemporaryFile', 'Files.Utility');
+App::uses('NetCommonsFile', 'Files.Utility');
 
 /**
  * Class NetCommonsZip
@@ -43,17 +44,6 @@ class ZipDownloader {
 	public function __construct() {
 		$this->_tmpFolder = new TemporaryFolder();
 		$this->_open = true;
-		register_shutdown_function(array($this, 'delete'));
-	}
-
-/**
- * zipファイルの削除
- *
- * @return void
- */
-	public function delete() {
-		// zip本体の削除
-		unlink($this->path);
 	}
 
 /**
@@ -65,10 +55,8 @@ class ZipDownloader {
  */
 	public function close() {
 		// zip作成先
-		//$zipSaveFolder = new TemporaryFolder();
-		//$this->path = $zipSaveFolder->path . DS . 'download.zip';
-		$zipFile = new TemporaryFile();
-		$this->path = $zipFile->path . '.zip';
+		$zipSaveFolder = new TemporaryFolder();
+		$this->path = $zipSaveFolder->path . DS . Security::hash(mt_rand() . microtime(), 'md5') . '.zip';
 
 		if (strlen($this->_password)) {
 			// パスワードを使う
