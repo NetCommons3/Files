@@ -8,12 +8,12 @@
 
 App::uses('NetCommonsCakeTestCase', 'NetCommons.TestSuite');
 App::uses('NetCommonsControllerTestCase', 'NetCommons.TestSuite');
+App::uses('TemporaryFolder', 'Files.Utility');
 App::uses('TemporaryUploadFile', 'Files.Utility');
+App::uses('TemporaryUploadFileTesting', 'Files.Test/Testing');
 
 /**
- * Summary for AttachmentBehavior Test Case
- *
- * @property TestCreateProfile $SiteSetting テスト用モデル
+ * TemporaryUploadFileTest
  */
 class TemporaryUploadFileTest extends NetCommonsCakeTestCase {
 
@@ -24,13 +24,29 @@ class TemporaryUploadFileTest extends NetCommonsCakeTestCase {
  */
 	public $fixtures = [];
 
-	public function setUp() {
-		copy(APP . 'Plugin/Files/Test/Fixture/logo.gif', TMP . 'test.gif');
+/**
+ * @var TemporaryFolder
+ */
+	protected $_tmpFolder = null;
 
+/**
+ * setUp
+ *
+ * @return void
+ */
+	public function setUp() {
+		$this->_tmpFolder = new TemporaryFolder();
+		copy(APP . 'Plugin/Files/Test/Fixture/logo.gif', $this->_tmpFolder->path . DS . 'test.gif');
 	}
 
+/**
+ * tearDown
+ *
+ * @return void
+ */
 	public function tearDown() {
-		unlink(TMP . 'test.gif');
+		// 残ってたら削除する
+		//@unlink(TMP . 'test.gif');
 	}
 
 /**
@@ -42,43 +58,32 @@ class TemporaryUploadFileTest extends NetCommonsCakeTestCase {
 		$data = [
 			'name' => 'test.gif',
 			'type' => "image/gif",
-			'tmp_name' => TMP . 'test.gif',
+			'tmp_name' => $this->_tmpFolder->path . DS . 'test.gif',
 			'error' => 0,
 			'size' => 442850,
 		];
 
 		// アップロードしたファイルではないので例外が発生する
 		$this->setExpectedException('InternalErrorException');
-		$uploadFile = new TemporaryUploadFile($data);
+		new TemporaryUploadFile($data);
 	}
 
+/**
+ * テスト用にmove_uploaded_fileをrenameに置き換えてのテスト
+ *
+ * @return void
+ */
 	public function testNewSuccess() {
 		$data = [
 			'name' => 'test.gif',
 			'type' => "image/gif",
-			'tmp_name' => TMP . 'test.gif',
+			'tmp_name' => $this->_tmpFolder->path . DS . 'test.gif',
 			'error' => 0,
 			'size' => 442850,
 		];
 
-		//$uploadFileMock = $this->getMockBuilder('TemporaryUploadFile')
-		//	->setConstructorArgs($data)
-		//	->setMethods('_moveFile')
-		//	->getMock();
-		//$uploadFileMock = $this->getMock('TemporaryUploadFile', ['_moveFile'], [$data]);
-		//$uploadFileMock->expects($this->once())
-		//	->method('_moveFile');
-			//->will($this->returnCallback('testMove'));
-			//->will($this->returnValue(true));
-
 		$uploadFile = new TemporaryUploadFileTesting($data);
-		$this->assertFileNotExists(TMP . 'test.gif');
+		$this->assertFileNotExists($this->_tmpFolder->path . DS . 'test.gif');
 		$this->assertFileExists($uploadFile->path);
-	}
-
-}
-class TemporaryUploadFileTesting extends TemporaryUploadFile {
-	protected function _moveFile($path, $destPath) {
-		return rename($path, $destPath);
 	}
 }
