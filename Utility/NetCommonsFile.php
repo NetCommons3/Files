@@ -29,4 +29,17 @@ class NetCommonsFile {
 		}
 		return $tmp;
 	}
+
+/**
+ * basenameがlocale依存だったので自前実装
+ *
+ * @param string $path ファイルパス
+ * @return string basename
+ */
+	public static function basename($path) {
+		$slashPath = str_replace(DS, '/', $path);
+		$separatePath = explode('/', $slashPath);
+		$basename = array_pop($separatePath);
+		return $basename;
+	}
 }
