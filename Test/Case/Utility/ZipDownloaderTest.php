@@ -84,6 +84,28 @@ class ZipDownloaderTest extends NetCommonsCakeTestCase {
 		$this->assertTrue($fileSize > 0);
 	}
 
+	public function testCreateZipWithEmptyPassword() {
+		$zip = new ZipDownloader();
+		$addFile = dirname(dirname(__DIR__)) . DS . 'Fixture' . DS . 'logo.gif';
+
+		$zip->addFile($addFile);
+
+		$zip->setPassword('');
+
+		$zip->close();
+
+		$this->assertFileExists($zip->path);
+
+		$unzipFolder1 = new TemporaryFolder();
+		$cmd = sprintf('unzip %s -d %s', $zip->path, $unzipFolder1->path);
+		exec($cmd, $output, $returnVar);
+		$this->assertEquals(0, $returnVar, $output);
+
+		$this->assertFileExists($unzipFolder1->path . DS . 'logo.gif');
+		$fileSize = filesize($unzipFolder1->path . DS . 'logo.gif');
+		$this->assertTrue($fileSize > 0);
+	}
+
 /**
  * test add folder
  *

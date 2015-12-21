@@ -104,10 +104,11 @@ class CsvFileWriter extends TemporaryFile {
 		$zip = new ZipDownloader();
 		$zip->addFile($this->path);
 		// zipのダウンロードを実行
-		if ($password) {
+		if (strlen($password)) {
 			$zip->setPassword($password);
 		}
 		$zip->close();
+
 		return $zip->download($zipFilename);
 	}
 

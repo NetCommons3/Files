@@ -43,6 +43,7 @@ class TemporaryUploadFile extends File {
  * ファイル名は自動的にハッシュしたものに書き換わる。
  *
  * @param array $file アップロードファイルの配列
+ * @throws InternalErrorException
  */
 	public function __construct($file) {
 		$this->temporaryFolder = new TemporaryFolder();
@@ -51,9 +52,15 @@ class TemporaryUploadFile extends File {
 				$file['name'],
 				PATHINFO_EXTENSION
 			);
-
-		move_uploaded_file($path, $this->temporaryFolder->path . DS . $destFileName);
+		$result = $this->_moveFile($path, $this->temporaryFolder->path . DS . $destFileName);
+		if ($result === false) {
+			throw new InternalErrorException('move_uploaded_file failed');
+		}
 		$this->error = $file['error'];
 		parent::__construct($this->temporaryFolder->path . DS . $destFileName);
+	}
+
+	protected function _moveFile($path, $destPath) {
+		return move_uploaded_file($path, $destPath);
 	}
 }

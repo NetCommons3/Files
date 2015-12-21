@@ -67,6 +67,7 @@ class ZipDownloader {
 		// zip作成先
 		//$zipSaveFolder = new TemporaryFolder();
 		//$this->path = $zipSaveFolder->path . DS . 'download.zip';
+		// TODO TemporaryFileでなく作業用フォルダとファイル名だけ欲しい。ファイルはここでは作りたくない
 		$zipFile = new TemporaryFile();
 		$this->path = $zipFile->path;
 
@@ -82,7 +83,12 @@ class ZipDownloader {
 			);
 			chdir($this->_tmpFolder->path);
 			// コマンドを実行する
-			exec(($execCmd));
+			exec($execCmd, $output, $returnVar);
+			if ($returnVar > 0) {
+				CakeLog::warning(' Error:output=' . json_encode($output) . ', return_var=' . $returnVar);
+				return false;
+			}
+
 		} else {
 			// パスワード無しZIP
 			// ZipArchiverを使う
