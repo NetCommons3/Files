@@ -49,4 +49,32 @@ class CsvFileWriterTest extends NetCommonsCakeTestCase {
 			debug($line);
 		}
 	}
+
+	public function testRenameJapaneseFilename() {
+		$tmpFile = new TemporaryFile();
+		$result = rename($tmpFile->path, '日本語ファイル名.csv');
+
+		$this->assertTrue($result);
+	}
+
+/**
+ * CSVに日本語ファイル名を指定したときの問題
+ *
+ * @see https://github.com/NetCommons3/Files/issues/39
+ * @return void
+ */
+	public function testAddFileJapaneseFilename() {
+		$file = dirname(dirname(__DIR__)) . DS . 'Fixture' . DS . 'logo.gif';
+		$addFile = TMP . '日本語ファイル名.gif';
+		copy($file, $addFile);
+
+		$zipDownloader = new ZipDownloader();
+		$zipDownloader->addFile($addFile);
+
+		$property = new ReflectionProperty($zipDownloader, '_tmpFolder');
+		$property->setAccessible(true);
+		$folderPath = $property->getValue($zipDownloader)->path;
+
+		$this->assertFileExists($folderPath . DS . '日本語ファイル名.gif');
+	}
 }

@@ -10,6 +10,7 @@
 
 App::uses('TemporaryFolder', 'Files.Utility');
 App::uses('TemporaryFile', 'Files.Utility');
+App::uses('NetCommonsFile', 'Files.Utility');
 
 /**
  * Class NetCommonsZip
@@ -43,17 +44,6 @@ class ZipDownloader {
 	public function __construct() {
 		$this->_tmpFolder = new TemporaryFolder();
 		$this->_open = true;
-		register_shutdown_function(array($this, 'delete'));
-	}
-
-/**
- * zipファイルの削除
- *
- * @return void
- */
-	public function delete() {
-		// zip本体の削除
-		unlink($this->path);
 	}
 
 /**
@@ -65,10 +55,8 @@ class ZipDownloader {
  */
 	public function close() {
 		// zip作成先
-		//$zipSaveFolder = new TemporaryFolder();
-		//$this->path = $zipSaveFolder->path . DS . 'download.zip';
-		$zipFile = new TemporaryFile();
-		$this->path = $zipFile->path . '.zip';
+		$zipSaveFolder = new TemporaryFolder();
+		$this->path = $zipSaveFolder->path . DS . Security::hash(mt_rand() . microtime(), 'md5') . '.zip';
 
 		if (strlen($this->_password)) {
 			// パスワードを使う
@@ -120,17 +108,19 @@ class ZipDownloader {
  * ファイル追加
  *
  * @param string $filePath 追加するファイルのパス
- * @param string|null $localname  ZIPに追加するときのファイル名
+ * @param string|null $localName  ZIPに追加するときのファイル名
  *
  * @return void
  * @throws InternalErrorException
  */
-	public function addFile($filePath, $localname = null) {
-		// ファイルをlocalnameにしてコピー
-		if ($localname === null) {
-			$localname = basename($filePath);
+	public function addFile($filePath, $localName = null) {
+		// ファイルをlocalNameにしてコピー
+		if ($localName === null) {
+			$localName = NetCommonsFile::basename($filePath);
 		}
-		if (!copy($filePath, $this->_tmpFolder->path . DS . $localname)) {
+		$destPath = $this->_tmpFolder->path . DS . $localName;
+		$result = copy($filePath, $destPath);
+		if (!$result) {
 			// 失敗
 			throw new InternalErrorException('NetCommonsZip File IO Error');
 		}
@@ -161,7 +151,7 @@ class ZipDownloader {
  */
 	public function addFolder($folderPath) {
 		$folder = new Folder($folderPath);
-		if (!$folder->copy($this->_tmpFolder->path . DS . basename($folder->path))) {
+		if (!$folder->copy($this->_tmpFolder->path . DS . NetCommonsFile::basename($folder->path))) {
 			throw new InternalErrorException('NetCommonsZip File IO Error');
 		}
 	}
