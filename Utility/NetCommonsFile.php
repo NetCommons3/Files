@@ -29,4 +29,11 @@ class NetCommonsFile {
 		}
 		return $tmp;
 	}
+
+	public static function basename($path) {
+		$slashPath = str_replace(DS, '/', $path);
+		$separatePath = explode('/', $slashPath);
+		$basename = array_pop($separatePath);
+		return $basename;
+	}
 }

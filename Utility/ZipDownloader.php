@@ -120,17 +120,19 @@ class ZipDownloader {
  * ファイル追加
  *
  * @param string $filePath 追加するファイルのパス
- * @param string|null $localname  ZIPに追加するときのファイル名
+ * @param string|null $localName  ZIPに追加するときのファイル名
  *
  * @return void
  * @throws InternalErrorException
  */
-	public function addFile($filePath, $localname = null) {
-		// ファイルをlocalnameにしてコピー
-		if ($localname === null) {
-			$localname = basename($filePath);
+	public function addFile($filePath, $localName = null) {
+		// ファイルをlocalNameにしてコピー
+		if ($localName === null) {
+			$localName = NetCommonsFile::basename($filePath);
 		}
-		if (!copy($filePath, $this->_tmpFolder->path . DS . $localname)) {
+		$destPath = $this->_tmpFolder->path . DS . $localName;
+		$result = copy($filePath, $destPath);
+		if (!$result) {
 			// 失敗
 			throw new InternalErrorException('NetCommonsZip File IO Error');
 		}
@@ -161,7 +163,7 @@ class ZipDownloader {
  */
 	public function addFolder($folderPath) {
 		$folder = new Folder($folderPath);
-		if (!$folder->copy($this->_tmpFolder->path . DS . basename($folder->path))) {
+		if (!$folder->copy($this->_tmpFolder->path . DS . NetCommonsFile::basename($folder->path))) {
 			throw new InternalErrorException('NetCommonsZip File IO Error');
 		}
 	}
