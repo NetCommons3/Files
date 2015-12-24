@@ -57,8 +57,15 @@ class DownloadComponentTest extends NetCommonsCakeTestCase {
  * @return void
  */
 	public function tearDown() {
+		Configure::write('Config.language', null);
+		Current::$current = null;
 	}
 
+/**
+ * test doDownload
+ *
+ * @return void
+ */
 	public function testDoDownload() {
 		$pass = [
 			null,
@@ -68,15 +75,73 @@ class DownloadComponentTest extends NetCommonsCakeTestCase {
 
 		Current::$current['Room']['id'] = 1;
 		Current::$current['Language']['id'] = 2;
-		$this->TestContrller->plugin = 'NetCommons';
+		$this->TestController->plugin = 'NetCommons';
 
 		$contentId = 2;
 
 		$this->TestController->params['pass'] = $pass;
 
-		// TODO responseをモックにして渡される値をテスト
-		// TODO downloadカウントがカウントアップされるかをテスト
-		$response = $this->Download->doDownload($contentId);
+		// responseをモックにして渡される値をテスト
+		$path = WWW_ROOT . 'files/upload_file/real_file_name/1/1/foobarhash.jpg';
+
+		$responseMock = $this->getMock('CakeResponse', ['file']);
+		$responseMock->expects($this->once())
+			->method('file')
+			->with($this->equalTo($path));
+		$this->TestController->response = $responseMock;
+
+		// カウントアップが呼ばれるかテスト
+		$UploadFileMock = $this->getMockForModel('Files.UploadFile', ['countUp']);
+		$UploadFileMock->expects($this->once())
+			->method('countUp')
+			->will($this->returnValue(true));
+
+		$this->Download->doDownload($contentId);
 	}
 
+/**
+ * サムネイルファイルのダウンロード
+ *
+ * @return void
+ */
+	public function testDoDownloadThumbnail() {
+		$pass = [
+			null,
+			null,
+			'photo', //params['pass'][2]
+		];
+
+		Current::$current['Room']['id'] = 1;
+		Current::$current['Language']['id'] = 2;
+		$this->TestController->plugin = 'NetCommons';
+
+		$contentId = 2;
+
+		$this->TestController->params['pass'] = $pass;
+
+		// responseをモックにして渡される値をテスト
+		$path = WWW_ROOT . 'files/upload_file/real_file_name/1/1/small_foobarhash.jpg';
+
+		$responseMock = $this->getMock('CakeResponse', ['file']);
+		$responseMock->expects($this->once())
+			->method('file')
+			->with($this->equalTo($path));
+		$this->TestController->response = $responseMock;
+
+		// カウントアップが呼ばれるかテスト
+		$UploadFileMock = $this->getMockForModel('Files.UploadFile', ['countUp']);
+		$UploadFileMock->expects($this->once())
+			->method('countUp')
+			->will($this->returnValue(true));
+
+		$this->Download->doDownload($contentId, ['size' => 'small']);
+	}
+
+	public function testDifferentRoomId() {
+
+	}
+
+	public function testInvisibleBlock() {
+
+	}
 }
