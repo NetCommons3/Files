@@ -25,7 +25,7 @@ class TemporaryUploadFileTest extends NetCommonsCakeTestCase {
 	public $fixtures = [];
 
 /**
- * @var TemporaryFolder
+ * @var TemporaryFolder テンポラリフォルダ
  */
 	protected $_tmpFolder = null;
 

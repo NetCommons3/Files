@@ -50,6 +50,11 @@ class CsvFileWriterTest extends NetCommonsCakeTestCase {
 		}
 	}
 
+/**
+ * 日本語ファイルリネームテスト
+ *
+ * @return void
+ */
 	public function testRenameJapaneseFilename() {
 		$tmpFile = new TemporaryFile();
 		$result = rename($tmpFile->path, '日本語ファイル名.csv');

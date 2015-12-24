@@ -11,6 +11,9 @@ App::uses('NetCommonsCakeTestCase', 'NetCommons.TestSuite');
 App::uses('NetCommonsControllerTestCase', 'NetCommons.TestSuite');
 App::uses('NetCommonsFile', 'Files.Utility');
 
+/**
+ * Class NetCommonsFileTest
+ */
 class NetCommonsFileTest extends NetCommonsCakeTestCase {
 
 /**
