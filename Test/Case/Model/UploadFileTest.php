@@ -2,11 +2,11 @@
 /**
  * UploadFile Test Case
  *
-* @author Noriko Arai <arai@nii.ac.jp>
-* @author Your Name <yourname@domain.com>
-* @link http://www.netcommons.org NetCommons Project
-* @license http://www.netcommons.org/license.txt NetCommons License
-* @copyright Copyright 2014, NetCommons Project
+ * @author Noriko Arai <arai@nii.ac.jp>
+ * @author   Ryuji AMANO <ryuji@ryus.co.jp>
+ * @link http://www.netcommons.org NetCommons Project
+ * @license http://www.netcommons.org/license.txt NetCommons License
+ * @copyright Copyright 2014, NetCommons Project
  */
 
 App::uses('UploadFile', 'Files.Model');
@@ -78,7 +78,6 @@ class UploadFileTest extends NetCommonsCakeTestCase {
 		// 関連テーブルが削除される
 		$count = $this->UploadFilesContent->find('count', ['conditions' => $conditions]);
 		$this->assertEquals(0, $count);
-
 
 		// 他に関連がないのでファイルレコードも削除
 		$count = $this->UploadFile->find('count', ['conditions' => ['id' => 1]]);
