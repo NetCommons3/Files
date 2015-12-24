@@ -64,10 +64,6 @@ class UploadFile extends FilesAppModel {
  * @return void
  */
 	public function setOptions($options) {
-		// imagickなかったらgd
-		if (class_exists('imagick') === false) {
-			$options['thumbnailMethod'] = 'GD';
-		}
 		$this->uploadSettings('real_file_name', $options);
 	}
 
@@ -117,6 +113,11 @@ class UploadFile extends FilesAppModel {
  * @return void
  */
 	public function beforeSave($options = array()) {
+		// imagickクラスがなかったらサムネイル生成はGDを利用
+		if (class_exists('imagick') === false) {
+			$this->uploadSettings('real_file_name', 'thumbnailMethod', 'GD');
+		}
+
 		$roomId = Current::read('Room.id');
 		$path = WWW_ROOT . 'files' . DS . 'upload_file' . DS . 'real_file_name' . DS . $roomId . DS;
 
