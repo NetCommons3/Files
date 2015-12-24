@@ -52,14 +52,6 @@ class UploadFileTest extends NetCommonsCakeTestCase {
 	}
 
 /**
- * testSetOptions method
- *
- * @return void
- */
-	public function testSetOptions() {
-	}
-
-/**
  * testRemoveFile method
  *
  * @return void
@@ -82,22 +74,6 @@ class UploadFileTest extends NetCommonsCakeTestCase {
 		// 他に関連がないのでファイルレコードも削除
 		$count = $this->UploadFile->find('count', ['conditions' => ['id' => 1]]);
 		$this->assertEquals(0, $count);
-	}
-
-/**
- * testNameCallback method
- *
- * @return void
- */
-	public function testNameCallback() {
-	}
-
-/**
- * testGetFile method
- *
- * @return void
- */
-	public function testGetFile() {
 	}
 
 /**
