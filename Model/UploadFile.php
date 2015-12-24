@@ -307,7 +307,7 @@ class UploadFile extends FilesAppModel {
 				$contentKey,
 				$fieldName
 		);
-
+		// 以前の添付ファイルとの関連を切る。
 		$this->deleteLink($pluginKey, $contentId, $fieldName);
 		// 関連テーブル登録
 		$this->makeLink($pluginKey, $contentId, $uploadFile['UploadFile']['id']);
