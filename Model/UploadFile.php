@@ -113,6 +113,11 @@ class UploadFile extends FilesAppModel {
  * @return void
  */
 	public function beforeSave($options = array()) {
+		// imagickクラスがなかったらサムネイル生成はGDを利用
+		if (class_exists('imagick') === false) {
+			$this->uploadSettings('real_file_name', 'thumbnailMethod', '_resizePhp');
+		}
+
 		$roomId = Current::read('Room.id');
 		$path = WWW_ROOT . 'files' . DS . 'upload_file' . DS . 'real_file_name' . DS . $roomId . DS;
 
@@ -307,7 +312,7 @@ class UploadFile extends FilesAppModel {
 				$contentKey,
 				$fieldName
 		);
-
+		// 以前の添付ファイルとの関連を切る。
 		$this->deleteLink($pluginKey, $contentId, $fieldName);
 		// 関連テーブル登録
 		$this->makeLink($pluginKey, $contentId, $uploadFile['UploadFile']['id']);
