@@ -68,7 +68,7 @@ class UploadFileFixture extends CakeTestFixture {
 			'download_count' => 1,
 			'total_download_count' => 1,
 			'room_id' => 1,
-			'block_key' => '5',
+			'block_key' => 'block_1',
 			'created_user' => 1,
 			'created' => '2015-11-06 02:20:55',
 			'modified_user' => 1,

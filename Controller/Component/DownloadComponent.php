@@ -70,7 +70,7 @@ class DownloadComponent extends Component {
 			$filename = $size . '_' . $filename;
 		}
 
-		$filePath = WWW_ROOT . $file['UploadFile']['path'] . $file['UploadFile']['id'] . DS . $filename;
+		$filePath = $this->_getFilePath($file, $filename);
 
 		$this->_controller->response->file($filePath, array('name' => $file['UploadFile']['original_name']));
 
@@ -78,5 +78,15 @@ class DownloadComponent extends Component {
 		$UploadFile->countUp($file);
 
 		return $this->_controller->response;
+	}
+
+	/**
+	 * @param $file
+	 * @param $filename
+	 * @return string
+	 */
+	protected function _getFilePath($file, $filename) {
+		$filePath = WWW_ROOT . $file['UploadFile']['path'] . $file['UploadFile']['id'] . DS . $filename;
+		return $filePath;
 	}
 }
