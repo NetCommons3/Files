@@ -48,7 +48,6 @@ class UploadFileTest extends NetCommonsCakeTestCase {
  */
 	public function tearDown() {
 		unset($this->UploadFile);
-
 		parent::tearDown();
 	}
 
@@ -164,6 +163,20 @@ class UploadFileTest extends NetCommonsCakeTestCase {
  * @return void
  */
 	public function testMakeLink() {
+		$pluginKey = 'files';
+		$contentId = 1;
+		$uploadFileId = 1;
+		$this->UploadFile->makeLink($pluginKey, $contentId, $uploadFileId);
+
+		// 関連レコードが挿入されてることを確認
+		$conditions = [
+			'UploadFilesContent.plugin_key' => $pluginKey,
+			'UploadFilesContent.content_id' => $contentId,
+			'UploadFilesContent.upload_file_id' => $uploadFileId
+		];
+		$link = $this->UploadFilesContent->find('first', ['conditions' => $conditions]);
+
+		$this->assertTrue($link['UploadFilesContent']['id'] > 0);
 	}
 
 /**
@@ -172,6 +185,20 @@ class UploadFileTest extends NetCommonsCakeTestCase {
  * @return void
  */
 	public function testDeleteLink() {
+		$pluginKey = 'net_commons';
+		$contentId = 2;
+		$fieldName = 'photo';
+		// Uploadビヘイビアを無効にしておく
+		$this->UploadFile->Behaviors->unload('Upload');
+		$this->UploadFile->deleteLink($pluginKey, $contentId, $fieldName);
+
+		// fixtureで挿入された関連レコードが削除されてること
+		$count = $this->UploadFilesContent->find('count', ['conditions' => ['UploadFilesContent.id' => 1]]);
+		$this->assertEquals(0, $count);
+
+		// fixtureで挿入されたUploadFileレコードも削除されること（他に関連がないので）
+		$count = $this->UploadFile->find('count', ['conditions' => ['UploadFile.id' => 1]]);
+		$this->assertEquals(0, $count);
 	}
 
 /**
@@ -180,6 +207,32 @@ class UploadFileTest extends NetCommonsCakeTestCase {
  * @return void
  */
 	public function testAttach() {
-	}
+		copy(dirname(dirname(__DIR__)) . DS . 'Fixture' . DS . 'logo.gif', TMP . 'logo.gif');
 
+		$pluginKey = 'net_commons';
+		$contentKey = 'content_key_1';
+		$contentId = 3;
+		$fieldName = 'image';
+		$file = new File(TMP . 'logo.gif');
+
+		$this->UploadFile->attach($pluginKey, $contentKey, $contentId, $fieldName, $file);
+
+		// UploadFileレコードが登録される
+		$conditions = [
+			'plugin_key' => $pluginKey,
+			'content_key' => $contentKey,
+			'field_name' => $fieldName,
+		];
+		$file = $this->UploadFile->find('first', ['conditions' => $conditions]);
+		$this->assertTrue($file['UploadFile']['id'] > 0);
+
+		// 関連レコードが登録される。
+		$conditions = [
+			'UploadFilesContent.upload_file_id' => $file['UploadFile']['id'],
+			'UploadFilesContent.content_id' => $contentId,
+			'UploadFilesContent.plugin_key' => $pluginKey
+		];
+		$link = $this->UploadFilesContent->find('first', ['conditions' => $conditions]);
+		$this->assertTrue($link['UploadFilesContent']['id'] > 0);
+	}
 }
