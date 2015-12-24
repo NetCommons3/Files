@@ -60,6 +60,13 @@ class TemporaryUploadFile extends File {
 		parent::__construct($this->temporaryFolder->path . DS . $destFileName);
 	}
 
+/**
+ * ファイル移動
+ *
+ * @param string $path 移動元
+ * @param string $destPath 移動先
+ * @return bool
+ */
 	protected function _moveFile($path, $destPath) {
 		return move_uploaded_file($path, $destPath);
 	}
