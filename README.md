@@ -119,3 +119,9 @@ public $components = array(
 認証キーの詳細については認証キーのドキュメントも参照してください。
 
 [AuthorizationKeys](https://github.com/NetCommons3/AuthorizationKeys#概要)
+
+# Validation
+
+AttachmentBehaviorでUploadビヘイビアのバリデーションルールを利用できます。
+
+- [Uploadビヘイビアのバリデータ](https://github.com/josegonzalez/cakephp-upload/blob/2.x/docs/validation.rst)
