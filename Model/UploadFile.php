@@ -64,6 +64,10 @@ class UploadFile extends FilesAppModel {
  * @return void
  */
 	public function setOptions($options) {
+		// imagickなかったらgd
+		if (class_exists('imagick') === false) {
+			$options['thumbnailMethod'] = 'GD';
+		}
 		$this->uploadSettings('real_file_name', $options);
 	}
 
