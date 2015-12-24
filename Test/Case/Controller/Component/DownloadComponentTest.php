@@ -27,7 +27,7 @@ class DownloadComponentTest extends NetCommonsCakeTestCase {
 	public $fixtures = [];
 
 /**
- * @var DownloadComponent
+ * @var DownloadComponent ダウンロードコンポーネント
  */
 	public $Download = null;
 
@@ -137,11 +137,57 @@ class DownloadComponentTest extends NetCommonsCakeTestCase {
 		$this->Download->doDownload($contentId, ['size' => 'small']);
 	}
 
+/**
+ * 別ルームだったら例外発生
+ *
+ * @return void
+ */
 	public function testDifferentRoomId() {
+		$pass = [
+			null,
+			null,
+			'photo', //params['pass'][2]
+		];
 
+		Current::$current['Room']['id'] = 2; // 別ルーム
+		Current::$current['Language']['id'] = 2;
+		$this->TestController->plugin = 'NetCommons';
+
+		$contentId = 2;
+
+		$this->TestController->params['pass'] = $pass;
+
+		$this->setExpectedException('ForbiddenException');
+		$this->Download->doDownload($contentId, ['size' => 'small']);
 	}
 
+/**
+ * ブロック非表示で例外発生
+ *
+ * @return void
+ */
 	public function testInvisibleBlock() {
+		$pass = [
+			null,
+			null,
+			'photo', //params['pass'][2]
+		];
 
+		Current::$current['Room']['id'] = 1;
+		Current::$current['Language']['id'] = 2;
+		$this->TestController->plugin = 'NetCommons';
+
+		$contentId = 2;
+
+		$this->TestController->params['pass'] = $pass;
+
+		// Block->isVisible == false
+		$BlockMock = $this->getMockForModel('Block', ['isVisible']);
+		$BlockMock->expects($this->once())
+			->method('isVisible')
+			->will($this->returnValue(false));
+
+		$this->setExpectedException('ForbiddenException');
+		$this->Download->doDownload($contentId, ['size' => 'small']);
 	}
 }
