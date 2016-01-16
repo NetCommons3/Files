@@ -26,7 +26,7 @@ class AttachmentBehaviorTest extends NetCommonsCakeTestCase {
  */
 	public $fixtures = [
 		//'plugin.files.file',
-		'plugin.net_commons.site_setting',
+		'plugin.site_manager.site_setting',
 		'plugin.files.upload_file',
 		'plugin.files.upload_files_content',
 	];
@@ -42,7 +42,7 @@ class AttachmentBehaviorTest extends NetCommonsCakeTestCase {
 		//NetCommonsControllerTestCase::loadTestPlugin($this, 'NetCommons', 'TestNetCommons');
 
 		// ε(　　　　 v ﾟωﾟ)　＜テストのためにとりあえずSiteSetting使ってる。ちゃんとダミーのモデルにしたい
-		$this->SiteSetting = ClassRegistry::init('NetCommons.SiteSetting');
+		$this->SiteSetting = ClassRegistry::init('SiteManager.SiteSetting');
 		$this->SiteSetting->Behaviors->load('NetCommons.OriginalKey');
 		$this->SiteSetting->Behaviors->load('Files.Attachment', ['photo', 'pdf']);
 
