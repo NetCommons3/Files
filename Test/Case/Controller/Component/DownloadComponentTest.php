@@ -75,7 +75,7 @@ class DownloadComponentTest extends NetCommonsCakeTestCase {
 
 		Current::$current['Room']['id'] = 1;
 		Current::$current['Language']['id'] = 2;
-		$this->TestController->plugin = 'NetCommons';
+		$this->TestController->plugin = 'SiteManager';
 
 		$contentId = 2;
 
@@ -113,7 +113,7 @@ class DownloadComponentTest extends NetCommonsCakeTestCase {
 
 		Current::$current['Room']['id'] = 1;
 		Current::$current['Language']['id'] = 2;
-		$this->TestController->plugin = 'NetCommons';
+		$this->TestController->plugin = 'SiteManager';
 
 		$contentId = 2;
 
@@ -151,7 +151,7 @@ class DownloadComponentTest extends NetCommonsCakeTestCase {
 
 		Current::$current['Room']['id'] = 2; // 別ルーム
 		Current::$current['Language']['id'] = 2;
-		$this->TestController->plugin = 'NetCommons';
+		$this->TestController->plugin = 'SiteManager';
 
 		$contentId = 2;
 
@@ -175,7 +175,7 @@ class DownloadComponentTest extends NetCommonsCakeTestCase {
 
 		Current::$current['Room']['id'] = 1;
 		Current::$current['Language']['id'] = 2;
-		$this->TestController->plugin = 'NetCommons';
+		$this->TestController->plugin = 'SiteManager';
 
 		$contentId = 2;
 

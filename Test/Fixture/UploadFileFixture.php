@@ -53,7 +53,7 @@ class UploadFileFixture extends CakeTestFixture {
 	public $records = array(
 		array(
 			'id' => 1,
-			'plugin_key' => 'net_commons',
+			'plugin_key' => 'site_manager',
 			'content_key' => 'theme',
 			'field_name' => 'photo',
 			'original_name' => 'foo.jpg',

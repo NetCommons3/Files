@@ -26,7 +26,7 @@ class AttachmentBehaviorTest extends NetCommonsCakeTestCase {
  */
 	public $fixtures = [
 		//'plugin.files.file',
-		'plugin.net_commons.site_setting',
+		'plugin.site_manager.site_setting',
 		'plugin.files.upload_file',
 		'plugin.files.upload_files_content',
 	];
@@ -42,7 +42,7 @@ class AttachmentBehaviorTest extends NetCommonsCakeTestCase {
 		//NetCommonsControllerTestCase::loadTestPlugin($this, 'NetCommons', 'TestNetCommons');
 
 		// ε(　　　　 v ﾟωﾟ)　＜テストのためにとりあえずSiteSetting使ってる。ちゃんとダミーのモデルにしたい
-		$this->SiteSetting = ClassRegistry::init('NetCommons.SiteSetting');
+		$this->SiteSetting = ClassRegistry::init('SiteManager.SiteSetting');
 		$this->SiteSetting->Behaviors->load('NetCommons.OriginalKey');
 		$this->SiteSetting->Behaviors->load('Files.Attachment', ['photo', 'pdf']);
 
@@ -144,7 +144,7 @@ class AttachmentBehaviorTest extends NetCommonsCakeTestCase {
 		// その時ファイルが添付されてなければ、元々contentId=1についていたファイル（fileId=1）が引き続き添付される
 		$UploadFilesContent = ClassRegistry::init('Files.UploadFilesContent');
 
-		$link = $UploadFilesContent->findByPluginKeyAndContentIdAndUploadFileId('net_commons', 2, 1);
+		$link = $UploadFilesContent->findByPluginKeyAndContentIdAndUploadFileId('site_manager', 2, 1);
 		$this->assertNotEmpty($link);
 
 		$data = $this->SiteSetting->findById(2);
@@ -167,7 +167,7 @@ class AttachmentBehaviorTest extends NetCommonsCakeTestCase {
 
 		$savedData = $this->SiteSetting->save($data); // 同じキーで新規レコード登録（NC3での編集時の保存処理）
 
-		$link = $UploadFilesContent->findByPluginKeyAndContentIdAndUploadFileId('net_commons', $savedData['SiteSetting']['id'], 1);
+		$link = $UploadFilesContent->findByPluginKeyAndContentIdAndUploadFileId('site_manager', $savedData['SiteSetting']['id'], 1);
 		$this->assertNotEmpty($link);
 	}
 
