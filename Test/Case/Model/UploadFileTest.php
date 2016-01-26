@@ -160,7 +160,7 @@ class UploadFileTest extends NetCommonsCakeTestCase {
  * @return void
  */
 	public function testDeleteLink() {
-		$pluginKey = 'net_commons';
+		$pluginKey = 'site_manager';
 		$contentId = 2;
 		$fieldName = 'photo';
 		// Uploadビヘイビアを無効にしておく
@@ -184,7 +184,7 @@ class UploadFileTest extends NetCommonsCakeTestCase {
 	public function testAttach() {
 		copy(dirname(dirname(__DIR__)) . DS . 'Fixture' . DS . 'logo.gif', TMP . 'logo.gif');
 
-		$pluginKey = 'net_commons';
+		$pluginKey = 'site_manager';
 		$contentKey = 'content_key_1';
 		$contentId = 3;
 		$fieldName = 'image';
