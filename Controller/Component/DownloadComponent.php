@@ -42,7 +42,10 @@ class DownloadComponent extends Component {
 		$size = Hash::get($this->_controller->params['pass'], 3, null);
 
 		$fieldName = Hash::get($options, 'field', $fieldName);
+		unset($options['field']);
 		$size = Hash::get($options, 'size', $size);
+		unset($options['size']);
+
 
 		// ファイル情報取得 plugin_keyとコンテンツID、フィールドの情報が必要
 		$UploadFile = ClassRegistry::init('Files.UploadFile');
@@ -72,7 +75,10 @@ class DownloadComponent extends Component {
 
 		$filePath = WWW_ROOT . $file['UploadFile']['path'] . $file['UploadFile']['id'] . DS . $filename;
 
-		$this->_controller->response->file($filePath, array('name' => $file['UploadFile']['original_name']));
+
+		$options = Hash::merge(array('name' => $file['UploadFile']['original_name']), $options);
+		$this->_controller->response->file($filePath, $options
+			);
 
 		// Download カウントアップ
 		$UploadFile->countUp($file);
