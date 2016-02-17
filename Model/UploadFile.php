@@ -193,25 +193,27 @@ class UploadFile extends FilesAppModel {
  * @param string $pluginKey プラグインキー
  * @param string $contentKey コンテンツキー
  * @param string $fieldName フィールド名
+ * @param array $data データ登録時に上書きしたいデータを渡す
  * @return array
  * @throws Exception
  */
-	public function registByFile(File $file, $pluginKey, $contentKey, $fieldName) {
+	public function registByFile(File $file, $pluginKey, $contentKey, $fieldName, $data = array()) {
 		// データの登録
-		$data = $this->create();
+		$_tmpData = $this->create();
 		// $dataにアサイン
-		$data['UploadFile']['plugin_key'] = $pluginKey;
-		$data['UploadFile']['content_key'] = $contentKey;
-		$data['UploadFile']['field_name'] = $fieldName;
-		$data['UploadFile']['original_name'] = $file->name;
-		$data['UploadFile']['extension'] = pathinfo($file->name, PATHINFO_EXTENSION);
-		$data['UploadFile']['real_file_name'] = [
+		$_tmpData['UploadFile']['plugin_key'] = $pluginKey;
+		$_tmpData['UploadFile']['content_key'] = $contentKey;
+		$_tmpData['UploadFile']['field_name'] = $fieldName;
+		$_tmpData['UploadFile']['original_name'] = $file->name;
+		$_tmpData['UploadFile']['extension'] = pathinfo($file->name, PATHINFO_EXTENSION);
+		$_tmpData['UploadFile']['real_file_name'] = [
 			'name' => $file->name,
 			'type' => $file->mime(),
 			'tmp_name' => $file->path,
 			'error' => 0,
 			'size' => $file->size(),
 		];
+		$data = Hash::merge($_tmpData, $data);
 		$data = $this->save($data); // あれ？普通にsaveするとUploadビヘイビアが動く？
 
 		return $data;
@@ -227,11 +229,12 @@ class UploadFile extends FilesAppModel {
  * @param string $pluginKey プラグインキー
  * @param string $contentKey コンテンツキー
  * @param string $fieldName フィールド名
+ * @param array $data データ登録時に上書きしたいデータを渡す
  * @return array 登録されたUploadFileレコード
  */
-	public function registByFilePath($filePath, $pluginKey, $contentKey, $fieldName) {
+	public function registByFilePath($filePath, $pluginKey, $contentKey, $fieldName, $data = array()) {
 		$file = new File($filePath);
-		return $this->registByFile($file, $pluginKey, $contentKey, $fieldName);
+		return $this->registByFile($file, $pluginKey, $contentKey, $fieldName, $data);
 	}
 
 /**
