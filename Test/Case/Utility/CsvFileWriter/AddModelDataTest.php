@@ -10,6 +10,8 @@
  */
 
 App::uses('NetCommonsCakeTestCase', 'NetCommons.TestSuite');
+App::uses('CsvFileReader', 'Files.Utility');
+App::uses('CsvFileWriter', 'Files.Utility');
 
 /**
  * CsvFileWriter::addModelData()のテスト
@@ -32,15 +34,149 @@ class UtilityCsvFileWriterAddModelDataTest extends NetCommonsCakeTestCase {
  * @return void
  */
 	public function testAddModelData() {
-		//データ生成
-		array =  $data;
-
-		//テスト実施
-		//$result = $this->addModelData(array);
+		$header = [
+			'BlogEntry.id' => 'データID',
+			'BlogEntry.title' => 'タイトル',
+			'BlogEntry.body1' => '本文1',
+			'BlogEntry.publish_start' => '公開日時'
+		];
+		$blogEntries = [
+			0 => [
+				'BlogEntry' => [
+					'id' => 1,
+					'title' => '記事タイトル1',
+					'body1' => '記事本文1',
+					'publish_start' => '2015-12-31 00:00:00'
+				],
+			],
+			1 => [
+				'BlogEntry' => [
+					'id' => 2,
+					'title' => '記事タイトル2',
+					'body1' => '記事本文2',
+					'publish_start' => '2015-12-31 01:00:00'
+				],
+			]
+		];
+		$csvWriter = new CsvFileWriter(['header' => $header]);
+		foreach($blogEntries as $data){
+			$csvWriter->addModelData($data);
+		}
+		$csvWriter->close();
 
 		//チェック
-		//TODO:assertを書く
-		//debug($result);
+		$csvReader = new CsvFileReader($csvWriter->path);
+
+		foreach ($csvReader as $index => $resultLine) {
+			if ($index === 0) {
+				// header
+				$this->assertEquals(array_values($header), $resultLine);
+			}
+			if ($index > 0) {
+				$this->assertEquals(array_values(Hash::flatten($blogEntries[$index - 1])), $resultLine);
+			}
+		}
 	}
 
+/**
+ * addModelData()のテスト headerで指定されたカラムだけCSV出力されるかのテスト
+ *
+ * @return void
+ */
+	public function testAddModelDataFilterHeader() {
+		$header = [
+			'BlogEntry.id' => 'データID',
+			'BlogEntry.title' => 'タイトル',
+			//'BlogEntry.body1' => '本文1',
+			//'BlogEntry.publish_start' => '公開日時'
+		];
+		$blogEntries = [
+			0 => [
+				'BlogEntry' => [
+					'id' => 1,
+					'title' => '記事タイトル1',
+					'body1' => '記事本文1',
+					'publish_start' => '2015-12-31 00:00:00'
+				],
+			],
+			1 => [
+				'BlogEntry' => [
+					'id' => 2,
+					'title' => '記事タイトル2',
+					'body1' => '記事本文2',
+					'publish_start' => '2015-12-31 01:00:00'
+				],
+			]
+		];
+		$csvWriter = new CsvFileWriter(['header' => $header]);
+		foreach($blogEntries as $data){
+			$csvWriter->addModelData($data);
+		}
+		$csvWriter->close();
+
+		//チェック
+		$csvReader = new CsvFileReader($csvWriter->path);
+
+		foreach ($csvReader as $index => $resultLine) {
+			if ($index === 0) {
+				// header
+				$this->assertEquals(array_values($header), $resultLine);
+			}
+			// id, titleだけがCSVに出力される
+			if ($index > 0) {
+				$this->assertEquals($blogEntries[$index - 1]['BlogEntry']['id'], $resultLine[0]);
+				$this->assertEquals($blogEntries[$index - 1]['BlogEntry']['title'], $resultLine[1]);
+			}
+		}
+	}
+
+/**
+ * addModelData()のテスト header指定無しのケース
+ *
+ * @return void
+ */
+	public function testAddModelDataNoFilter() {
+		//$header = [
+		//	'BlogEntry.id' => 'データID',
+		//	'BlogEntry.title' => 'タイトル',
+		//	'BlogEntry.body1' => '本文1',
+		//	'BlogEntry.publish_start' => '公開日時'
+		//];
+		$blogEntries = [
+			0 => [
+				'BlogEntry' => [
+					'id' => 1,
+					'title' => '記事タイトル1',
+					'body1' => '記事本文1',
+					'publish_start' => '2015-12-31 00:00:00'
+				],
+			],
+			1 => [
+				'BlogEntry' => [
+					'id' => 2,
+					'title' => '記事タイトル2',
+					'body1' => '記事本文2',
+					'publish_start' => '2015-12-31 01:00:00'
+				],
+			]
+		];
+		$csvWriter = new CsvFileWriter();
+		foreach($blogEntries as $data){
+			$csvWriter->addModelData($data);
+		}
+		$csvWriter->close();
+
+		//チェック
+		$csvReader = new CsvFileReader($csvWriter->path);
+
+		foreach ($csvReader as $index => $resultLine) {
+			//if ($index === 0) {
+			//	// header
+			//	$this->assertEquals(array_values($header), $resultLine);
+			//}
+			//if ($index > 0) {
+				$this->assertEquals(array_values(Hash::flatten($blogEntries[$index ])), $resultLine);
+			//}
+		}
+	}
 }

@@ -10,6 +10,8 @@
  */
 
 App::uses('NetCommonsCakeTestCase', 'NetCommons.TestSuite');
+App::uses('CsvFileReader', 'Files.Utility');
+App::uses('CsvFileWriter', 'Files.Utility');
 
 /**
  * CsvFileWriter::add()のテスト
@@ -32,15 +34,23 @@ class UtilityCsvFileWriterAddTest extends NetCommonsCakeTestCase {
  * @return void
  */
 	public function testAdd() {
-		//データ生成
-		array =  $line;
+		$csvFilePath = dirname(dirname(dirname(__DIR__))) . '/Fixture/sample_csv_excel2010.csv';
+		$csvReader = new CsvFileReader($csvFilePath);
+		$lines = array();
+		foreach ($csvReader as $line) {
+			$lines[] = $line;
+		}
 
-		//テスト実施
-		//$result = $this->add(array);
+		$writer = new CsvFileWriter();
+		foreach ($lines as $line) {
+			$writer->add($line);
+		}
+		$writer->close();
 
-		//チェック
-		//TODO:assertを書く
-		//debug($result);
+		$csvReader = new CsvFileReader($writer->path);
+		foreach ($csvReader as $index => $resultLine) {
+			$this->assertEquals($lines[$index], $resultLine);
+			//debug($resultLine);
+		}
 	}
-
 }

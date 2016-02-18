@@ -10,7 +10,9 @@
  */
 
 App::uses('NetCommonsCakeTestCase', 'NetCommons.TestSuite');
-
+App::uses('CsvFileReader', 'Files.Utility');
+App::uses('CsvFileWriter', 'Files.Utility');
+App::uses('CakeResponse', 'Network');
 /**
  * CsvFileWriter::download()のテスト
  *
@@ -33,14 +35,24 @@ class UtilityCsvFileWriterDownloadTest extends NetCommonsCakeTestCase {
  */
 	public function testDownload() {
 		//データ生成
-		$filename = null;
+		$csvFilePath = dirname(dirname(dirname(__DIR__))) . '/Fixture/sample_csv_excel2010.csv';
+		$csvReader = new CsvFileReader($csvFilePath);
+		$lines = array();
+		foreach ($csvReader as $line) {
+			$lines[] = $line;
+		}
+
+		$writer = new CsvFileWriter();
+		foreach ($lines as $line) {
+			$writer->add($line);
+		}
+		$writer->close();
 
 		//テスト実施
-		//$result = $this->download($filename);
-
-		//チェック
-		//TODO:assertを書く
-		//debug($result);
+		$response = $writer->download('test.csv');
+		$this->assertInstanceOf('CakeResponse', $response);
+		$this->assertEquals('text/csv', $response->type());
+		//debug($response->header());
 	}
 
 }
