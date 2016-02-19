@@ -32,15 +32,31 @@ class UtilityZipDownloaderAddFolderTest extends NetCommonsCakeTestCase {
  * @return void
  */
 	public function testAddFolder() {
-		//データ生成
-		$folderPath = null;
+		$zip = new ZipDownloader();
+		$addFolder = dirname(dirname(dirname(__DIR__))) . DS . 'Fixture';
 
-		//テスト実施
-		//$result = $this->addFolder($folderPath);
+		$zip->addFolder($addFolder);
 
-		//チェック
-		//TODO:assertを書く
-		//debug($result);
+		$zip->close();
+		$this->assertFileExists($zip->path);
+
+		$unzip = new UnZip($zip->path);
+		$unzip->extract();
+		$this->assertFileExists($unzip->path . DS . 'Fixture' . DS . 'logo.gif');
 	}
 
+/**
+ * addFolder() 例外発生のテスト
+ *
+ * @return void
+ */
+	public function testAddFolderFailed() {
+		$zip = new ZipDownloader();
+
+		$this->setExpectedException('InternalErrorException');
+		// warning抑止して例外を発生させる
+		// @codingStandardsIgnoreStart
+		@$zip->addFolder('/detarameFolder');
+		// @codingStandardsIgnoreEnd
+	}
 }

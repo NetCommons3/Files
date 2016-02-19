@@ -7,7 +7,7 @@
  * @license http://www.netcommons.org/license.txt NetCommons License
  */
 
-
+App::uses('File', 'Utility');
 App::uses('TemporaryFolder', 'Files.Utility');
 App::uses('TemporaryFile', 'Files.Utility');
 App::uses('NetCommonsFile', 'Files.Utility');
@@ -38,6 +38,8 @@ class ZipDownloader {
  */
 	protected $_open = false;
 
+	protected $_zipCommand = 'zip';
+
 /**
  * ZipDownloader constructor.
  */
@@ -60,7 +62,7 @@ class ZipDownloader {
 
 		if (strlen($this->_password)) {
 			// パスワードを使う
-			$cmd = 'zip';
+			$cmd = $this->_zipCommand;
 			$execCmd = sprintf(
 				'%s -r -e -P %s %s %s',
 				$cmd,
@@ -73,7 +75,7 @@ class ZipDownloader {
 			// コマンドを実行する
 			//exec(($execCmd));
 			exec($execCmd, $output, $returnVar);
-			CakeLog::debug($execCmd);
+			//CakeLog::debug($execCmd);
 			if ($returnVar > 0) {
 				CakeLog::debug(' Error:output=' . json_encode($output) . ', return_var=' . $returnVar);
 				return false;

@@ -32,14 +32,34 @@ class UtilityZipDownloaderCloseTest extends NetCommonsCakeTestCase {
  * @return void
  */
 	public function testClose() {
-		//データ生成
+		$zip = new ZipDownloader();
+		$zip->addFromString('foo.txt', 'foo');
+		$openProperty = new ReflectionProperty($zip, '_open');
+		$openProperty->setAccessible(true);
+		$open = $openProperty->getValue($zip);
+		// open
+		$this->assertTrue($open);
+		$zip->close();
+		//close
+		$open = $openProperty->getValue($zip);
+		$this->assertFalse($open);
+	}
 
-		//テスト実施
-		//$result = $this->close();
+/**
+ * zip コマンド失敗のテスト
+ *
+ * @return void
+ */
+	public function testCloseFailed() {
+		$zip = new ZipDownloader();
+		$zip->addFromString('foo.txt', 'foo');
+		$zip->setPassword('password');
+		$zipCommandProperty = new ReflectionProperty($zip, '_zipCommand');
+		$zipCommandProperty->setAccessible(true);
+		$zipCommandProperty->setValue($zip, 'detaramena_command');
 
-		//チェック
-		//TODO:assertを書く
-		//debug($result);
+		$false = $zip->close();
+		$this->assertFalse($false);
 	}
 
 }

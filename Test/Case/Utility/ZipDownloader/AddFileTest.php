@@ -44,4 +44,48 @@ class UtilityZipDownloaderAddFileTest extends NetCommonsCakeTestCase {
 		//debug($result);
 	}
 
+/**
+ * test create zip no password
+ *
+ * @return void
+ */
+	public function testCreateZipNoPassword() {
+		$zip = new ZipDownloader();
+		$addFile = dirname(dirname(dirname(__DIR__))) . DS . 'Fixture' . DS . 'logo.gif';
+
+		$zip->addFile($addFile);
+		$zip->close();
+
+		$this->assertFileExists($zip->path);
+
+		$unzip = new ZipArchive();
+		$unzip->open($zip->path);
+		$unzipFolder = new TemporaryFolder();
+		$unzip->extractTo($unzipFolder->path);
+
+		$this->assertFileExists($unzipFolder->path . DS . 'logo.gif');
+		$fileSize = filesize($unzipFolder->path . DS . 'logo.gif');
+		$this->assertTrue($fileSize > 0);
+	}
+
+/**
+ * addFile() で例外発生のテスト
+ *
+ * @return void
+ */
+	public function testAddFileFailed() {
+		$zip = new ZipDownloader();
+		$addFile = dirname(dirname(dirname(__DIR__))) . DS . 'Fixture' . DS . 'logo.gif';
+		//$tmpFolder = new ReflectionProperty($zip, '_tmpFolder');
+		//$tmpFolder->setAccessible(true);
+		//$tmp = $tmpFolder->getValue($zip);
+		//$tmp->path = '/detara';
+
+		$this->setExpectedException('InternalErrorException');
+		// warning抑止して例外を発生させる
+		// @codingStandardsIgnoreStart
+		@$zip->addFile($addFile, 'Failed/Filename');
+		// @codingStandardsIgnoreEnd
+	}
+
 }

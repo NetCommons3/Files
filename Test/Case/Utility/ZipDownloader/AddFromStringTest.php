@@ -32,16 +32,22 @@ class UtilityZipDownloaderAddFromStringTest extends NetCommonsCakeTestCase {
  * @return void
  */
 	public function testAddFromString() {
-		//データ生成
-		$localname = null;
-		$contents = null;
+		$zip = new ZipDownloader();
+		//$tmpFolder = new TemporaryFolder();
+		//$zip->open($tmpFolder->path . DS . 'test.zip', true);
 
-		//テスト実施
-		//$result = $this->addFromString($localname, $contents);
+		$zip->addFromString('foo.txt', 'foo');
 
-		//チェック
-		//TODO:assertを書く
-		//debug($result);
+		$zip->close();
+
+		$unzip = new UnZip($zip->path);
+		//$unzip->open($tmpFolder->path . DS . 'test.zip');
+		//$unzipFolder = new TemporaryFolder();
+		//$unzip->extractTo($unzipFolder->path);
+		$unzip->extract();
+
+		$contents = file($unzip->path . DS . 'foo.txt');
+		$this->assertEquals('foo', $contents[0]);
 	}
 
 }

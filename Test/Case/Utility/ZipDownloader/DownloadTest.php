@@ -10,6 +10,7 @@
  */
 
 App::uses('NetCommonsCakeTestCase', 'NetCommons.TestSuite');
+App::uses('CakeResponse', 'Network');
 
 /**
  * ZipDownloader::download()のテスト
@@ -33,14 +34,30 @@ class UtilityZipDownloaderDownloadTest extends NetCommonsCakeTestCase {
  */
 	public function testDownload() {
 		//データ生成
-		$filename = null;
+		$zip = new ZipDownloader();
+		$zip->addFromString('foo.txt', 'foo');
+		//$folderPath = TMP . 'log';
+		//$zip->addFolder($folderPath);
+		$zip->setPassword('password');
+		$response = $zip->download('zipfile.zip');
 
 		//テスト実施
-		//$result = $this->download($filename);
+		$this->assertInstanceOf('CakeResponse', $response);
+		$this->assertEquals('application/zip', $response->type());
+	}
 
-		//チェック
-		//TODO:assertを書く
-		//debug($result);
+/**
+ * ZIPダウンロードの利用例
+ *
+ * @return CakeResponse
+ */
+	public function useZipDownloadExample() {
+		$zip = new ZipDownloader();
+		$zip->addFromString('foo.txt', 'foo');
+		$folderPath = TMP . 'log';
+		$zip->addFolder($folderPath);
+		$zip->setPassword('password');
+		return $zip->download('file.zip');
 	}
 
 }
