@@ -33,8 +33,7 @@ class ZipDownloaderTest extends CakeTestSuite {
 		$name = __CLASS__;
 		$path = __DIR__ . DS . substr($name, 0, -4); // 末尾のTest"を除外
 		$suite = new CakeTestSuite(sprintf('All %s tests', $name));
-		$suite->addTestDirectoryRecursive($path
-		);
+		$suite->addTestDirectoryRecursive($path);
 		return $suite;
 	}
 }
