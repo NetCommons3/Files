@@ -44,42 +44,18 @@ class FileUploadComponent extends Component {
  */
 	public function getTemporaryUploadFile($fieldName) {
 		$file = Hash::get($this->controller->request->data, $fieldName);
-		$fileObject = new TemporaryUploadFile($file);
-		return $fileObject;
+		return $this->_getTemporaryUploadFile($file);
 	}
 
 /**
- * Before the controller action
+ * TemporaryUploadFileインスタンス生成
  *
- * @param string $model Model name.
- * @param string $field Request parameter name.
- * @return void
+ * @param array $file $_FILES[xxx]相当の配列
+ * @return TemporaryUploadFile
+ *
+ * @codeCoverageIgnore
  */
-	public function upload($model, $field) {
-		if (! isset($this->controller->data[$model][$field]) ||
-				$this->controller->data[$model][$field]['name'] === '') {
-			return array();
-		}
-
-		$slug = Security::hash(
-			$this->controller->data[$model][$field]['name'] . mt_rand() . microtime(), 'md5'
-		);
-
-		$data = Hash::merge(
-			$this->controller->data[$field]['File'],
-			array(
-				'slug' => $slug,
-				'extension' => pathinfo($this->controller->data[$model][$field]['name'], PATHINFO_EXTENSION),
-				'original_name' => $slug,
-				'mimetype' => $this->controller->data[$model][$field]['type'],
-			),
-			$this->controller->data[$model][$field]
-		);
-		if (preg_match('/^image/', $data['type']) === 1 ||
-				preg_match('/^video/', $data['type']) === 1) {
-			$data['alt'] = $data['name'];
-		}
-
-		return $data;
+	protected function _getTemporaryUploadFile($file) {
+		return new TemporaryUploadFile($file);
 	}
 }

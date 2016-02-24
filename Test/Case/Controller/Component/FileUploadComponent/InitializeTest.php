@@ -74,12 +74,8 @@ class FileUploadComponentInitializeTest extends NetCommonsControllerTestCase {
 			'method' => 'get'
 		));
 
-		//チェック
-		$pattern = '/' . preg_quote('Controller/Component/FileUploadComponent', '/') . '/';
-		$this->assertRegExp($pattern, $this->view);
-
-		//TODO:必要に応じてassert追加する
-		debug($this->view);
+		// initializeでコントローラがわたってるはず
+		$this->assertEquals($this->controller, $this->controller->FileUpload->controller);
 
 	}
 

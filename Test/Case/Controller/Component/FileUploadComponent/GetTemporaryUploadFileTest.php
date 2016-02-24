@@ -10,6 +10,7 @@
  */
 
 App::uses('NetCommonsControllerTestCase', 'NetCommons.TestSuite');
+App::uses('TemporaryUploadFileTesting', 'Files.Test/Testing');
 
 /**
  * FileUploadComponent::getTemporaryUploadFile()のテスト
@@ -63,23 +64,61 @@ class FileUploadComponentGetTemporaryUploadFileTest extends NetCommonsController
  * @return void
  */
 	public function testGetTemporaryUploadFile() {
+		//$Collection = new ComponentCollection();
+		//$component = new FileUploadComponent($Collection);
+		//$component->getTemporaryUploadFile();
+		//
+
 		//テストコントローラ生成
 		$this->generateNc('TestFiles.TestFileUploadComponent');
-
 		//ログイン
 		TestAuthGeneral::login($this);
 
+
+		$fileData = array(
+			'name' => 'logo.doc',
+			'type' => 'application/msword',
+			'size' => 5873,
+			'tmp_name' => 'foo_bar'
+		);
+		$this->controller->request->data = [
+				'field' => $fileData
+		];
 		//テスト実行
-		$this->_testNcAction('/test_files/test_file_upload_component/index', array(
-			'method' => 'get'
-		));
+		//$this->_testNcAction('/test_files/test_file_upload_component/index', array(
+		//	'method' => 'post'
+		//));
 
-		//チェック
-		$pattern = '/' . preg_quote('Controller/Component/FileUploadComponent', '/') . '/';
-		$this->assertRegExp($pattern, $this->view);
+		//$file = $this->controller->FileUpload->getTemporaryUploadFile('field', 'TemporaryUploadFileTesting');
 
-		//TODO:必要に応じてassert追加する
-		debug($this->view);
+		////
+		////$method = new ReflectionMethod($this->controller->FileUpload, '_getTemporaryUploadFile');
+		////$method->setAccessible(true);
+		////
+		////$result = $method->invoke($this->controller->FileUpload, $data);
+		////
+		////$this->assertEqual($result, 'StringAbar');
+		////
+		////$method = new ReflectionMethod()
+		$Collection = new ComponentCollection();
+
+		$mock = $this->getMock('FileUploadComponent', ['_getTemporaryUploadFile'], array($Collection));
+		$mock->expects($this->once()) //1回だけ呼ばれる
+			->method('_getTemporaryUploadFile')
+			->with($this->equalTo($fileData));
+		$mock->initialize($this->controller);
+	$mock->getTemporaryUploadFile('field');
+
+			//
+		////テスト実行
+		//$this->_testNcAction('/test_files/test_file_upload_component/index', array(
+		//	'method' => 'post'
+		//));
+		//
+		//$file = $this->controller->FileUpload->getTemporaryUploadFile('field');
+		//
+		////$this->assertInstanceOf('TemporaryUploadFile', $file);
+
 
 	}
 
