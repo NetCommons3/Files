@@ -59,16 +59,15 @@ class UploadFileGetFileTest extends NetCommonsGetTest {
 		$methodName = $this->_methodName;
 
 		//データ生成
-		$pluginKey = null;
-		$contentId = null;
-		$fieldName = null;
+		$pluginKey = 'site_manager';
+		$contentId = 2;
+		$fieldName = 'photo';
 
 		//テスト実施
 		$result = $this->$model->$methodName($pluginKey, $contentId, $fieldName);
 
-		//チェック
-		//TODO:Assertを書く
-		debug($result);
+		// UploadFile.id =1 のデータが取れる
+		$this->assertEquals(1, $result['UploadFile']['id']);
 	}
 
 }
