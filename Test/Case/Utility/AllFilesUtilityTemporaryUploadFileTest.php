@@ -2,8 +2,7 @@
 /**
  * All TemporaryUploadFile Test suite
  *
- * @author Noriko Arai <arai@nii.ac.jp>
- * @author Ryuji AMANO <nakajimashouhei@gmail.com>
+ * @author Ryuji AMANO <ryuji@ryus.co.jp>
  * @link http://www.netcommons.org NetCommons Project
  * @license http://www.netcommons.org/license.txt NetCommons License
  * @copyright Copyright 2014, NetCommons Project
@@ -14,7 +13,7 @@ App::uses('NetCommonsTestSuite', 'NetCommons.TestSuite');
 /**
  * All TemporaryUploadFile Test suite
  *
- * @author Ryuji AMANO <nakajimashouhei@gmail.com>
+ * @author Ryuji AMANO <ryuji@ryus.co.jp>
  * @package NetCommons\Files\Test\Case\TemporaryUploadFile
  */
 class AllFilesUtilityTemporaryUploadFileTest extends NetCommonsTestSuite {

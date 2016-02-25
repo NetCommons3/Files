@@ -2,7 +2,6 @@
 /**
  * UploadFile Test Case
  *
- * @author Noriko Arai <arai@nii.ac.jp>
  * @author   Ryuji AMANO <ryuji@ryus.co.jp>
  * @link http://www.netcommons.org NetCommons Project
  * @license http://www.netcommons.org/license.txt NetCommons License
@@ -76,18 +75,6 @@ class UploadFileTest extends NetCommonsCakeTestCase {
 		$this->assertEquals(0, $count);
 	}
 
-/**
- * testCountUp method
- *
- * @return void
- */
-	public function testCountUp() {
-		$file = $this->UploadFile->findById(1);
-		$beforeCount = $file['UploadFile']['download_count'];
-		$this->UploadFile->countUp($file);
-		$afterFile = $this->UploadFile->findById(1);
-		$this->assertEquals($beforeCount + 1, $afterFile['UploadFile']['download_count']);
-	}
 
 /**
  * testRegistByFile method
