@@ -219,6 +219,9 @@ class UploadFile extends FilesAppModel {
 		];
 		$data = Hash::merge($_tmpData, $data);
 		$data = $this->save($data); // あれ？普通にsaveするとUploadビヘイビアが動く？
+		if ($data === false) {
+			throw new InternalErrorException('Failed UploadFile::registByFile()');
+		}
 
 		return $data;
 	}

@@ -76,48 +76,6 @@ class UploadFileTest extends NetCommonsCakeTestCase {
 	}
 
 
-/**
- * testRegistByFile method
- *
- * @return void
- */
-	public function testRegistByFile() {
-		copy(dirname(dirname(__DIR__)) . DS . 'Fixture' . DS . 'logo.gif', TMP . 'logo.gif');
-		$file = new File(TMP . 'logo.gif');
-		$pluginKey = 'files';
-		$contentKey = 'content_key_1';
-		$fieldName = 'image';
-		$data = $this->UploadFile->registByFile($file, $pluginKey, $contentKey, $fieldName);
-
-		$this->assertTrue($data['UploadFile']['id'] > 0);
-
-		$this->UploadFile->delete($this->UploadFile->id);
-	}
-
-/**
- * testRegistByFilePath method
- *
- * @return void
- */
-	public function testRegistByFilePath() {
-		copy(dirname(dirname(__DIR__)) . DS . 'Fixture' . DS . 'logo.gif', TMP . 'logo.gif');
-		$pluginKey = 'files';
-		$contentKey = 'content_key_1';
-		$fieldName = 'image';
-
-		// registByFileのラップメソッドなので、registByFileがコールされてるかテストする
-		$UploadFileMock = $this->getMockForModel('Files.UploadFile', ['registByFile']);
-		$UploadFileMock->expects($this->once())
-			->method('registByFile')
-			->with(
-				$this->isInstanceOf('File'),
-				$this->equalTo($pluginKey),
-				$this->equalTo($contentKey),
-				$this->equalTo($fieldName)
-			);
-
-		$UploadFileMock->registByFilePath(TMP . 'logo.gif', $pluginKey, $contentKey, $fieldName);
-	}
 
 
 
