@@ -60,14 +60,20 @@ class UploadFileNameCallbackTest extends NetCommonsModelTestCase {
 		$methodName = $this->_methodName;
 
 		//データ生成
-		$data['UploadFile'] = (new UploadFileFixture())->records[0];
-
+		$field = null;
+		$file = 'testFile.zip';
+		$data = array();
+		$options = array();
 		//テスト実施
-		$result = $this->$model->$methodName($data);
+		$result = $this->$model->$methodName($field, $file, $data, $options);
 
-		//チェック
-		//TODO:Assertを書く
-		debug($result);
+		// 拡張子は同じ
+		$ext = pathinfo($result, PATHINFO_EXTENSION);
+		$this->assertEquals('zip', $ext);
+
+		// basenameはmd5ハッシュ値
+		$basename = pathinfo($result, PATHINFO_FILENAME);
+		$this->assertEquals(Security::hash($file, 'md5'), $basename);
 	}
 
 }
