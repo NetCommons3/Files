@@ -119,27 +119,6 @@ class UploadFileTest extends NetCommonsCakeTestCase {
 		$UploadFileMock->registByFilePath(TMP . 'logo.gif', $pluginKey, $contentKey, $fieldName);
 	}
 
-/**
- * testMakeLink method
- *
- * @return void
- */
-	public function testMakeLink() {
-		$pluginKey = 'files';
-		$contentId = 1;
-		$uploadFileId = 1;
-		$this->UploadFile->makeLink($pluginKey, $contentId, $uploadFileId);
-
-		// 関連レコードが挿入されてることを確認
-		$conditions = [
-			'UploadFilesContent.plugin_key' => $pluginKey,
-			'UploadFilesContent.content_id' => $contentId,
-			'UploadFilesContent.upload_file_id' => $uploadFileId
-		];
-		$link = $this->UploadFilesContent->find('first', ['conditions' => $conditions]);
-
-		$this->assertTrue($link['UploadFilesContent']['id'] > 0);
-	}
 
 
 

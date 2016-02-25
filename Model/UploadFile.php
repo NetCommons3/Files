@@ -257,8 +257,9 @@ class UploadFile extends FilesAppModel {
 		];
 		$UploadFilesContent = ClassRegistry::init('Files.UploadFilesContent');
 		$data = $UploadFilesContent->create($data);
-		// ε(　　　　 v ﾟωﾟ)　＜ 例外処理
-		$UploadFilesContent->save($data);
+		if ($UploadFilesContent->save($data) === false) {
+			throw new InternalErrorException('Failed UploadFile::makeLink()');
+		}
 	}
 
 /**

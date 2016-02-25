@@ -8,7 +8,7 @@
  * @copyright Copyright 2014, NetCommons Project
  */
 
-App::uses('NetCommonsSaveTest', 'NetCommons.TestSuite');
+App::uses('NetCommonsModelTestCase', 'NetCommons.TestSuite');
 App::uses('UploadFileFixture', 'Files.Test/Fixture');
 
 /**
@@ -17,7 +17,7 @@ App::uses('UploadFileFixture', 'Files.Test/Fixture');
  * @author Ryuji AMANO <ryuji@ryus.co.jp>
  * @package NetCommons\Files\Test\Case\Model\UploadFile
  */
-class UploadFileMakeLinkTest extends NetCommonsSaveTest {
+class UploadFileMakeLinkTest extends NetCommonsModelTestCase {
 
 /**
  * Fixtures
@@ -51,66 +51,60 @@ class UploadFileMakeLinkTest extends NetCommonsSaveTest {
 	protected $_methodName = 'makeLink';
 
 /**
- * Save用DataProvider
+ * setUp method
  *
- * ### 戻り値
- *  - data 登録データ
- *
- * @return array テストデータ
+ * @return void
  */
-	public function dataProviderSave() {
-		$data['UploadFile'] = (new UploadFileFixture())->records[1];
-		$data['UploadFile']['status'] = '1';
-
-		//TODO:テストパタンを書く
-		$results = array();
-		// * 編集の登録処理
-		$results[0] = array($data);
-		// * 新規の登録処理
-		$results[1] = array($data);
-		$results[1] = Hash::insert($results[1], '0.UploadFile.id', null);
-		$results[1] = Hash::insert($results[1], '0.UploadFile.key', null);
-		$results[1] = Hash::remove($results[1], '0.UploadFile.created_user');
-
-		return $results;
+	public function setUp() {
+		parent::setUp();
+		//$this->UploadFile = ClassRegistry::init('Files.UploadFile');
+		$this->UploadFilesContent = ClassRegistry::init('Files.UploadFilesContent');
 	}
 
 /**
- * SaveのExceptionError用DataProvider
+ * tearDown method
  *
- * ### 戻り値
- *  - data 登録データ
- *  - mockModel Mockのモデル
- *  - mockMethod Mockのメソッド
- *
- * @return array テストデータ
+ * @return void
  */
-	public function dataProviderSaveOnExceptionError() {
-		$data['UploadFile'] = (new UploadFileFixture())->records[0];
-
-		//TODO:テストパタンを書く
-		return array(
-			array($data, 'Files.UploadFile', 'save'),
-		);
+	public function tearDown() {
+		unset($this->UploadFileContent);
+		parent::tearDown();
 	}
 
 /**
- * SaveのValidationError用DataProvider
+ * testMakeLink method
  *
- * ### 戻り値
- *  - data 登録データ
- *  - mockModel Mockのモデル
- *  - mockMethod Mockのメソッド(省略可：デフォルト validates)
- *
- * @return array テストデータ
+ * @return void
  */
-	public function dataProviderSaveOnValidationError() {
-		$data['UploadFile'] = (new UploadFileFixture())->records[0];
+	public function testMakeLink() {
+		$pluginKey = 'files';
+		$contentId = 1;
+		$uploadFileId = 1;
+		$this->UploadFile->makeLink($pluginKey, $contentId, $uploadFileId);
 
-		//TODO:テストパタンを書く
-		return array(
-			array($data, 'Files.UploadFile'),
-		);
+		// 関連レコードが挿入されてることを確認
+		$conditions = [
+			'UploadFilesContent.plugin_key' => $pluginKey,
+			'UploadFilesContent.content_id' => $contentId,
+			'UploadFilesContent.upload_file_id' => $uploadFileId
+		];
+		$link = $this->UploadFilesContent->find('first', ['conditions' => $conditions]);
+
+		$this->assertTrue($link['UploadFilesContent']['id'] > 0);
+	}
+
+/**
+ * testMakeLinkFailed method
+ *
+ * @return void
+ */
+	public function testMakeLinkFailed() {
+		$pluginKey = 'files';
+		$contentId = 1;
+		$uploadFileId = 1;
+		$this->setExpectedException('InternalErrorException');
+		$this->_mockForReturnFalse('UploadFile', 'Files.UploadFilesContent', 'save');
+		$this->UploadFile->makeLink($pluginKey, $contentId, $uploadFileId);
 	}
 
 }
