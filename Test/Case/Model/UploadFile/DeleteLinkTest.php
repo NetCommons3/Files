@@ -8,7 +8,7 @@
  * @copyright Copyright 2014, NetCommons Project
  */
 
-App::uses('NetCommonsDeleteTest', 'NetCommons.TestSuite');
+App::uses('NetCommonsModelTestCase', 'NetCommons.TestSuite');
 App::uses('UploadFileFixture', 'Files.Test/Fixture');
 
 /**
@@ -17,7 +17,7 @@ App::uses('UploadFileFixture', 'Files.Test/Fixture');
  * @author Ryuji AMANO <ryuji@ryus.co.jp>
  * @package NetCommons\Files\Test\Case\Model\UploadFile
  */
-class UploadFileDeleteLinkTest extends NetCommonsDeleteTest {
+class UploadFileDeleteLinkTest extends NetCommonsModelTestCase {
 
 /**
  * Fixtures
@@ -51,42 +51,85 @@ class UploadFileDeleteLinkTest extends NetCommonsDeleteTest {
 	protected $_methodName = 'deleteLink';
 
 /**
- * Delete用DataProvider
+ * setUp method
  *
- * ### 戻り値
- *  - data: 削除データ
- *  - associationModels: 削除確認の関連モデル array(model => conditions)
- *
- * @return array テストデータ
+ * @return void
  */
-	public function dataProviderDelete() {
-		$data['UploadFile'] = (new UploadFileFixture())->records[0];
-		$association = array();
-
-		//TODO:テストパタンを書く
-		$results = array();
-		$results[0] = array($data, $association);
-
-		return $results;
+	public function setUp() {
+		parent::setUp();
+		//$this->UploadFile = ClassRegistry::init('Files.UploadFile');
+		$this->UploadFilesContent = ClassRegistry::init('Files.UploadFilesContent');
 	}
 
 /**
- * ExceptionError用DataProvider
+ * tearDown method
  *
- * ### 戻り値
- *  - data 登録データ
- *  - mockModel Mockのモデル
- *  - mockMethod Mockのメソッド
- *
- * @return array テストデータ
+ * @return void
  */
-	public function dataProviderDeleteOnExceptionError() {
-		$data['UploadFile'] = (new UploadFileFixture())->records[0];
-
-		//TODO:テストパタンを書く
-		return array(
-			array($data, 'Files.UploadFile', 'deleteAll'),
-		);
+	public function tearDown() {
+		unset($this->UploadFileContent);
+		parent::tearDown();
 	}
 
+/**
+ * testDeleteLink method
+ *
+ * @return void
+ */
+	public function testDeleteLink() {
+		$pluginKey = 'site_manager';
+		$contentId = 2;
+		$fieldName = 'photo';
+		// Uploadビヘイビアを無効にしておく
+		$this->UploadFile->Behaviors->unload('Upload');
+		$this->UploadFile->deleteLink($pluginKey, $contentId, $fieldName);
+
+		// fixtureで挿入された関連レコードが削除されてること
+		$count = $this->UploadFilesContent->find('count', ['conditions' => ['UploadFilesContent.id' => 1]]);
+		$this->assertEquals(0, $count);
+
+		// fixtureで挿入されたUploadFileレコードも削除されること（他に関連がないので）
+		$count = $this->UploadFile->find('count', ['conditions' => ['UploadFile.id' => 1]]);
+		$this->assertEquals(0, $count);
+	}
+
+/**
+ * deleteLink delete()失敗で例外発生
+ *
+ * @return void
+ */
+	public function testDeleteLinkFailed() {
+		$pluginKey = 'site_manager';
+		$contentId = 2;
+		$fieldName = 'photo';
+		// Uploadビヘイビアを無効にしておく
+		$this->UploadFile->Behaviors->unload('Upload');
+		$this->_mockForReturnFalse('UploadFile', 'Files.UploadFile', 'delete');
+
+		$this->setExpectedException('InternalErrorException');
+
+		$this->UploadFile->deleteLink($pluginKey, $contentId, $fieldName);
+	}
+
+/**
+ * deleteLink コンテンツとのリンクがないケース
+ *
+ * @return void
+ */
+	public function testDeleteLinkByNoLink() {
+		$pluginKey = 'site_manager';
+		$contentId = 3;
+		$fieldName = 'photo';
+		// Uploadビヘイビアを無効にしておく
+		$this->UploadFile->Behaviors->unload('Upload');
+		$this->UploadFile->deleteLink($pluginKey, $contentId, $fieldName);
+
+		// 削除されるリンクがないので、レコード数に変化無し
+		$count = $this->UploadFilesContent->find('count', ['conditions' => ['UploadFilesContent.id' => 1]]);
+		$this->assertEquals(1, $count);
+
+		// 削除されるリンクがないので、レコード数に変化無し
+		$count = $this->UploadFile->find('count', ['conditions' => ['UploadFile.id' => 1]]);
+		$this->assertEquals(1, $count);
+	}
 }

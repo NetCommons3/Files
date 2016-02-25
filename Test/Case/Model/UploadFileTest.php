@@ -141,27 +141,6 @@ class UploadFileTest extends NetCommonsCakeTestCase {
 		$this->assertTrue($link['UploadFilesContent']['id'] > 0);
 	}
 
-/**
- * testDeleteLink method
- *
- * @return void
- */
-	public function testDeleteLink() {
-		$pluginKey = 'site_manager';
-		$contentId = 2;
-		$fieldName = 'photo';
-		// Uploadビヘイビアを無効にしておく
-		$this->UploadFile->Behaviors->unload('Upload');
-		$this->UploadFile->deleteLink($pluginKey, $contentId, $fieldName);
-
-		// fixtureで挿入された関連レコードが削除されてること
-		$count = $this->UploadFilesContent->find('count', ['conditions' => ['UploadFilesContent.id' => 1]]);
-		$this->assertEquals(0, $count);
-
-		// fixtureで挿入されたUploadFileレコードも削除されること（他に関連がないので）
-		$count = $this->UploadFile->find('count', ['conditions' => ['UploadFile.id' => 1]]);
-		$this->assertEquals(0, $count);
-	}
 
 
 }

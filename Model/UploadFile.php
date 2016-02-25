@@ -285,6 +285,7 @@ class UploadFile extends FilesAppModel {
  * 関連テーブルデータがひとつもないUploadFileレコードを削除する
  *
  * @param array $link UploadFilesContent関連レコードのデータ
+ * @throws InternalErrorException
  * @return void
  */
 	protected function _deleteNoRelationUploadFile($link) {
@@ -296,7 +297,9 @@ class UploadFile extends FilesAppModel {
 		];
 		$count = $this->UploadFilesContent->find('count', ['conditions' => $conditions]);
 		if ($count == 0) {
-			$this->delete($link['UploadFile']['id']);
+			if ($this->delete($link['UploadFile']['id']) === false) {
+				throw new InternalErrorException('Failed UploadFile::_deleteNoRelationUploadFile');
+			};
 		}
 	}
 
