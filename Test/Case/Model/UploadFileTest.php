@@ -50,30 +50,6 @@ class UploadFileTest extends NetCommonsCakeTestCase {
 		parent::tearDown();
 	}
 
-/**
- * testRemoveFile method
- *
- * @return void
- */
-	public function testRemoveFile() {
-		$contentId = 2;
-		$fileId = 1;
-		// uploadビヘイビアが動作して実態ファイル削除を実行する…がここではUploadビヘイビアを外してDBレベルのテスト
-		$this->UploadFile->Behaviors->unload('Upload');
-		$this->UploadFile->removeFile($contentId, $fileId);
-
-		$conditions = [
-			'upload_file_id' => $fileId,
-			'content_id' => $contentId,
-		];
-		// 関連テーブルが削除される
-		$count = $this->UploadFilesContent->find('count', ['conditions' => $conditions]);
-		$this->assertEquals(0, $count);
-
-		// 他に関連がないのでファイルレコードも削除
-		$count = $this->UploadFile->find('count', ['conditions' => ['id' => 1]]);
-		$this->assertEquals(0, $count);
-	}
 
 
 

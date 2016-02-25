@@ -8,7 +8,7 @@
  * @copyright Copyright 2014, NetCommons Project
  */
 
-App::uses('NetCommonsDeleteTest', 'NetCommons.TestSuite');
+App::uses('NetCommonsModelTestCase', 'NetCommons.TestSuite');
 App::uses('UploadFileFixture', 'Files.Test/Fixture');
 
 /**
@@ -17,7 +17,7 @@ App::uses('UploadFileFixture', 'Files.Test/Fixture');
  * @author Ryuji AMANO <ryuji@ryus.co.jp>
  * @package NetCommons\Files\Test\Case\Model\UploadFile
  */
-class UploadFileRemoveFileTest extends NetCommonsDeleteTest {
+class UploadFileRemoveFileTest extends NetCommonsModelTestCase {
 
 /**
  * Fixtures
@@ -51,42 +51,136 @@ class UploadFileRemoveFileTest extends NetCommonsDeleteTest {
 	protected $_methodName = 'removeFile';
 
 /**
- * Delete用DataProvider
+ * setUp method
  *
- * ### 戻り値
- *  - data: 削除データ
- *  - associationModels: 削除確認の関連モデル array(model => conditions)
- *
- * @return array テストデータ
+ * @return void
  */
-	public function dataProviderDelete() {
-		$data['UploadFile'] = (new UploadFileFixture())->records[0];
-		$association = array();
-
-		//TODO:テストパタンを書く
-		$results = array();
-		$results[0] = array($data, $association);
-
-		return $results;
+	public function setUp() {
+		parent::setUp();
+		$this->UploadFilesContent = ClassRegistry::init('Files.UploadFilesContent');
 	}
 
 /**
- * ExceptionError用DataProvider
+ * tearDown method
  *
- * ### 戻り値
- *  - data 登録データ
- *  - mockModel Mockのモデル
- *  - mockMethod Mockのメソッド
- *
- * @return array テストデータ
+ * @return void
  */
-	public function dataProviderDeleteOnExceptionError() {
-		$data['UploadFile'] = (new UploadFileFixture())->records[0];
-
-		//TODO:テストパタンを書く
-		return array(
-			array($data, 'Files.UploadFile', 'deleteAll'),
-		);
+	public function tearDown() {
+		unset($this->UploadFileContent);
+		parent::tearDown();
 	}
+
+/**
+ * testRemoveFile method
+ *
+ * @return void
+ */
+	public function testRemoveFile() {
+		$contentId = 2;
+		$fileId = 1;
+		// uploadビヘイビアが動作して実態ファイル削除を実行する…がここではUploadビヘイビアを外してDBレベルのテスト
+		$this->UploadFile->Behaviors->unload('Upload');
+		$this->UploadFile->removeFile($contentId, $fileId);
+
+		$conditions = [
+			'upload_file_id' => $fileId,
+			'content_id' => $contentId,
+		];
+		// 関連テーブルが削除される
+		$count = $this->UploadFilesContent->find('count', ['conditions' => $conditions]);
+		$this->assertEquals(0, $count);
+
+		// 他に関連がないのでファイルレコードも削除
+		$count = $this->UploadFile->find('count', ['conditions' => ['id' => 1]]);
+		$this->assertEquals(0, $count);
+	}
+
+/**
+ * 関連レコードがない contents->deleteがこーるされない
+ *
+ * @return void
+ */
+	public function testRemoveFileNoLink() {
+		$contentId = 2;
+		$fileId = 2;
+		// uploadビヘイビアが動作して実態ファイル削除を実行する…がここではUploadビヘイビアを外してDBレベルのテスト
+		$this->UploadFile->Behaviors->unload('Upload');
+
+		// 関連レコードがない contents->deleteがこーるされない
+		$mock = $this->getMockForModel('Files.UploadFilesContent', ['delete']);
+		$mock->expects($this->never())
+			->method('delete');
+
+		$this->UploadFile->removeFile($contentId, $fileId);
+	}
+
+/**
+ * 他に関連レコードがあるのときはリンクだけ削除してファイルを残す $this->delteがコールされない
+ *
+ * @return void
+ */
+	public function testRemoveFileNoMoreLink() {
+		// 2レコードのコンテンツデータからリンクされている1ファイルのデータ
+		$contentId = 3;
+		$fileId = 3;
+		// uploadビヘイビアが動作して実態ファイル削除を実行する…がここではUploadビヘイビアを外してDBレベルのテスト
+		$this->UploadFile->Behaviors->unload('Upload');
+
+		// 関連レコードがない contents->deleteがこーるされない
+		$mock = $this->getMockForModel('Files.UploadFile', ['delete']);
+		$mock->expects($this->never())
+			->method('delete');
+
+		$this->UploadFile->removeFile($contentId, $fileId);
+
+		$conditions = [
+			'upload_file_id' => $fileId,
+			'content_id' => $contentId,
+		];
+		// 関連テーブルが削除される
+		$count = $this->UploadFilesContent->find('count', ['conditions' => $conditions]);
+		$this->assertEquals(0, $count);
+
+		// 他に関連があるのでファイルは残す
+		$count = $this->UploadFile->find('count', ['conditions' => ['id' => $fileId]]);
+		$this->assertEquals(1, $count);
+	}
+
+/**
+ * UploadFilesContent->delete fail
+ *
+ * @return void
+ */
+	public function testRemoveFileLinkDeleteFail() {
+		$contentId = 2;
+		$fileId = 1;
+		// uploadビヘイビアが動作して実態ファイル削除を実行する…がここではUploadビヘイビアを外してDBレベルのテスト
+		$this->UploadFile->Behaviors->unload('Upload');
+
+		// 関連レコードがない contents->deleteがこーるされない
+		$this->_mockForReturnFalse('UploadFilesContent', 'Files.UploadFilesContent', 'delete');
+		$this->setExpectedException('InternalErrorException');
+
+		$this->UploadFile->removeFile($contentId, $fileId);
+	}
+
+/**
+ * $this->delete fail
+ *
+ * @return void
+ */
+	public function testRemoveFileDeleteFail() {
+		$contentId = 2;
+		$fileId = 1;
+		// uploadビヘイビアが動作して実態ファイル削除を実行する…がここではUploadビヘイビアを外してDBレベルのテスト
+		$this->UploadFile->Behaviors->unload('Upload');
+
+		// 関連レコードがない contents->deleteがこーるされない
+		$this->_mockForReturnFalse('UploadFile', 'Files.UploadFile', 'delete');
+		$this->setExpectedException('InternalErrorException');
+
+		$this->UploadFile->removeFile($contentId, $fileId);
+	}
+
 
 }

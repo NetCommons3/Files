@@ -72,19 +72,24 @@ class UploadFile extends FilesAppModel {
  *
  * @param int $contentId コンテンツID
  * @param int $fileId アップロードファイルID
+ * @throws InternalErrorException
  * @return void
  */
 	public function removeFile($contentId, $fileId) {
-		$UploadFilesContents = ClassRegistry::init('Files.UploadFilesContents');
-		$link = $UploadFilesContents->findByContentIdAndUploadFileId($contentId, $fileId);
+		$UploadFilesContent = ClassRegistry::init('Files.UploadFilesContent');
+		$link = $UploadFilesContent->findByContentIdAndUploadFileId($contentId, $fileId);
 		if ($link) {
 			// 関連レコードみつかったら削除する
-			$UploadFilesContents->delete($link['UploadFilesContents']['id'], false);
+			if ($UploadFilesContent->delete($link['UploadFilesContent']['id'], false) === false) {
+				throw new InternalErrorException('Failed UploadFile::removeFile()');
+			}
 			// ファイルIDの関連テーブルが他に見つからなかったらファイルも削除する
-			$count = $UploadFilesContents->find('count', ['conditions' => ['upload_file_id' => $fileId]]);
+			$count = $UploadFilesContent->find('count', ['conditions' => ['upload_file_id' => $fileId]]);
 			if ($count == 0) {
 				// 他に関連レコード無ければファイル削除
-				$this->delete($fileId, false);
+				if ($this->delete($fileId, false) === false) {
+					throw new InternalErrorException('Failed UploadFile::removeFile()');
+				}
 			}
 		}
 	}
