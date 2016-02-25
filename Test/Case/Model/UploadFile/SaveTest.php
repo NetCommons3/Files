@@ -3,7 +3,7 @@
  * beforeSave()とafterSave()のテスト
  *
  * @author Noriko Arai <arai@nii.ac.jp>
- * @author Shohei Nakajima <nakajimashouhei@gmail.com>
+ * @author Ryuji AMANO <nakajimashouhei@gmail.com>
  * @link http://www.netcommons.org NetCommons Project
  * @license http://www.netcommons.org/license.txt NetCommons License
  * @copyright Copyright 2014, NetCommons Project
@@ -15,7 +15,7 @@ App::uses('UploadFileFixture', 'Files.Test/Fixture');
 /**
  * beforeSave()とafterSave()のテスト
  *
- * @author Shohei Nakajima <nakajimashouhei@gmail.com>
+ * @author Ryuji AMANO <nakajimashouhei@gmail.com>
  * @package NetCommons\Files\Test\Case\Model\UploadFile
  */
 class UploadFileSaveTest extends NetCommonsModelTestCase {
@@ -57,12 +57,13 @@ class UploadFileSaveTest extends NetCommonsModelTestCase {
  * @return void
  */
 	public function testSave() {
+		$model = $this->_modelName;
+		$methodName = $this->_methodName;
+
 		//データ生成
 		$data['UploadFile'] = (new UploadFileFixture())->records[0];
 
 		//テスト実施
-		$model = $this->_modelName;
-		$methodName = $this->_methodName;
 		$result = $this->$model->$methodName($data);
 
 		//チェック

@@ -3,7 +3,7 @@
  * UploadFile::getFile()のテスト
  *
  * @author Noriko Arai <arai@nii.ac.jp>
- * @author Shohei Nakajima <nakajimashouhei@gmail.com>
+ * @author Ryuji AMANO <nakajimashouhei@gmail.com>
  * @link http://www.netcommons.org NetCommons Project
  * @license http://www.netcommons.org/license.txt NetCommons License
  * @copyright Copyright 2014, NetCommons Project
@@ -14,7 +14,7 @@ App::uses('NetCommonsGetTest', 'NetCommons.TestSuite');
 /**
  * UploadFile::getFile()のテスト
  *
- * @author Shohei Nakajima <nakajimashouhei@gmail.com>
+ * @author Ryuji AMANO <nakajimashouhei@gmail.com>
  * @package NetCommons\Files\Test\Case\Model\UploadFile
  */
 class UploadFileGetFileTest extends NetCommonsGetTest {
@@ -56,14 +56,15 @@ class UploadFileGetFileTest extends NetCommonsGetTest {
  * @return void
  */
 	public function testGetFile() {
+		$model = $this->_modelName;
+		$methodName = $this->_methodName;
+
 		//データ生成
 		$pluginKey = null;
 		$contentId = null;
 		$fieldName = null;
 
 		//テスト実施
-		$model = $this->_modelName;
-		$methodName = $this->_methodName;
 		$result = $this->$model->$methodName($pluginKey, $contentId, $fieldName);
 
 		//チェック
