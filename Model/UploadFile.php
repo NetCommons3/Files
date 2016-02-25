@@ -182,8 +182,12 @@ class UploadFile extends FilesAppModel {
 		// plugin_key, content_key, field_nameが同じだったら
 		$this->create();
 		$this->begin();
-		$this->save($data, ['callbacks' => false]);
+		$result = $this->save($data, ['callbacks' => false]);
+		if ($result === false) {
+			throw new InternalErrorException('Failed UploadFile::countUp()');
+		}
 		$this->commit();
+		return $result;
 	}
 
 /**
