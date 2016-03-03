@@ -43,19 +43,19 @@ class FileUploadComponent extends Component {
  * @return TemporaryUploadFile
  */
 	public function getTemporaryUploadFile($fieldName) {
-		$file = Hash::get($this->controller->request->data, $fieldName);
-		return $this->_getTemporaryUploadFile($file);
+		$fileInfo = Hash::get($this->controller->request->data, $fieldName);
+		return $this->_getTemporaryUploadFile($fileInfo);
 	}
 
 /**
  * TemporaryUploadFileインスタンス生成
  *
- * @param array $file $_FILES[xxx]相当の配列
+ * @param array $fileInfo $_FILES[xxx]相当の配列
  * @return TemporaryUploadFile
  *
  * @codeCoverageIgnore
  */
-	protected function _getTemporaryUploadFile($file) {
-		return new TemporaryUploadFile($file);
+	protected function _getTemporaryUploadFile($fileInfo) {
+		return new TemporaryUploadFile($fileInfo);
 	}
 }
