@@ -57,7 +57,6 @@ class UtilityCsvFileWriterZipDownloadTest extends NetCommonsCakeTestCase {
 		$this->assertInstanceOf('CakeResponse', $response);
 		$this->assertEquals('application/zip', $response->type());
 		//debug($response->header());
-
 	}
 
 /**

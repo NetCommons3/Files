@@ -79,7 +79,6 @@ class DownloadComponentInitializeTest extends NetCommonsControllerTestCase {
 
 		//TODO:必要に応じてassert追加する
 		debug($this->view);
-
 	}
 
 }

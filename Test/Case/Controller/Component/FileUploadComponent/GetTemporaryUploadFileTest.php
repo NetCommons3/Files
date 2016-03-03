@@ -73,7 +73,6 @@ class FileUploadComponentGetTemporaryUploadFileTest extends NetCommonsController
 		//ログイン
 		TestAuthGeneral::login($this);
 
-
 		$fileData = array(
 			'name' => 'logo.doc',
 			'type' => 'application/msword',
@@ -106,9 +105,7 @@ class FileUploadComponentGetTemporaryUploadFileTest extends NetCommonsController
 			->method('_getTemporaryUploadFile')
 			->with($this->equalTo($fileData));
 		$mock->initialize($this->controller);
-	$mock->getTemporaryUploadFile('field');
-
-			//
+		$mock->getTemporaryUploadFile('field');
 		////テスト実行
 		//$this->_testNcAction('/test_files/test_file_upload_component/index', array(
 		//	'method' => 'post'
@@ -117,8 +114,5 @@ class FileUploadComponentGetTemporaryUploadFileTest extends NetCommonsController
 		//$file = $this->controller->FileUpload->getTemporaryUploadFile('field');
 		//
 		////$this->assertInstanceOf('TemporaryUploadFile', $file);
-
-
 	}
-
 }

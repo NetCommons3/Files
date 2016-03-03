@@ -79,7 +79,6 @@ class DownloadComponentDoDownloadByUploadFileIdTest extends NetCommonsController
 
 		//TODO:必要に応じてassert追加する
 		debug($this->view);
-
 	}
 
 }

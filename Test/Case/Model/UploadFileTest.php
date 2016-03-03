@@ -49,11 +49,4 @@ class UploadFileTest extends NetCommonsCakeTestCase {
 		unset($this->UploadFile);
 		parent::tearDown();
 	}
-
-
-
-
-
-
-
 }

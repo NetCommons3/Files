@@ -58,7 +58,7 @@ class UtilityCsvFileWriterAddModelDataTest extends NetCommonsCakeTestCase {
 			]
 		];
 		$csvWriter = new CsvFileWriter(['header' => $header]);
-		foreach($blogEntries as $data){
+		foreach ($blogEntries as $data) {
 			$csvWriter->addModelData($data);
 		}
 		$csvWriter->close();
@@ -108,7 +108,7 @@ class UtilityCsvFileWriterAddModelDataTest extends NetCommonsCakeTestCase {
 			]
 		];
 		$csvWriter = new CsvFileWriter(['header' => $header]);
-		foreach($blogEntries as $data){
+		foreach ($blogEntries as $data) {
 			$csvWriter->addModelData($data);
 		}
 		$csvWriter->close();
@@ -160,7 +160,7 @@ class UtilityCsvFileWriterAddModelDataTest extends NetCommonsCakeTestCase {
 			]
 		];
 		$csvWriter = new CsvFileWriter();
-		foreach($blogEntries as $data){
+		foreach ($blogEntries as $data) {
 			$csvWriter->addModelData($data);
 		}
 		$csvWriter->close();
@@ -169,13 +169,7 @@ class UtilityCsvFileWriterAddModelDataTest extends NetCommonsCakeTestCase {
 		$csvReader = new CsvFileReader($csvWriter->path);
 
 		foreach ($csvReader as $index => $resultLine) {
-			//if ($index === 0) {
-			//	// header
-			//	$this->assertEquals(array_values($header), $resultLine);
-			//}
-			//if ($index > 0) {
-				$this->assertEquals(array_values(Hash::flatten($blogEntries[$index ])), $resultLine);
-			//}
+			$this->assertEquals(array_values(Hash::flatten($blogEntries[$index])), $resultLine);
 		}
 	}
 }

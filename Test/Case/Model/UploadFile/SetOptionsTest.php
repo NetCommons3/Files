@@ -73,6 +73,5 @@ class UploadFileSetOptionsTest extends NetCommonsModelTestCase {
 		//
 		$this->UploadFile->Behaviors->load('Upload');
 		$this->UploadFile->setOptions($options);
-
 	}
 }

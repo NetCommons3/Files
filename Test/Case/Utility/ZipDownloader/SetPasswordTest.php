@@ -42,11 +42,11 @@ class UtilityZipDownloaderSetPasswordTest extends NetCommonsCakeTestCase {
 		//debug($result);
 	}
 
-	/**
-	 * test creat zip with password
-	 *
-	 * @return void
-	 */
+/**
+ * test creat zip with password
+ *
+ * @return void
+ */
 	public function testCreateZipWithPassword() {
 		$zip = new ZipDownloader();
 		//$tmpFolder = new Folder(TMP . 'test', true);
@@ -73,11 +73,11 @@ class UtilityZipDownloaderSetPasswordTest extends NetCommonsCakeTestCase {
 		$this->assertTrue($fileSize > 0);
 	}
 
-	/**
-	 * 空パスワードのテスト
-	 *
-	 * @return void
-	 */
+/**
+ * 空パスワードのテスト
+ *
+ * @return void
+ */
 	public function testCreateZipWithEmptyPassword() {
 		$zip = new ZipDownloader();
 		$addFile = dirname(dirname(dirname(__DIR__))) . DS . 'Fixture' . DS . 'logo.gif';

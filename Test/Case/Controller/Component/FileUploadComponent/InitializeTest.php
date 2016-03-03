@@ -75,7 +75,5 @@ class FileUploadComponentInitializeTest extends NetCommonsControllerTestCase {
 
 		// initializeでコントローラがわたってるはず
 		$this->assertEquals($this->controller, $this->controller->FileUpload->controller);
-
 	}
-
 }
