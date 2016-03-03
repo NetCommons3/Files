@@ -56,18 +56,24 @@ class UploadFileSetOptionsTest extends NetCommonsModelTestCase {
  * @return void
  */
 	public function testSetOptions() {
-		$model = $this->_modelName;
-		$methodName = $this->_methodName;
+		$this->UploadFile->Behaviors->unload('Upload');
+		$options = [
+			'foo' => 'bar'
+		];
+		$uploadBehaviorMock = $this->getMock('UploadBehavior', ['uploadSettings']);
+		//
+		$uploadBehaviorMock->expects($this->once()) //1回だけ呼ばれる
+			->method('uploadSettings')
+			->with(
+				$this->isInstanceOf('Model'),
+				$this->equalTo('real_file_name'),
+				$this->equalTo($options));
+		ClassRegistry::removeObject('UploadBehavior');
+		ClassRegistry::addObject('UploadBehavior', $uploadBehaviorMock);
+		//
+		$this->UploadFile->Behaviors->load('Upload');
+		$this->UploadFile->setOptions($options);
 
-		//データ生成
-		$data['UploadFile'] = (new UploadFileFixture())->records[0];
-
-		//テスト実施
-		$result = $this->$model->$methodName($data);
-
-		//チェック
-		//TODO:Assertを書く
-		debug($result);
 	}
 
 }
