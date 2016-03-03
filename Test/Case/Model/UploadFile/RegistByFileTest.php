@@ -87,6 +87,11 @@ class UploadFileRegistByFileTest extends NetCommonsModelTestCase {
 		$this->UploadFile->registByFile($file, $pluginKey, $contentKey, $fieldName);
 	}
 
+/**
+ * test RegistByFile TemporaryUploadFileを渡したときは元ファイル名で保存されることのテスト
+ *
+ * @return void
+ */
 	public function testRegistByFileWithTemporaryUploadFile() {
 		copy(dirname(dirname(dirname(__DIR__))) . DS . 'Fixture' . DS . 'logo.gif', TMP . 'logo.gif');
 		$fileInfo = [
@@ -111,7 +116,5 @@ class UploadFileRegistByFileTest extends NetCommonsModelTestCase {
 		$this->assertEquals('logo.gif', $uploadFile['UploadFile']['original_name']);
 
 		$this->UploadFile->delete($this->UploadFile->id);
-
 	}
-
 }

@@ -50,7 +50,6 @@ class UploadFileRegistByFilePathTest extends NetCommonsModelTestCase {
  */
 	protected $_methodName = 'registByFilePath';
 
-
 /**
  * testRegistByFilePath method
  *
@@ -75,6 +74,4 @@ class UploadFileRegistByFilePathTest extends NetCommonsModelTestCase {
 
 		$UploadFileMock->registByFilePath(TMP . 'logo.gif', $pluginKey, $contentKey, $fieldName);
 	}
-
-
 }

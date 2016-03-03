@@ -181,6 +181,4 @@ class UploadFileRemoveFileTest extends NetCommonsModelTestCase {
 
 		$this->UploadFile->removeFile($contentId, $fileId);
 	}
-
-
 }
