@@ -377,7 +377,7 @@ class AttachmentBehavior extends ModelBehavior {
  * @SuppressWarnings(PHPMD.BooleanArgumentFlag)
  */
 	public function isBelowMaxSize(Model $model, $check, $size = null, $requireUpload = true) {
-		return $this->UploadFile->isValidDir($check, $size, $requireUpload);
+		return $this->UploadFile->isBelowMaxSize($check, $size, $requireUpload);
 	}
 
 /**

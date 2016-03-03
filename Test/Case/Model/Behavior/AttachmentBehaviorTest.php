@@ -57,13 +57,13 @@ class AttachmentBehaviorTest extends NetCommonsCakeTestCase {
  * @return void
  */
 	protected function _setupUploadBehaviorMock() {
-		$uploadBehaviorMock = $this->getMock('UploadBehavior', ['handleUploadedFile', '_createThumbnails']);
+		$this->uploadBehaviorMock = $this->getMock('UploadBehavior', ['handleUploadedFile', '_createThumbnails']);
 
-		$uploadBehaviorMock->expects($this->any())
+		$this->uploadBehaviorMock->expects($this->any())
 				->method('handleUploadedFile')
 				->will($this->returnValue(true));
 		ClassRegistry::removeObject('UploadBehavior');
-		ClassRegistry::addObject('UploadBehavior', $uploadBehaviorMock);
+		ClassRegistry::addObject('UploadBehavior', $this->uploadBehaviorMock);
 
 		$UploadFile = ClassRegistry::init('Files.UploadFile');
 		$UploadFile->Behaviors->unload('Upload.Upload');
@@ -192,45 +192,4 @@ class AttachmentBehaviorTest extends NetCommonsCakeTestCase {
 		$this->assertEquals('', $emptyString);
 	}
 
-/**
- * Uploadプラグインのvalidatorをラップできてるかのテスト
- *
- * @throws Exception
- * @return void
- */
-	public function testWrapValidator() {
-		$this->SiteSetting->validate['pdf'] = [
-				'rule' => array('isValidExtension', array('pdf'), false),
-				'message' => 'pdf only'
-		];
-		$data = $this->SiteSetting->findById(2);
-		unset($data['SiteSetting']['id']);
-		$result = $this->SiteSetting->save($data);
-		$this->assertInternalType('array', $result);
-
-		$data = [
-				'key' => 1,
-				'photo' => [
-						'name' => 'photofile.gif',
-						'type' => "image/gif",
-						'tmp_name' => TMP . '/test.gif',
-						'error' => 0,
-						'size' => 442850,
-				],
-				'pdf' => [
-						'name' => 'photofile.gif',
-						'type' => "image/gif",
-						'tmp_name' => TMP . '/test.gif',
-						'error' => 0,
-						'size' => 442850,
-				],
-		];
-
-		$newData = $this->SiteSetting->create($data);
-		$resultFalse = $this->SiteSetting->save($newData);
-
-		$this->assertFalse($resultFalse);
-		$this->assertNotEmpty($this->SiteSetting->validationErrors);
-		debug($this->SiteSetting->validationErrors);
-	}
 }
