@@ -213,7 +213,7 @@ class UploadFile extends FilesAppModel {
 		$_tmpData['UploadFile']['plugin_key'] = $pluginKey;
 		$_tmpData['UploadFile']['content_key'] = $contentKey;
 		$_tmpData['UploadFile']['field_name'] = $fieldName;
-		$_tmpData['UploadFile']['original_name'] = $file->name;
+		$_tmpData['UploadFile']['original_name'] = property_exists($file, 'original_name') ? $file->original_name : $file->name;
 		$_tmpData['UploadFile']['extension'] = pathinfo($file->name, PATHINFO_EXTENSION);
 		$_tmpData['UploadFile']['real_file_name'] = [
 			'name' => $file->name,

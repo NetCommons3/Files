@@ -10,6 +10,7 @@
 
 App::uses('NetCommonsModelTestCase', 'NetCommons.TestSuite');
 App::uses('UploadFileFixture', 'Files.Test/Fixture');
+App::uses('TemporaryUploadFileTesting', 'Files.Test/Testing');
 
 /**
  * UploadFile::registByFile()のテスト
@@ -84,6 +85,33 @@ class UploadFileRegistByFileTest extends NetCommonsModelTestCase {
 		$this->_mockForReturnFalse('UploadFile', 'Files.UploadFile', 'save');
 
 		$this->UploadFile->registByFile($file, $pluginKey, $contentKey, $fieldName);
+	}
+
+	public function testRegistByFileWithTemporaryUploadFile() {
+		copy(dirname(dirname(dirname(__DIR__))) . DS . 'Fixture' . DS . 'logo.gif', TMP . 'logo.gif');
+		$fileInfo = [
+			'name' => 'logo.gif',
+			'type' => 'image/gif',
+			'size' => 100,
+			'tmp_name' => TMP . 'logo.gif',
+			'error' => UPLOAD_ERR_OK,
+		];
+		$file = new TemporaryUploadFileTesting($fileInfo);
+
+		//$file = new File(TMP . 'logo.gif');
+		$pluginKey = 'files';
+		$contentKey = 'content_key_1';
+		$fieldName = 'image';
+		$data = $this->UploadFile->registByFile($file, $pluginKey, $contentKey, $fieldName);
+
+		$this->assertTrue($data['UploadFile']['id'] > 0);
+
+		// 元ファイル名がoriginal_nameに保存されてること
+		$uploadFile = $this->UploadFile->findById($data['UploadFile']['id']);
+		$this->assertEquals('logo.gif', $uploadFile['UploadFile']['original_name']);
+
+		$this->UploadFile->delete($this->UploadFile->id);
+
 	}
 
 }
