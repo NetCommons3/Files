@@ -35,6 +35,8 @@ class TemporaryUploadFile extends File {
  */
 	public $temporaryFolder;
 
+	public $original_name = null;
+
 /**
  * TemporaryUploadFile constructor.
  *
@@ -48,6 +50,9 @@ class TemporaryUploadFile extends File {
 	public function __construct($file) {
 		$this->temporaryFolder = new TemporaryFolder();
 		$path = $file['tmp_name'];
+
+		$this->original_name = $file['name'];
+
 		$destFileName = Security::hash(mt_rand() . microtime(), 'md5') . '.' . pathinfo(
 				$file['name'],
 				PATHINFO_EXTENSION
