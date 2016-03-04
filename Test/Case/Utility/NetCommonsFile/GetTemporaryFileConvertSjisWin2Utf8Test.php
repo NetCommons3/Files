@@ -32,7 +32,6 @@ class UtilityNetCommonsFileGetTemporaryFileConvertSjisWin2Utf8Test extends NetCo
  * @return void
  */
 	public function testGetTemporaryFileConvertSjisWin2Utf8() {
-
 		$filePath = dirname(dirname(dirname(__DIR__))) . '/Fixture/sample_csv_excel2010.csv';
 		$file = NetCommonsFile::getTemporaryFileConvertSjisWin2Utf8($filePath);
 		//debug($file);

@@ -234,4 +234,41 @@ class DownloadComponentDoDownloadTest extends NetCommonsControllerTestCase {
 		$this->controller->Download->doDownload($contentId, ['size' => 'small']);
 	}
 
+/**
+ * sizeに'..'が入ってたらディレクトリトラバーサルの可能性有りとしてBadRequest
+ *
+ * @return void
+ */
+	public function testBadRequestSize() {
+		//テストコントローラ生成
+		$this->generateNc('TestFiles.TestDownloadComponent');
+		// $this->controllerにテスト用コントローラが配置される
+
+		//ログイン
+		TestAuthGeneral::login($this);
+
+		// componentのInitializeをコールしたいのでアクションコール
+		$this->_testNcAction('/test_files/test_download_component/index', array(
+			'method' => 'get'
+		));
+
+		$pass = [
+			null,
+			null,
+			'photo', //params['pass'][2]
+		];
+
+		Current::$current['Room']['id'] = 1;
+		Current::$current['Language']['id'] = 2;
+		$this->controller->plugin = 'SiteManager';
+
+		$contentId = 2;
+
+		$this->controller->params['pass'] = $pass;
+
+		$this->setExpectedException('BadRequestException');
+
+		$this->controller->Download->doDownload($contentId, ['size' => '../foo']);
+	}
+
 }

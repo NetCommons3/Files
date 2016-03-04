@@ -74,7 +74,7 @@ class AttachmentBehaviorSetupTest extends NetCommonsModelTestCase {
 		$expects = [
 			'TestAttachmentBehaviorSetupWithConfigModel' => [
 				'fileFields' => [
-					'photo' =>[
+					'photo' => [
 						'thumbnailSizes' => [
 							'small' => '200ml',
 						]

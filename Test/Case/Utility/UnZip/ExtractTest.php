@@ -45,7 +45,6 @@ class UtilityUnZipExtractTest extends NetCommonsCakeTestCase {
 		$this->assertEquals('hogehoge file', $contents[0]);
 	}
 
-
 /**
  * test unzip failed
  *

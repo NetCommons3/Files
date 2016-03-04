@@ -180,7 +180,7 @@ class UploadFile extends FilesAppModel {
  * ダウンロードカウントアップ
  *
  * @param array $data UploadFileデータ
- * @throws Exception
+ * @throws InternalErrorException
  * @return void
  */
 	public function countUp($data) {
@@ -206,7 +206,7 @@ class UploadFile extends FilesAppModel {
  * @param string $fieldName フィールド名
  * @param array $data データ登録時に上書きしたいデータを渡す
  * @return array
- * @throws Exception
+ * @throws InternalErrorException
  */
 	public function registByFile(File $file, $pluginKey, $contentKey, $fieldName, $data = array()) {
 		// データの登録
@@ -215,7 +215,7 @@ class UploadFile extends FilesAppModel {
 		$_tmpData['UploadFile']['plugin_key'] = $pluginKey;
 		$_tmpData['UploadFile']['content_key'] = $contentKey;
 		$_tmpData['UploadFile']['field_name'] = $fieldName;
-		$_tmpData['UploadFile']['original_name'] = property_exists($file, 'original_name') ? $file->original_name : $file->name;
+		$_tmpData['UploadFile']['original_name'] = property_exists($file, 'originalName') ? $file->originalName : $file->name;
 		$_tmpData['UploadFile']['extension'] = pathinfo($file->name, PATHINFO_EXTENSION);
 		$_tmpData['UploadFile']['real_file_name'] = [
 			'name' => $file->name,
@@ -257,6 +257,7 @@ class UploadFile extends FilesAppModel {
  * @param string $pluginKey プラグインキー
  * @param int $contentId コンテンツID
  * @param int $uploadFileId アップロードファイルID
+ * @throws InternalErrorException
  * @return void
  */
 	public function makeLink($pluginKey, $contentId, $uploadFileId) {

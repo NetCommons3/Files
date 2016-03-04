@@ -44,13 +44,6 @@ class AttachmentBehaviorValidateWrapTest extends NetCommonsModelTestCase {
 		NetCommonsCakeTestCase::loadTestPlugin($this, 'Files', 'TestFiles');
 		$this->TestModel = ClassRegistry::init('TestFiles.TestAttachmentBehaviorModel');
 
-		//$this->SiteSetting = ClassRegistry::init('SiteManager.SiteSetting');
-		//$this->SiteSetting->Behaviors->load('NetCommons.OriginalKey');
-		//$this->SiteSetting->Behaviors->load('Files.Attachment', ['photo', 'pdf']);
-		//
-		//copy(APP . 'Plugin/Files/Test/Fixture/logo.gif', TMP . '/test.gif');
-
-
 		$this->_setupUploadBehaviorMock();
 	}
 
