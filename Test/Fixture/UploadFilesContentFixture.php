@@ -78,6 +78,16 @@ class UploadFilesContentFixture extends CakeTestFixture {
 			'modified_user' => 1,
 			'modified' => '2015-10-29 08:50:56'
 		),
+		array(
+			'id' => 5,
+			'plugin_key' => 'test_files',
+			'content_id' => 5,
+			'upload_file_id' => 5,
+			'created_user' => 1,
+			'created' => '2015-10-29 08:50:56',
+			'modified_user' => 1,
+			'modified' => '2015-10-29 08:50:56'
+		),
 	);
 
 }
