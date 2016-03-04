@@ -120,9 +120,9 @@ class UploadFile extends FilesAppModel {
 	public function beforeSave($options = array()) {
 		// imagickクラスがなかったらサムネイル生成はGDを利用
 		if (class_exists('imagick') === false) {
-			// @codingStandardsIgnoreStart
+			// @codeCoverageIgnoreStart
 			$this->uploadSettings('real_file_name', 'thumbnailMethod', '_resizePhp');
-			// @codingStandardsIgnoreEnd
+			// @codeCoverageIgnoreEnd
 		}
 
 		$roomId = Current::read('Room.id');

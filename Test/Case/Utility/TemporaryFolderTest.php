@@ -31,7 +31,6 @@ class TemporaryFolderTest extends NetCommonsCakeTestCase {
  */
 	public function testCreate() {
 		$tempFolder = new TemporaryFolder();
-		debug($tempFolder->path);
 		$this->assertTrue(file_exists($tempFolder->path));
 		$path = $tempFolder->path;
 		$this->assertEquals(TMP, substr($path, 0, strlen(TMP)));
