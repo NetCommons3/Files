@@ -33,6 +33,8 @@ class UtilityCsvFileWriterAddTest extends NetCommonsCakeTestCase {
  * @return void
  */
 	public function testAdd() {
+		debug(mb_internal_encoding());
+		mb_internal_encoding('UTF-8');
 		$lines = array();
 		$lines[] = array(0, 1, 2, 3, 4, 5);
 		$lines[] = array(
