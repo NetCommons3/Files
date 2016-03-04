@@ -57,28 +57,54 @@ class DownloadComponentDoDownloadByUploadFileIdTest extends NetCommonsController
 	}
 
 /**
- * doDownloadByUploadFileId()のテスト
+ * test doDownloadByUploadFileId
  *
  * @return void
  */
 	public function testDoDownloadByUploadFileId() {
 		//テストコントローラ生成
 		$this->generateNc('TestFiles.TestDownloadComponent');
+		// $this->controllerにテスト用コントローラが配置される
 
 		//ログイン
 		TestAuthGeneral::login($this);
 
-		//テスト実行
-		$this->_testNcAction('/test_files/test_download_component/index', array(
-			'method' => 'get'
-		));
+		// componentのInitializeをコールしたいのでアクションコール
+		$this->_testNcAction(
+			'/test_files/test_download_component/index',
+			array(
+				'method' => 'get'
+			)
+		);
 
-		//チェック
-		$pattern = '/' . preg_quote('Controller/Component/DownloadComponent', '/') . '/';
-		$this->assertRegExp($pattern, $this->view);
+		$pass = [
+			null,
+			null,
+			'photo', //params['pass'][2]
+		];
 
-		//TODO:必要に応じてassert追加する
-		debug($this->view);
+		Current::$current['Room']['id'] = 1;
+		Current::$current['Language']['id'] = 2;
+		$this->controller->plugin = 'SiteManager';
+
+		$this->controller->params['pass'] = $pass;
+
+		$fileId = 1;
+		// responseをモックにして渡される値をテスト
+		$path = WWW_ROOT . 'files/upload_file/real_file_name/1/1/foobarhash.jpg';
+
+		$responseMock = $this->getMock('CakeResponse', ['file']);
+		$responseMock->expects($this->once())
+			->method('file')
+			->with($this->equalTo($path));
+		$this->controller->response = $responseMock;
+
+		// カウントアップが呼ばれるかテスト
+		$UploadFileMock = $this->getMockForModel('Files.UploadFile', ['countUp']);
+		$UploadFileMock->expects($this->once())
+			->method('countUp')
+			->will($this->returnValue(true));
+
+		$this->controller->Download->doDownloadByUploadFileId($fileId);
 	}
-
 }

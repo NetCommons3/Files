@@ -57,28 +57,181 @@ class DownloadComponentDoDownloadTest extends NetCommonsControllerTestCase {
 	}
 
 /**
- * doDownload()のテスト
+ * test doDownload
  *
  * @return void
  */
 	public function testDoDownload() {
 		//テストコントローラ生成
 		$this->generateNc('TestFiles.TestDownloadComponent');
+		// $this->controllerにテスト用コントローラが配置される
 
 		//ログイン
 		TestAuthGeneral::login($this);
 
-		//テスト実行
+		// componentのInitializeをコールしたいのでアクションコール
 		$this->_testNcAction('/test_files/test_download_component/index', array(
 			'method' => 'get'
 		));
 
-		//チェック
-		$pattern = '/' . preg_quote('Controller/Component/DownloadComponent', '/') . '/';
-		$this->assertRegExp($pattern, $this->view);
+		$pass = [
+			null,
+			null,
+			'photo', //params['pass'][2]
+		];
 
-		//TODO:必要に応じてassert追加する
-		debug($this->view);
+		Current::$current['Room']['id'] = 1;
+		Current::$current['Language']['id'] = 2;
+		$this->controller->plugin = 'SiteManager';
+
+		$contentId = 2;
+
+		$this->controller->params['pass'] = $pass;
+
+		// responseをモックにして渡される値をテスト
+		$path = WWW_ROOT . 'files/upload_file/real_file_name/1/1/foobarhash.jpg';
+
+		$responseMock = $this->getMock('CakeResponse', ['file']);
+		$responseMock->expects($this->once())
+			->method('file')
+			->with($this->equalTo($path));
+		$this->controller->response = $responseMock;
+
+		// カウントアップが呼ばれるかテスト
+		$UploadFileMock = $this->getMockForModel('Files.UploadFile', ['countUp']);
+		$UploadFileMock->expects($this->once())
+			->method('countUp')
+			->will($this->returnValue(true));
+
+		$this->controller->Download->doDownload($contentId);
+	}
+
+/**
+ * サムネイルファイルのダウンロード
+ *
+ * @return void
+ */
+	public function testDoDownloadThumbnail() {
+		//テストコントローラ生成
+		$this->generateNc('TestFiles.TestDownloadComponent');
+		// $this->controllerにテスト用コントローラが配置される
+
+		//ログイン
+		TestAuthGeneral::login($this);
+
+		// componentのInitializeをコールしたいのでアクションコール
+		$this->_testNcAction('/test_files/test_download_component/index', array(
+			'method' => 'get'
+		));
+
+		$pass = [
+			null,
+			null,
+			'photo', //params['pass'][2]
+		];
+
+		Current::$current['Room']['id'] = 1;
+		Current::$current['Language']['id'] = 2;
+		$this->controller->plugin = 'SiteManager';
+
+		$contentId = 2;
+
+		$this->controller->params['pass'] = $pass;
+
+		// responseをモックにして渡される値をテスト
+		$path = WWW_ROOT . 'files/upload_file/real_file_name/1/1/small_foobarhash.jpg';
+
+		$responseMock = $this->getMock('CakeResponse', ['file']);
+		$responseMock->expects($this->once())
+			->method('file')
+			->with($this->equalTo($path));
+		$this->controller->response = $responseMock;
+
+		// カウントアップが呼ばれるかテスト
+		$UploadFileMock = $this->getMockForModel('Files.UploadFile', ['countUp']);
+		$UploadFileMock->expects($this->once())
+			->method('countUp')
+			->will($this->returnValue(true));
+
+		$this->controller->Download->doDownload($contentId, ['size' => 'small']);
+	}
+
+/**
+ * 別ルームだったら例外発生
+ *
+ * @return void
+ */
+	public function testDifferentRoomId() {
+		//テストコントローラ生成
+		$this->generateNc('TestFiles.TestDownloadComponent');
+		// $this->controllerにテスト用コントローラが配置される
+
+		//ログイン
+		TestAuthGeneral::login($this);
+
+		// componentのInitializeをコールしたいのでアクションコール
+		$this->_testNcAction('/test_files/test_download_component/index', array(
+			'method' => 'get'
+		));
+
+		$pass = [
+			null,
+			null,
+			'photo', //params['pass'][2]
+		];
+
+		Current::$current['Room']['id'] = 2; // 別ルーム
+		Current::$current['Language']['id'] = 2;
+		$this->controller->plugin = 'SiteManager';
+
+		$contentId = 2;
+
+		$this->controller->params['pass'] = $pass;
+
+		$this->setExpectedException('ForbiddenException');
+		$this->controller->Download->doDownload($contentId, ['size' => 'small']);
+	}
+
+/**
+ * ブロック非表示で例外発生
+ *
+ * @return void
+ */
+	public function testInvisibleBlock() {
+		//テストコントローラ生成
+		$this->generateNc('TestFiles.TestDownloadComponent');
+		// $this->controllerにテスト用コントローラが配置される
+
+		//ログイン
+		TestAuthGeneral::login($this);
+
+		// componentのInitializeをコールしたいのでアクションコール
+		$this->_testNcAction('/test_files/test_download_component/index', array(
+			'method' => 'get'
+		));
+
+		$pass = [
+			null,
+			null,
+			'photo', //params['pass'][2]
+		];
+
+		Current::$current['Room']['id'] = 1;
+		Current::$current['Language']['id'] = 2;
+		$this->controller->plugin = 'SiteManager';
+
+		$contentId = 2;
+
+		$this->controller->params['pass'] = $pass;
+
+		// Block->isVisible == false
+		$BlockMock = $this->getMockForModel('Block', ['isVisible']);
+		$BlockMock->expects($this->once())
+			->method('isVisible')
+			->will($this->returnValue(false));
+
+		$this->setExpectedException('ForbiddenException');
+		$this->controller->Download->doDownload($contentId, ['size' => 'small']);
 	}
 
 }

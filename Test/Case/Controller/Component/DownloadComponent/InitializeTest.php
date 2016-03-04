@@ -74,11 +74,11 @@ class DownloadComponentInitializeTest extends NetCommonsControllerTestCase {
 		));
 
 		//チェック
-		$pattern = '/' . preg_quote('Controller/Component/DownloadComponent', '/') . '/';
-		$this->assertRegExp($pattern, $this->view);
-
-		//TODO:必要に応じてassert追加する
-		debug($this->view);
+		//$pattern = '/' . preg_quote('Controller/Component/DownloadComponent', '/') . '/';
+		//$this->assertRegExp($pattern, $this->view);
+		$property = new ReflectionProperty($this->controller->Download, '_controller');
+		$property->setAccessible(true);
+		$this->assertInstanceOf('AppController', $property->getValue($this->controller->Download));
 	}
 
 }
