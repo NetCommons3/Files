@@ -33,13 +33,17 @@ class UtilityCsvFileWriterAddTest extends NetCommonsCakeTestCase {
  * @return void
  */
 	public function testAdd() {
-		$csvFilePath = dirname(dirname(dirname(__DIR__))) . '/Fixture/sample_csv_excel2010.csv';
-		$csvReader = new CsvFileReader($csvFilePath);
 		$lines = array();
-		foreach ($csvReader as $line) {
-			$lines[] = $line;
-		}
-
+		$lines[] = array(0, 1, 2, 3, 4, 5);
+		$lines[] = array(
+			'カンマの入った文字列,この手前にカンマ',
+			'ダブルクォート"の入った文字列',
+			'途中に改行
+が入ってる文字列',
+			'途中に￥が入ってる文字列\この手前にあり',
+			'Foo',
+			'Bar'
+		);
 		$writer = new CsvFileWriter();
 		foreach ($lines as $line) {
 			$writer->add($line);
@@ -49,7 +53,6 @@ class UtilityCsvFileWriterAddTest extends NetCommonsCakeTestCase {
 		$csvReader = new CsvFileReader($writer->path);
 		foreach ($csvReader as $index => $resultLine) {
 			$this->assertEquals($lines[$index], $resultLine);
-			//debug($resultLine);
 		}
 	}
 }
