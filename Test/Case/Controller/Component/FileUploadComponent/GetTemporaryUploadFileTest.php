@@ -82,22 +82,6 @@ class FileUploadComponentGetTemporaryUploadFileTest extends NetCommonsController
 		$this->controller->request->data = [
 				'field' => $fileData
 		];
-		//テスト実行
-		//$this->_testNcAction('/test_files/test_file_upload_component/index', array(
-		//	'method' => 'post'
-		//));
-
-		//$file = $this->controller->FileUpload->getTemporaryUploadFile('field', 'TemporaryUploadFileTesting');
-
-		////
-		////$method = new ReflectionMethod($this->controller->FileUpload, '_getTemporaryUploadFile');
-		////$method->setAccessible(true);
-		////
-		////$result = $method->invoke($this->controller->FileUpload, $data);
-		////
-		////$this->assertEqual($result, 'StringAbar');
-		////
-		////$method = new ReflectionMethod()
 		$Collection = new ComponentCollection();
 
 		$mock = $this->getMock('FileUploadComponent', ['_getTemporaryUploadFile'], array($Collection));
@@ -106,13 +90,5 @@ class FileUploadComponentGetTemporaryUploadFileTest extends NetCommonsController
 			->with($this->equalTo($fileData));
 		$mock->initialize($this->controller);
 		$mock->getTemporaryUploadFile('field');
-		////テスト実行
-		//$this->_testNcAction('/test_files/test_file_upload_component/index', array(
-		//	'method' => 'post'
-		//));
-		//
-		//$file = $this->controller->FileUpload->getTemporaryUploadFile('field');
-		//
-		////$this->assertInstanceOf('TemporaryUploadFile', $file);
 	}
 }

@@ -53,7 +53,7 @@ class FileUploadComponent extends Component {
  * @param array $fileInfo $_FILES[xxx]相当の配列
  * @return TemporaryUploadFile
  *
- * @codeCoverageIgnore
+ * @codeCoverageIgnore TempoaryUploadFileは実アップロードされたファイルの情報を渡さないと内部でmov_uploaded_fileが失敗するのでテストできない
  */
 	protected function _getTemporaryUploadFile($fileInfo) {
 		return new TemporaryUploadFile($fileInfo);
