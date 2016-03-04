@@ -271,4 +271,48 @@ class DownloadComponentDoDownloadTest extends NetCommonsControllerTestCase {
 		$this->controller->Download->doDownload($contentId, ['size' => '../foo']);
 	}
 
+/**
+ * test doDownload content_key, block_keyともにセットされてないuploadFileのダウンロード時はblock_keyでガードしない
+ *
+ * @return void
+ */
+	public function testDoDownloadNoContentKeyAndBlockKey() {
+		//テストコントローラ生成
+		$this->generateNc('TestFiles.TestDownloadComponent');
+		// $this->controllerにテスト用コントローラが配置される
+
+		//ログイン
+		TestAuthGeneral::login($this);
+
+		// componentのInitializeをコールしたいのでアクションコール
+		$this->_testNcAction('/test_files/test_download_component/index', array(
+			'method' => 'get'
+		));
+
+		$pass = [
+			null,
+			null,
+			'photo', //params['pass'][2]
+		];
+
+		Current::$current['Room']['id'] = 1;
+		Current::$current['Language']['id'] = 2;
+		$this->controller->plugin = 'TestFiles';
+
+		// content_keyもblock_keyもnullなデータ
+		$contentId = 5;
+
+		$this->controller->params['pass'] = $pass;
+
+		// CakeResponseをモックにしとく
+		$responseMock = $this->getMock('CakeResponse');
+		$this->controller->response = $responseMock;
+
+		// ブロックの表示状況チェックがされないこと
+		$BlockMock = $this->getMockForModel('Block', ['isVisible']);
+		$BlockMock->expects($this->never())
+			->method('isVisible');
+
+		$this->controller->Download->doDownload($contentId);
+	}
 }

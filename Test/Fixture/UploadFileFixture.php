@@ -130,11 +130,11 @@ class UploadFileFixture extends CakeTestFixture {
 			'modified_user' => 4,
 			'modified' => '2016-02-25 03:44:14'
 		),
-		array(
+		array( // content_key, block_keyともにnullなデータ
 			'id' => 5,
-			'plugin_key' => 'Lorem ipsum dolor sit amet',
-			'content_key' => 'Lorem ipsum dolor sit amet',
-			'field_name' => 'Lorem ipsum dolor sit amet',
+			'plugin_key' => 'test_files',
+			'content_key' => null,
+			'field_name' => 'photo',
 			'original_name' => 'Lorem ipsum dolor sit amet',
 			'path' => 'Lorem ipsum dolor sit amet',
 			'real_file_name' => 'Lorem ipsum dolor sit amet',
@@ -143,8 +143,8 @@ class UploadFileFixture extends CakeTestFixture {
 			'size' => 5,
 			'download_count' => 5,
 			'total_download_count' => 5,
-			'room_id' => 5,
-			'block_key' => 'Lorem ipsum dolor sit amet',
+			'room_id' => 1,
+			'block_key' => null,
 			'created_user' => 5,
 			'created' => '2016-02-25 03:44:14',
 			'modified_user' => 5,
