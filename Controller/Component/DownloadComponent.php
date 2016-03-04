@@ -87,6 +87,7 @@ class DownloadComponent extends Component {
  * @param array $options オプション
  * @return CakeResponse|null
  * @throws ForbiddenException
+ * @throws BadRequestException
  */
 	protected function _downloadUploadFile($file, $size, $options) {
 		$UploadFile = ClassRegistry::init('Files.UploadFile');
@@ -113,6 +114,10 @@ class DownloadComponent extends Component {
 		// size対応
 		$filename = $file['UploadFile']['real_file_name'];
 		if ($size !== null) {
+			// $size = '../../'とかを排除するため！
+			if (strpos($size, '..') !== false) {
+				throw new BadRequestException();
+			}
 			$filename = $size . '_' . $filename;
 		}
 

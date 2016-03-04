@@ -1,28 +1,17 @@
 <?php
 /**
- * Schema file
+ * FilesSchema
  *
- * @author Noriko Arai <arai@nii.ac.jp>
- * @author Shohei Nakajima <nakajimashouhei@gmail.com>
- * @link http://www.netcommons.org NetCommons Project
- * @license http://www.netcommons.org/license.txt NetCommons License
- * @copyright Copyright 2014, NetCommons Project
  */
 
 /**
- * Schema file
- *
- * @author Shohei Nakajima <nakajimashouhei@gmail.com>
- * @package NetCommons\Files\Config\Schema
+ * Class FilesSchema
  * @SuppressWarnings(PHPMD.LongVariable)
- * @SuppressWarnings(PHPMD.TooManyFields)
  */
 class FilesSchema extends CakeSchema {
 
 /**
- * Database connection
- *
- * @var string
+ * @var string $connection
  */
 	public $connection = 'master';
 
@@ -46,9 +35,7 @@ class FilesSchema extends CakeSchema {
 	}
 
 /**
- * upload_files table
- *
- * @var array
+ * @var array upload_files
  */
 	public $upload_files = array(
 		'id' => array('type' => 'integer', 'null' => false, 'default' => null, 'unsigned' => false, 'key' => 'primary', 'comment' => 'ID |  |  | '),
@@ -76,7 +63,7 @@ class FilesSchema extends CakeSchema {
 	);
 
 /**
- * upload_files_contents table
+ * upload_files_contents
  *
  * @var array
  */

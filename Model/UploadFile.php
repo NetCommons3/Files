@@ -72,19 +72,24 @@ class UploadFile extends FilesAppModel {
  *
  * @param int $contentId コンテンツID
  * @param int $fileId アップロードファイルID
+ * @throws InternalErrorException
  * @return void
  */
 	public function removeFile($contentId, $fileId) {
-		$UploadFilesContents = ClassRegistry::init('Files.UploadFilesContents');
-		$link = $UploadFilesContents->findByContentIdAndUploadFileId($contentId, $fileId);
+		$UploadFilesContent = ClassRegistry::init('Files.UploadFilesContent');
+		$link = $UploadFilesContent->findByContentIdAndUploadFileId($contentId, $fileId);
 		if ($link) {
 			// 関連レコードみつかったら削除する
-			$UploadFilesContents->delete($link['UploadFilesContents']['id'], false);
+			if ($UploadFilesContent->delete($link['UploadFilesContent']['id'], false) === false) {
+				throw new InternalErrorException('Failed UploadFile::removeFile()');
+			}
 			// ファイルIDの関連テーブルが他に見つからなかったらファイルも削除する
-			$count = $UploadFilesContents->find('count', ['conditions' => ['upload_file_id' => $fileId]]);
+			$count = $UploadFilesContent->find('count', ['conditions' => ['upload_file_id' => $fileId]]);
 			if ($count == 0) {
 				// 他に関連レコード無ければファイル削除
-				$this->delete($fileId, false);
+				if ($this->delete($fileId, false) === false) {
+					throw new InternalErrorException('Failed UploadFile::removeFile()');
+				}
 			}
 		}
 	}
@@ -115,7 +120,9 @@ class UploadFile extends FilesAppModel {
 	public function beforeSave($options = array()) {
 		// imagickクラスがなかったらサムネイル生成はGDを利用
 		if (class_exists('imagick') === false) {
+			// @codeCoverageIgnoreStart
 			$this->uploadSettings('real_file_name', 'thumbnailMethod', '_resizePhp');
+			// @codeCoverageIgnoreEnd
 		}
 
 		$roomId = Current::read('Room.id');
@@ -173,7 +180,7 @@ class UploadFile extends FilesAppModel {
  * ダウンロードカウントアップ
  *
  * @param array $data UploadFileデータ
- * @throws Exception
+ * @throws InternalErrorException
  * @return void
  */
 	public function countUp($data) {
@@ -182,8 +189,12 @@ class UploadFile extends FilesAppModel {
 		// plugin_key, content_key, field_nameが同じだったら
 		$this->create();
 		$this->begin();
-		$this->save($data, ['callbacks' => false]);
+		$result = $this->save($data, ['callbacks' => false]);
+		if ($result === false) {
+			throw new InternalErrorException('Failed UploadFile::countUp()');
+		}
 		$this->commit();
+		return $result;
 	}
 
 /**
@@ -195,7 +206,7 @@ class UploadFile extends FilesAppModel {
  * @param string $fieldName フィールド名
  * @param array $data データ登録時に上書きしたいデータを渡す
  * @return array
- * @throws Exception
+ * @throws InternalErrorException
  */
 	public function registByFile(File $file, $pluginKey, $contentKey, $fieldName, $data = array()) {
 		// データの登録
@@ -204,7 +215,7 @@ class UploadFile extends FilesAppModel {
 		$_tmpData['UploadFile']['plugin_key'] = $pluginKey;
 		$_tmpData['UploadFile']['content_key'] = $contentKey;
 		$_tmpData['UploadFile']['field_name'] = $fieldName;
-		$_tmpData['UploadFile']['original_name'] = property_exists($file, 'original_name') ? $file->original_name : $file->name;
+		$_tmpData['UploadFile']['original_name'] = property_exists($file, 'originalName') ? $file->originalName : $file->name;
 		$_tmpData['UploadFile']['extension'] = pathinfo($file->name, PATHINFO_EXTENSION);
 		$_tmpData['UploadFile']['real_file_name'] = [
 			'name' => $file->name,
@@ -215,6 +226,9 @@ class UploadFile extends FilesAppModel {
 		];
 		$data = Hash::merge($_tmpData, $data);
 		$data = $this->save($data); // あれ？普通にsaveするとUploadビヘイビアが動く？
+		if ($data === false) {
+			throw new InternalErrorException('Failed UploadFile::registByFile()');
+		}
 
 		return $data;
 	}
@@ -243,6 +257,7 @@ class UploadFile extends FilesAppModel {
  * @param string $pluginKey プラグインキー
  * @param int $contentId コンテンツID
  * @param int $uploadFileId アップロードファイルID
+ * @throws InternalErrorException
  * @return void
  */
 	public function makeLink($pluginKey, $contentId, $uploadFileId) {
@@ -253,8 +268,9 @@ class UploadFile extends FilesAppModel {
 		];
 		$UploadFilesContent = ClassRegistry::init('Files.UploadFilesContent');
 		$data = $UploadFilesContent->create($data);
-		// ε(　　　　 v ﾟωﾟ)　＜ 例外処理
-		$UploadFilesContent->save($data);
+		if ($UploadFilesContent->save($data) === false) {
+			throw new InternalErrorException('Failed UploadFile::makeLink()');
+		}
 	}
 
 /**
@@ -281,6 +297,7 @@ class UploadFile extends FilesAppModel {
  * 関連テーブルデータがひとつもないUploadFileレコードを削除する
  *
  * @param array $link UploadFilesContent関連レコードのデータ
+ * @throws InternalErrorException
  * @return void
  */
 	protected function _deleteNoRelationUploadFile($link) {
@@ -292,7 +309,9 @@ class UploadFile extends FilesAppModel {
 		];
 		$count = $this->UploadFilesContent->find('count', ['conditions' => $conditions]);
 		if ($count == 0) {
-			$this->delete($link['UploadFile']['id']);
+			if ($this->delete($link['UploadFile']['id']) === false) {
+				throw new InternalErrorException('Failed UploadFile::_deleteNoRelationUploadFile');
+			};
 		}
 	}
 
@@ -321,5 +340,3 @@ class UploadFile extends FilesAppModel {
 		$this->makeLink($pluginKey, $contentId, $uploadFile['UploadFile']['id']);
 	}
 }
-
-

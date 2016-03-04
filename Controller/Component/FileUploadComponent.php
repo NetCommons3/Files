@@ -43,43 +43,19 @@ class FileUploadComponent extends Component {
  * @return TemporaryUploadFile
  */
 	public function getTemporaryUploadFile($fieldName) {
-		$file = Hash::get($this->controller->request->data, $fieldName);
-		$fileObject = new TemporaryUploadFile($file);
-		return $fileObject;
+		$fileInfo = Hash::get($this->controller->request->data, $fieldName);
+		return $this->_getTemporaryUploadFile($fileInfo);
 	}
 
 /**
- * Before the controller action
+ * TemporaryUploadFileインスタンス生成
  *
- * @param string $model Model name.
- * @param string $field Request parameter name.
- * @return void
+ * @param array $fileInfo $_FILES[xxx]相当の配列
+ * @return TemporaryUploadFile
+ *
+ * @codeCoverageIgnore TempoaryUploadFileは実アップロードされたファイルの情報を渡さないと内部でmov_uploaded_fileが失敗するのでテストできない
  */
-	public function upload($model, $field) {
-		if (! isset($this->controller->data[$model][$field]) ||
-				$this->controller->data[$model][$field]['name'] === '') {
-			return array();
-		}
-
-		$slug = Security::hash(
-			$this->controller->data[$model][$field]['name'] . mt_rand() . microtime(), 'md5'
-		);
-
-		$data = Hash::merge(
-			$this->controller->data[$field]['File'],
-			array(
-				'slug' => $slug,
-				'extension' => pathinfo($this->controller->data[$model][$field]['name'], PATHINFO_EXTENSION),
-				'original_name' => $slug,
-				'mimetype' => $this->controller->data[$model][$field]['type'],
-			),
-			$this->controller->data[$model][$field]
-		);
-		if (preg_match('/^image/', $data['type']) === 1 ||
-				preg_match('/^video/', $data['type']) === 1) {
-			$data['alt'] = $data['name'];
-		}
-
-		return $data;
+	protected function _getTemporaryUploadFile($fileInfo) {
+		return new TemporaryUploadFile($fileInfo);
 	}
 }

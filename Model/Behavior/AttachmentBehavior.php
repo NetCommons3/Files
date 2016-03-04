@@ -135,24 +135,23 @@ class AttachmentBehavior extends ModelBehavior {
  */
 	public function afterSave(Model $model, $created, $options = array()) {
 		// アップロードがなかったら以前のデータを挿入する
-		// formからhiddenで UploadFile.0.id 形式でデータが渡ってくる
-		if (isset($model->data['UploadFile'])) {
+		// formからhiddenで UploadFile.field_name.id 形式でデータが渡ってくる
+		if (isset($model->data['UploadFile'])) { // $data['UploadFile']にはモデルデータ編集時に添付されてるファイルについてのデータが入っている
 			foreach ($model->data['UploadFile'] as $uploadFile) {
-				// 同じfield_nameでアップロードされてるなら以前のファイルへの関連レコードは不要
+				// 同じfield_nameでアップロードされてるなら以前のファイルへの関連レコードを新規に追加する必要は無い（過去の関連レコードはそのまま）
 				if (isset($this->_uploadedFiles[$uploadFile['field_name']])) {
 					// 新たにアップロードされてる
 					// 履歴のないモデル（is_latest, is_activeカラムがない）だったら、以前のファイルを削除する
 					// 履歴のないモデルか？
 					if (!$model->hasField('is_latest')) {
-						// 以前のファイルを削除
+						// 履歴をもたないモデルなら以前のファイルを削除
 						$this->UploadFile->removeFile($model->id, $uploadFile['id']);
 					}
 				} else {
 					// 同じfield_nameでアップロードされてなければ以前のファイルへの関連レコードを入れる
-					//if (Hash::get($model->data[$model->alias][$uploadFile['field_name']], 'remove', false)) {
 					if (Hash::get($model->data, $model->alias . '.' . $uploadFile['field_name'] . '.remove', false)) {
-						// ファイル削除なのでリンクしない
-						// 今のコンテンツIDで関連テーブルのレコードがあったら、ユーザモデルのように履歴のないモデルなのでそのときは関連テーブルを消す
+						// ファイル削除にチェックが入ってるのでリンクしない
+						// 今のコンテンツIDで関連テーブルのレコードがあったら、ユーザモデルのように履歴のないモデルなのでそのときは関連テーブルを消す必要があるのでremoveFileは呼んでおく。
 						$this->UploadFile->removeFile($model->id, $uploadFile['id']);
 					} else {
 						$uploadFileId = $uploadFile['id'];
@@ -377,7 +376,7 @@ class AttachmentBehavior extends ModelBehavior {
  * @SuppressWarnings(PHPMD.BooleanArgumentFlag)
  */
 	public function isBelowMaxSize(Model $model, $check, $size = null, $requireUpload = true) {
-		return $this->UploadFile->isValidDir($check, $size, $requireUpload);
+		return $this->UploadFile->isBelowMaxSize($check, $size, $requireUpload);
 	}
 
 /**

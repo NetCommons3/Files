@@ -48,6 +48,36 @@ class UploadFilesContentFixture extends CakeTestFixture {
 			'modified_user' => 1,
 			'modified' => '2015-10-29 08:50:56'
 		),
+		array(
+			'id' => 2,
+			'plugin_key' => 'site_manager',
+			'content_id' => 3,
+			'upload_file_id' => 3,
+			'created_user' => 1,
+			'created' => '2015-10-29 08:50:56',
+			'modified_user' => 1,
+			'modified' => '2015-10-29 08:50:56'
+		),
+		array(
+			'id' => 3,
+			'plugin_key' => 'site_manager',
+			'content_id' => 4,
+			'upload_file_id' => 3,
+			'created_user' => 1,
+			'created' => '2015-10-29 08:50:56',
+			'modified_user' => 1,
+			'modified' => '2015-10-29 08:50:56'
+		),
+		array(
+			'id' => 4,
+			'plugin_key' => 'test_files',
+			'content_id' => 2,
+			'upload_file_id' => 4,
+			'created_user' => 1,
+			'created' => '2015-10-29 08:50:56',
+			'modified_user' => 1,
+			'modified' => '2015-10-29 08:50:56'
+		),
 	);
 
 }

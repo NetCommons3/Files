@@ -35,7 +35,10 @@ class TemporaryUploadFile extends File {
  */
 	public $temporaryFolder;
 
-	public $original_name = null;
+/**
+ * @var string アップロードされた元ファイル名
+ */
+	public $originalName = null;
 
 /**
  * TemporaryUploadFile constructor.
@@ -51,7 +54,7 @@ class TemporaryUploadFile extends File {
 		$this->temporaryFolder = new TemporaryFolder();
 		$path = $file['tmp_name'];
 
-		$this->original_name = $file['name'];
+		$this->originalName = $file['name'];
 
 		$destFileName = Security::hash(mt_rand() . microtime(), 'md5') . '.' . pathinfo(
 				$file['name'],
