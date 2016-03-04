@@ -9,6 +9,7 @@
  */
 
 App::uses('NetCommonsCakeTestCase', 'NetCommons.TestSuite');
+App::uses('NetCommonsFile', 'Files.Utility');
 
 /**
  * NetCommonsFile::basename()のテスト
@@ -26,20 +27,25 @@ class UtilityNetCommonsFileBasenameTest extends NetCommonsCakeTestCase {
 	public $plugin = 'files';
 
 /**
- * basename()のテスト
+ * test basename
  *
  * @return void
  */
 	public function testBasename() {
-		//データ生成
-		$path = null;
+		$path = TMP . '日本語ファイル名.gif';
+		$basename = NetCommonsFile::basename($path);
+		$this->assertEquals($basename, '日本語ファイル名.gif');
+	}
 
-		//テスト実施
-		//$result = $this->basename($path);
-
-		//チェック
-		//TODO:assertを書く
-		//debug($result);
+/**
+ * test basenamae フォルダパス無しでの動作
+ *
+ * @return void
+ */
+	public function testBasenameForOnlyFile() {
+		$path = '日本語ファイル名.gif';
+		$basename = NetCommonsFile::basename($path);
+		$this->assertEquals($basename, '日本語ファイル名.gif');
 	}
 
 }

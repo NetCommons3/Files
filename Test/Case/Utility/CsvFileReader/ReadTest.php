@@ -1,29 +1,30 @@
 <?php
 /**
- * CsvFileReaderTest
+ * CsvFileReader::valid()のテスト
  *
- * @author   Ryuji AMANO <ryuji@ryus.co.jp>
+ * @author Ryuji AMANO <ryuji@ryus.co.jp>
  * @link http://www.netcommons.org NetCommons Project
  * @license http://www.netcommons.org/license.txt NetCommons License
+ * @copyright Copyright 2014, NetCommons Project
  */
 
 App::uses('NetCommonsCakeTestCase', 'NetCommons.TestSuite');
-App::uses('NetCommonsControllerTestCase', 'NetCommons.TestSuite');
 App::uses('CsvFileReader', 'Files.Utility');
 
 /**
- * Summary for AttachmentBehavior Test Case
+ * CsvFileReader::valid()のテスト
  *
- * @property TestCreateProfile $SiteSetting テスト用モデル
+ * @author Ryuji AMANO <ryuji@ryus.co.jp>
+ * @package NetCommons\Files\Test\Case\Utility\CsvFileReader
  */
-class CsvFileReaderTest extends NetCommonsCakeTestCase {
+class UtilityCsvFileReaderReadTest extends NetCommonsCakeTestCase {
 
 /**
- * Fixtures
+ * Plugin name
  *
- * @var array
+ * @var string
  */
-	public $fixtures = [];
+	public $plugin = 'files';
 
 /**
  * test read
@@ -31,20 +32,20 @@ class CsvFileReaderTest extends NetCommonsCakeTestCase {
  * @return void
  */
 	public function testRead() {
-		$csvFilePath = dirname(dirname(__DIR__)) . '/Fixture/sample_csv_excel2010.csv';
+		$csvFilePath = dirname(dirname(dirname(__DIR__))) . '/Fixture/sample_csv_excel2010.csv';
 		$csvReader = new CsvFileReader($csvFilePath);
 
 		$result = iterator_to_array($csvReader);
 		$this->assertEquals([1, 2, 3, 4, 5, 6], $result[0]);
 		$this->assertEquals([
-				'カンマの入った文字列,この手前にカンマ',
-				'ダブルクォート"の入った文字列',
-				'途中に改行
+			'カンマの入った文字列,この手前にカンマ',
+			'ダブルクォート"の入った文字列',
+			'途中に改行
 が入ってる文字列',
-				'途中に￥が入ってる文字列\この手前にあり',
-				'',
-				''
-			], $result[1]);
+			'途中に￥が入ってる文字列\この手前にあり',
+			'',
+			''
+		], $result[1]);
 	}
 
 /**
@@ -53,7 +54,7 @@ class CsvFileReaderTest extends NetCommonsCakeTestCase {
  * @return void
  */
 	public function testReadFromFileObject() {
-		$csvFilePath = dirname(dirname(__DIR__)) . '/Fixture/sample_csv_excel2010.csv';
+		$csvFilePath = dirname(dirname(dirname(__DIR__))) . '/Fixture/sample_csv_excel2010.csv';
 		$csvFile = new File($csvFilePath);
 		$csvReader = new CsvFileReader($csvFile);
 

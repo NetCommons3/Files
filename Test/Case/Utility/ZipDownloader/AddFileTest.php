@@ -26,24 +26,6 @@ class UtilityZipDownloaderAddFileTest extends NetCommonsCakeTestCase {
 	public $plugin = 'files';
 
 /**
- * addFile()のテスト
- *
- * @return void
- */
-	public function testAddFile() {
-		//データ生成
-		$filePath = null;
-		$localName = null;
-
-		//テスト実施
-		//$result = $this->addFile($filePath, $localName);
-
-		//チェック
-		//TODO:assertを書く
-		//debug($result);
-	}
-
-/**
  * test create zip no password
  *
  * @return void

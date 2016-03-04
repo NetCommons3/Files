@@ -9,6 +9,7 @@
  */
 
 App::uses('NetCommonsCakeTestCase', 'NetCommons.TestSuite');
+App::uses('NetCommonsFile', 'Files.Utility');
 
 /**
  * NetCommonsFile::getTemporaryFileConvertSjisWin2Utf8()のテスト
@@ -31,15 +32,12 @@ class UtilityNetCommonsFileGetTemporaryFileConvertSjisWin2Utf8Test extends NetCo
  * @return void
  */
 	public function testGetTemporaryFileConvertSjisWin2Utf8() {
-		//データ生成
-		$filePath = null;
 
-		//テスト実施
-		//$result = $this->getTemporaryFileConvertSjisWin2Utf8($filePath);
-
-		//チェック
-		//TODO:assertを書く
-		//debug($result);
+		$filePath = dirname(dirname(dirname(__DIR__))) . '/Fixture/sample_csv_excel2010.csv';
+		$file = NetCommonsFile::getTemporaryFileConvertSjisWin2Utf8($filePath);
+		//debug($file);
+		$fileContent = file_get_contents($file->path);
+		$encoding = mb_detect_encoding($fileContent);
+		$this->assertEquals('UTF-8', $encoding);
 	}
-
 }

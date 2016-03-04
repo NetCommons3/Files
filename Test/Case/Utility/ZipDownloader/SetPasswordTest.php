@@ -26,23 +26,6 @@ class UtilityZipDownloaderSetPasswordTest extends NetCommonsCakeTestCase {
 	public $plugin = 'files';
 
 /**
- * setPassword()のテスト
- *
- * @return void
- */
-	public function testSetPassword() {
-		//データ生成
-		$password = null;
-
-		//テスト実施
-		//$result = $this->setPassword($password);
-
-		//チェック
-		//TODO:assertを書く
-		//debug($result);
-	}
-
-/**
  * test creat zip with password
  *
  * @return void

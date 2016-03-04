@@ -9,6 +9,9 @@
  */
 
 App::uses('NetCommonsCakeTestCase', 'NetCommons.TestSuite');
+App::uses('TemporaryFolder', 'Files.Utility');
+App::uses('TemporaryFile', 'Files.Utility');
+App::uses('UnZip', 'Files.Utility');
 
 /**
  * UnZip::extract()のテスト
@@ -26,19 +29,32 @@ class UtilityUnZipExtractTest extends NetCommonsCakeTestCase {
 	public $plugin = 'files';
 
 /**
- * extract()のテスト
+ * test unzip
  *
  * @return void
  */
-	public function testExtract() {
-		//データ生成
+	public function testUnzip() {
+		$zip = new UnZip(dirname(dirname(dirname(__DIR__))) . DS . 'Fixture/test.zip');
+		$unzipedFolder = $zip->extract();
+		$this->assertFileExists($unzipedFolder->path . DS . 'test');
+		$this->assertFileExists($unzipedFolder->path . DS . 'test' . DS . 'bar');
+		$this->assertFileExists($unzipedFolder->path . DS . 'test' . DS . 'hoge');
+		$this->assertFileExists($unzipedFolder->path . DS . 'test' . DS . 'hoge' . DS . 'hogehoge');
 
-		//テスト実施
-		//$result = $this->extract();
-
-		//チェック
-		//TODO:assertを書く
-		//debug($result);
+		$contents = file($unzipedFolder->path . DS . 'test' . DS . 'hoge' . DS . 'hogehoge');
+		$this->assertEquals('hogehoge file', $contents[0]);
 	}
 
+
+/**
+ * test unzip failed
+ *
+ * @return void
+ */
+	public function testUnZipFailed() {
+		$zip = new UnZip(dirname(dirname(dirname(__DIR__))) . DS . 'Fixture/test_with_password.zip');
+		$zip->setPassword('no match password');
+		$resultFalse = $zip->extract();
+		$this->assertFalse($resultFalse);
+	}
 }
