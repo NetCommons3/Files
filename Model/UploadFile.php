@@ -340,5 +340,3 @@ class UploadFile extends FilesAppModel {
 		$this->makeLink($pluginKey, $contentId, $uploadFile['UploadFile']['id']);
 	}
 }
-
-
