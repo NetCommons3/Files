@@ -35,8 +35,6 @@ class TemporaryUploadFile extends File {
  */
 	public $temporaryFolder;
 
-	public $original_name = null;
-
 /**
  * @var string アップロードされた元ファイル名
  */
