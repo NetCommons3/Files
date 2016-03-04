@@ -43,47 +43,90 @@ class AttachmentBehaviorAttachFileTest extends NetCommonsModelTestCase {
 		//テストプラグインのロード
 		NetCommonsCakeTestCase::loadTestPlugin($this, 'Files', 'TestFiles');
 		$this->TestModel = ClassRegistry::init('TestFiles.TestAttachmentBehaviorModel');
-	}
-
-/**
- * attachFile()テストのDataProvider
- *
- * ### 戻り値
- *  - data コンテンツデータ
- *  - fieldName 添付するフィールド名
- *  - file 添付するファイルのFileインスタンスかファイルパス
- *  - keyFieldName コンテンツキーのフィールド名 省略可能 デフォルト key
- *
- * @return array データ
- */
-	public function dataProvider() {
-		//TODO:テストパタンを書く
-		$result[0] = array();
-		$result[0]['data'] = null;
-		$result[0]['fieldName'] = null;
-		$result[0]['file'] = null;
-		$result[0]['keyFieldName'] = 'key';
-
-		return $result;
+		copy(APP . 'Plugin/Files/Test/Fixture/logo.gif', TMP . '/test.gif');
 	}
 
 /**
  * attachFile()のテスト
  *
- * @param array $data コンテンツデータ
- * @param string $fieldName 添付するフィールド名
- * @param File|string $file 添付するファイルのFileインスタンスかファイルパス
- * @param string $keyFieldName コンテンツキーのフィールド名 省略可能 デフォルト key
- * @dataProvider dataProvider
  * @return void
  */
-	public function testAttachFile($data, $fieldName, $file, $keyFieldName) {
-		//テスト実施
-		$result = $this->TestModel->attachFile($data, $fieldName, $file, $keyFieldName);
+	public function testAttachFile() {
+		// UploadFile::attach モック
+		$data = [
+			'TestAttachmentBehaviorModel' => [
+				'id' => 10,
+				'key' => 'content_key'
 
-		//チェック
-		//TODO:Assertを書く
-		debug($result);
+			]
+		];
+		$fieldName = 'photo';
+		$file = new File(TMP . 'test.gif');
+		$keyFieldName = 'key';
+
+		//ClassRegistry::removeObject('UploadFile');
+		$uploadFileMock = $this->getMockForModel('Files.UploadFile', ['attach']);
+		// 一回呼ばれることを確認
+		// UploadFile::attach($pluginKey, $contentKey, $contentId, $fieldName, $file);
+		$uploadFileMock->expects($this->once())
+			->method('attach')
+			->with(
+				$this->equalTo('test_files'),
+				$this->equalTo('content_key'),
+				$this->equalTo(10),
+				$this->equalTo($fieldName),
+				$this->equalTo($file)
+			);
+		ClassRegistry::removeObject('UploadFile');
+		ClassRegistry::addObject('UploadFile', $uploadFileMock);
+
+		// AttachmentBehaviorにくっついてるUploadFileモデルをモックに差し替え
+		$attachmentBehavior = ClassRegistry::getObject('AttachmentBehavior');
+		$attachmentBehavior->UploadFile = $uploadFileMock;
+
+		//テスト実施
+		$this->TestModel->attachFile($data, $fieldName, $file, $keyFieldName);
 	}
 
+/**
+ * attachFile() path渡し
+ *
+ * @return void
+ */
+	public function testAttachFileWithFilePath() {
+		// UploadFile::attach モック
+		$data = [
+			'TestAttachmentBehaviorModel' => [
+				'id' => 10,
+				'key' => 'content_key'
+
+			]
+		];
+		$fieldName = 'photo';
+		$filePath = TMP . 'test.gif';
+		$keyFieldName = 'key';
+
+		//ClassRegistry::removeObject('UploadFile');
+		$uploadFileMock = $this->getMockForModel('Files.UploadFile', ['attach']);
+		// 一回呼ばれることを確認
+		// UploadFile::attach($pluginKey, $contentKey, $contentId, $fieldName, $file);
+		$uploadFileMock->expects($this->once())
+			->method('attach')
+			->with(
+				$this->equalTo('test_files'),
+				$this->equalTo('content_key'),
+				$this->equalTo(10),
+				$this->equalTo($fieldName),
+				$this->isInstanceOf('File')
+			);
+		ClassRegistry::removeObject('UploadFile');
+		ClassRegistry::addObject('UploadFile', $uploadFileMock);
+
+		// AttachmentBehaviorにくっついてるUploadFileモデルをモックに差し替え
+		$attachmentBehavior = ClassRegistry::getObject('AttachmentBehavior');
+		$attachmentBehavior->UploadFile = $uploadFileMock;
+
+		//テスト実施
+		$this->TestModel->attachFile($data, $fieldName, $filePath, $keyFieldName);
+	}
 }

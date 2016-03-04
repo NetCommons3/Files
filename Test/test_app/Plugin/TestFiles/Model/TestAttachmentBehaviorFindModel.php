@@ -25,6 +25,7 @@ class TestAttachmentBehaviorFindModel extends AppModel {
  * @var array
  */
 	public $actsAs = array(
+		'NetCommons.OriginalKey',
 		'Files.Attachment'
 	);
 

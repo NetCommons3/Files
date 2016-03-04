@@ -1,6 +1,6 @@
 <?php
 /**
- * AttachmentBehavior::save()テスト用Model
+ * AttachmentBehaviorテスト用Model
  *
  * @author Noriko Arai <arai@nii.ac.jp>
  * @author Shohei Nakajima <nakajimashouhei@gmail.com>
@@ -12,12 +12,19 @@
 App::uses('AppModel', 'Model');
 
 /**
- * AttachmentBehavior::save()テスト用Model
+ * AttachmentBehaviorテスト用Model
  *
  * @author Shohei Nakajima <nakajimashouhei@gmail.com>
  * @package NetCommons\Files\Test\test_app\Plugin\TestFiles\Model
  */
-class TestAttachmentBehaviorSaveModel extends AppModel {
+class TestAttachmentBehaviorSetupWithConfigModel extends AppModel {
+
+/**
+ * テーブル名
+ *
+ * @var mixed
+ */
+	public $useTable = false;
 
 /**
  * 使用ビヘイビア
@@ -27,8 +34,11 @@ class TestAttachmentBehaviorSaveModel extends AppModel {
 	public $actsAs = array(
 		'NetCommons.OriginalKey',
 		'Files.Attachment' => [
-			'photo',
-			'pdf'
+			'photo' => [
+				'thumbnailSizes' => array(
+					'small' => '200ml',
+				)
+			]
 		]
 	);
 

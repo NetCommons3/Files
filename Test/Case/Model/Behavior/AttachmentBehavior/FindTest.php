@@ -54,16 +54,22 @@ class AttachmentBehaviorFindTest extends NetCommonsModelTestCase {
  * @return void
  */
 	public function testFind() {
-		//テストデータ
-		$type = 'first';
-		$query = array();
+		////テストデータ
+		//$type = 'first';
+		//$query = array();
+		//
+		////テスト実施
+		//$result = $this->TestModel->find($type, $query);
 
-		//テスト実施
-		$result = $this->TestModel->find($type, $query);
+		// afterFindで添付されてるファイル情報をくっつける
+		$this->TestModel->recursive = 0;
+		$content = $this->TestModel->findById(2);
+		$this->assertEquals(4, $content['UploadFile']['photo']['id']);
 
-		//チェック
-		//TODO:Assertを書く
-		debug($result);
+		// recursive マイナスだと添付ファイル情報をつけない
+		$this->TestModel->recursive = -1;
+		$content = $this->TestModel->findById(2);
+		$this->assertFalse(isset($content['UploadFile']));
 	}
 
 }

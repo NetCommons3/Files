@@ -46,38 +46,54 @@ class AttachmentBehaviorUploadSettingsTest extends NetCommonsModelTestCase {
 	}
 
 /**
- * uploadSettings()テストのDataProvider
- *
- * ### 戻り値
- *  - filed フィールド名
- *  - options オプション
- *
- * @return array データ
- */
-	public function dataProvider() {
-		//TODO:テストパタンを書く
-		$result[0] = array();
-		$result[0]['filed'] = null;
-		$result[0]['options'] = array();
-
-		return $result;
-	}
-
-/**
  * uploadSettings()のテスト
  *
- * @param string $filed フィールド名
- * @param array $options オプション
- * @dataProvider dataProvider
  * @return void
  */
-	public function testUploadSettings($filed, $options) {
+	public function testUploadSettings() {
+		$field = 'photo';
+		$options = [ // 連想配列オプション
+			'foo' => 'bar'
+		];
 		//テスト実施
-		$result = $this->TestModel->uploadSettings($filed, $options);
+		$this->TestModel->uploadSettings($field, $options);
 
+		$attachment = ClassRegistry::getObject('AttachmentBehavior');
 		//チェック
-		//TODO:Assertを書く
-		debug($result);
+		$property = new ReflectionProperty($attachment, '_settings');
+		$property->setAccessible(true);
+		$value = $property->getValue($attachment);
+
+		$expects = [
+			'TestAttachmentBehaviorModel' => [
+				'fileFields' => [
+					'photo' => $options,
+				]
+			]
+		];
+		$this->assertEquals($expects, $value);
+
+		// setupから呼ばれたときにフィールド名しか定義されてなくて、オプション未設定のとき
+		// $fieldが配列添え字になり、$optionsにフィールド名文字列がくることになる
+		$field = 0;
+		$options = 'photo';
+		//テスト実施
+		$this->TestModel->uploadSettings($field, $options);
+
+		$attachment = ClassRegistry::getObject('AttachmentBehavior');
+		//チェック
+		$property = new ReflectionProperty($attachment, '_settings');
+		$property->setAccessible(true);
+		$value = $property->getValue($attachment);
+
+		$expects = [
+			'TestAttachmentBehaviorModel' => [
+				'fileFields' => [
+					'photo' => array(),
+				]
+			]
+		];
+		$this->assertEquals($expects, $value);
 	}
 
 }
