@@ -38,6 +38,9 @@ class ZipDownloader {
  */
 	protected $_open = false;
 
+/**
+ * @var string Zipコマンド
+ */
 	protected $_zipCommand = 'zip';
 
 /**
