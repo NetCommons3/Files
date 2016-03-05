@@ -11,7 +11,7 @@
 class FilesSchema extends CakeSchema {
 
 /**
- * @var string $connection
+ * @var string Connection
  */
 	public $connection = 'master';
 
