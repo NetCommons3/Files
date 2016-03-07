@@ -99,7 +99,7 @@ class DownloadComponent extends Component {
 				throw new ForbiddenException();
 			}
 		}
-		if ($file['UploadFile']['block_key'] || $file['UploadFile']['content_key']) {
+		if ($file['UploadFile']['block_key']) {
 			// block_keyによるガード
 			$Block = ClassRegistry::init('Blocks.Block');
 			$uploadFileBlock = $Block->findByKeyAndLanguageId(

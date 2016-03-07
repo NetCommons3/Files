@@ -107,4 +107,47 @@ class DownloadComponentDoDownloadByUploadFileIdTest extends NetCommonsController
 
 		$this->controller->Download->doDownloadByUploadFileId($fileId);
 	}
+
+/**
+ * ダウンロードコンポーネントでblock_keyガード条件をblock_keyかコンテンツkeyのあるときとしたら、アバター表示時にコンテンツキー有り&block_key無しのため例外発生するようになった。
+ * それを修正できたことを確かめるテスト
+ *
+ * @return void
+ */
+	public function testFixAvatarDownloadProblem() {
+		//テストコントローラ生成
+		$this->generateNc('TestFiles.TestDownloadComponent');
+		// $this->controllerにテスト用コントローラが配置される
+
+		//ログイン
+		TestAuthGeneral::login($this);
+
+		// componentのInitializeをコールしたいのでアクションコール
+		$this->_testNcAction(
+			'/test_files/test_download_component/index',
+			array(
+				'method' => 'get'
+			)
+		);
+		$this->controller->params['pass'] = [
+			null,
+			null,
+			'avatar', //params['pass'][2]
+		];
+
+		$fileId = 6; // avatarファイル
+
+		$path = WWW_ROOT . 'files/upload_file/real_file_name//6/hash_name.jpg';
+
+		$responseMock = $this->getMock('CakeResponse', ['file']);
+		$responseMock->expects($this->once())
+			->method('file')
+			->with($this->equalTo($path));
+		$this->controller->response = $responseMock;
+
+		// コンテンツキーが入ってるとブロックガードで例外が発生してた。-> DownloadComponent修正で例外発生しなくなったのを確認
+		// @codingStandardsIgnoreStart NOTICE無視して例外発生するのを確認したかったので@でエラー抑止してます。
+		@$this->controller->Download->doDownloadByUploadFileId($fileId);
+		// @codingStandardsIgnoreEnd
+	}
 }
