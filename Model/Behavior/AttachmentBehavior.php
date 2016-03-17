@@ -48,7 +48,7 @@ class AttachmentBehavior extends ModelBehavior {
 			$error = '"NetCommons.OriginalKeyBehavior" not loaded in ' . $model->alias . '. ';
 			$error .= 'Load "NetCommons.OriginalKeyBehavior" before loading "AttachmentBehavior"';
 			throw new CakeException($error);
-		};
+		}
 
 		foreach ($config as $filed => $options) {
 			$this->uploadSettings($model, $filed, $options);
