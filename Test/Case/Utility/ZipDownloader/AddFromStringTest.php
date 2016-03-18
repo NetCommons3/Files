@@ -9,6 +9,8 @@
  */
 
 App::uses('NetCommonsCakeTestCase', 'NetCommons.TestSuite');
+App::uses('ZipDownloader', 'Files.Utility');
+App::uses('UnZip', 'Files.Utility');
 
 /**
  * ZipDownloader::addFromString()のテスト
