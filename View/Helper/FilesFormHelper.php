@@ -46,9 +46,12 @@ class FilesFormHelper extends AppHelper {
 		$output = '';
 		if (isset($this->request->data['UploadFile'])) {
 			foreach (array_keys($this->request->data['UploadFile']) as $key) {
-				$output .= $this->NetCommonsForm->input('UploadFile.' . $key . '.id', ['type' => 'hidden']);
-				$output .= $this->NetCommonsForm->input('UploadFile.' . $key . '.field_name', ['type' => 'hidden']);
-				$output .= $this->NetCommonsForm->input('UploadFile.' . $key . '.original_name', ['type' => 'hidden']);
+				$idName = 'UploadFile.' . $key . '.id';
+				$output .= $this->NetCommonsForm->input($idName, ['type' => 'hidden']);
+				$fieldNameName = 'UploadFile.' . $key . '.field_name';
+				$output .= $this->NetCommonsForm->input($fieldNameName, ['type' => 'hidden']);
+				$originalNameName = 'UploadFile.' . $key . '.original_name';
+				$output .= $this->NetCommonsForm->input($originalNameName, ['type' => 'hidden']);
 			}
 
 			// uploadされた元ファイル名のリスト

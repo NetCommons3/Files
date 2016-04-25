@@ -47,7 +47,8 @@ class CsvFileWriter extends TemporaryFile {
 			$csvLine .= fgets($fp);
 		}
 		fclose($fp);
-		$convertLine = mb_convert_encoding($csvLine, 'SJIS-win', 'UTF-8'); // ε(　　　　 v ﾟωﾟ)　＜ SJIS-win決め打ちなのをなんとかしたいか
+		// ε(　　　　 v ﾟωﾟ)　＜ SJIS-win決め打ちなのをなんとかしたいか
+		$convertLine = mb_convert_encoding($csvLine, 'SJIS-win', 'UTF-8');
 		$this->append($convertLine);
 	}
 

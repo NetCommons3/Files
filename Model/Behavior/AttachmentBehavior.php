@@ -81,7 +81,8 @@ class AttachmentBehavior extends ModelBehavior {
 				];
 				$uploadFiles = $this->UploadFilesContent->find('all', ['conditions' => $conditions]);
 				foreach ($uploadFiles as $uploadFile) {
-					$results[$key]['UploadFile'][$uploadFile['UploadFile']['field_name']] = $uploadFile['UploadFile'];
+					$fieldName = $uploadFile['UploadFile']['field_name'];
+					$results[$key]['UploadFile'][$fieldName] = $uploadFile['UploadFile'];
 				}
 			}
 		}
@@ -136,7 +137,8 @@ class AttachmentBehavior extends ModelBehavior {
 	public function afterSave(Model $model, $created, $options = array()) {
 		// アップロードがなかったら以前のデータを挿入する
 		// formからhiddenで UploadFile.field_name.id 形式でデータが渡ってくる
-		if (isset($model->data['UploadFile'])) { // $data['UploadFile']にはモデルデータ編集時に添付されてるファイルについてのデータが入っている
+		// $data['UploadFile']にはモデルデータ編集時に添付されてるファイルについてのデータが入っている
+		if (isset($model->data['UploadFile'])) {
 			foreach ($model->data['UploadFile'] as $uploadFile) {
 				// 同じfield_nameでアップロードされてるなら以前のファイルへの関連レコードを新規に追加する必要は無い（過去の関連レコードはそのまま）
 				if (isset($this->_uploadedFiles[$uploadFile['field_name']])) {
@@ -149,7 +151,9 @@ class AttachmentBehavior extends ModelBehavior {
 					}
 				} else {
 					// 同じfield_nameでアップロードされてなければ以前のファイルへの関連レコードを入れる
-					if (Hash::get($model->data, $model->alias . '.' . $uploadFile['field_name'] . '.remove', false)) {
+
+					$removePath = $model->alias . '.' . $uploadFile['field_name'] . '.remove';
+					if (Hash::get($model->data, $removePath, false)) {
 						// ファイル削除にチェックが入ってるのでリンクしない
 						// 今のコンテンツIDで関連テーブルのレコードがあったら、ユーザモデルのように履歴のないモデルなのでそのときは関連テーブルを消す必要があるのでremoveFileは呼んでおく。
 						$this->UploadFile->removeFile($model->id, $uploadFile['id']);
@@ -335,7 +339,8 @@ class AttachmentBehavior extends ModelBehavior {
  * @return bool Success
  * @SuppressWarnings(PHPMD.BooleanArgumentFlag)
  */
-	public function isValidMimeType(Model $model, $check, $mimetypes = array(), $requireUpload = true) {
+	public function isValidMimeType(Model $model, $check, $mimetypes = array(),
+		$requireUpload = true) {
 		return $this->UploadFile->isValidMimeType($check, $mimetypes, $requireUpload);
 	}
 
@@ -403,7 +408,8 @@ class AttachmentBehavior extends ModelBehavior {
  * @return bool Success
  * @SuppressWarnings(PHPMD.BooleanArgumentFlag)
  */
-	public function isValidExtension(Model $model, $check, $extensions = array(), $requireUpload = true) {
+	public function isValidExtension(Model $model, $check, $extensions = array(),
+		$requireUpload = true) {
 		return $this->UploadFile->isValidExtension($check, $extensions, $requireUpload);
 	}
 
