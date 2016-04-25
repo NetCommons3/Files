@@ -148,7 +148,8 @@ class UploadFile extends FilesAppModel {
 		if (Hash::get($this->data, 'UploadFile.id', false) === false) {
 			// 新規の時だけトータルをセット
 			$result = $this->find('first', $options);
-			$this->data['UploadFile']['total_download_count'] = ($result['UploadFile']['total'] !== null) ? $result['UploadFile']['total'] : 0;
+			$total = ($result['UploadFile']['total'] !== null) ? $result['UploadFile']['total'] : 0;
+			$this->data['UploadFile']['total_download_count'] = $total;
 		}
 		unset($this->virtualFields['total']);
 		return true;
@@ -215,7 +216,8 @@ class UploadFile extends FilesAppModel {
 		$_tmpData['UploadFile']['plugin_key'] = $pluginKey;
 		$_tmpData['UploadFile']['content_key'] = $contentKey;
 		$_tmpData['UploadFile']['field_name'] = $fieldName;
-		$_tmpData['UploadFile']['original_name'] = property_exists($file, 'originalName') ? $file->originalName : $file->name;
+		$originalName = property_exists($file, 'originalName') ? $file->originalName : $file->name;
+		$_tmpData['UploadFile']['original_name'] = $originalName;
 		$_tmpData['UploadFile']['extension'] = pathinfo($file->name, PATHINFO_EXTENSION);
 		$_tmpData['UploadFile']['real_file_name'] = [
 			'name' => $file->name,
