@@ -112,7 +112,7 @@ class FilesFormHelper extends AppHelper {
 				$output .= $this->_uploadFileNames[$fieldName];
 			}
 			if ($remove) {
-				$output .= $this->checkbox(
+				$output .= $this->NetCommonsForm->checkbox(
 						$inputFieldName . '.remove',
 						['type' => 'checkbox', 'div' => false, 'error' => false]
 				);
