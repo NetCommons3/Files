@@ -41,7 +41,8 @@ class UploadFile extends FilesAppModel {
 									//'dir' => 'path',
 									'type' => 'mimetype',
 									'size' => 'size'
-							]
+							],
+							'deleteFolderOnDelete' => true,
 					),
 			],
 	];
@@ -87,11 +88,21 @@ class UploadFile extends FilesAppModel {
 			$count = $UploadFilesContent->find('count', ['conditions' => ['upload_file_id' => $fileId]]);
 			if ($count == 0) {
 				// 他に関連レコード無ければファイル削除
-				if ($this->delete($fileId, false) === false) {
+				if ($this->deleteUploadFile($fileId) === false) {
 					throw new InternalErrorException('Failed UploadFile::removeFile()');
 				}
 			}
 		}
+	}
+
+	public function deleteUploadFile($fileId){
+		// Uploadビヘイビアにpathを渡す
+		$uploadFile = $this->findById($fileId);
+		$path = WWW_ROOT . $uploadFile['UploadFile']['path'];
+		$this->uploadSettings('real_file_name', 'path', $path);
+		$this->uploadSettings('real_file_name', 'thumbnailPath', $path);
+
+		return $this->delete($fileId, false);
 	}
 
 /**
@@ -154,6 +165,15 @@ class UploadFile extends FilesAppModel {
 		unset($this->virtualFields['total']);
 		return true;
 	}
+
+	//public function beforeDelete($cascade = true) {
+	//	$uploadFile = $this->findById($this->id);
+	//	$path = WWW_ROOT . $uploadFile['UploadFile']['path'];
+	//	$this->uploadSettings('real_file_name', 'path', $path);
+	//	$this->uploadSettings('real_file_name', 'thumbnailPath', $path);
+	//
+	//	parent::beforeDelete($cascade);
+	//}
 
 /**
  * ファイル情報取得
@@ -296,6 +316,27 @@ class UploadFile extends FilesAppModel {
 	}
 
 /**
+ * 関連テーブルデータの削除（元コンテンツ削除時用）
+ *
+ * @param string $pluginKey プラグインキー
+ * @param int $contentId コンテンツID
+ * @param string $fieldName フィールド名
+ * @return void
+ */
+	public function deleteContentLink($pluginKey, $contentId) {
+		$conditions = [
+			'UploadFilesContent.plugin_key' => $pluginKey,
+			'UploadFilesContent.content_id' => $contentId,
+			//'UploadFile.field_name' => $fieldName,
+		];
+		$result = $this->UploadFilesContent->find('all', ['conditions' => $conditions]);
+		foreach ($result as $link) {
+			$this->_deleteNoRelationUploadFile($link);
+		}
+	}
+
+
+/**
  * 関連テーブルデータがひとつもないUploadFileレコードを削除する
  *
  * @param array $link UploadFilesContent関連レコードのデータ
@@ -311,7 +352,7 @@ class UploadFile extends FilesAppModel {
 		];
 		$count = $this->UploadFilesContent->find('count', ['conditions' => $conditions]);
 		if ($count == 0) {
-			if ($this->delete($link['UploadFile']['id']) === false) {
+			if ($this->deleteUploadFile($link['UploadFile']['id']) === false) {
 				throw new InternalErrorException('Failed UploadFile::_deleteNoRelationUploadFile');
 			};
 		}

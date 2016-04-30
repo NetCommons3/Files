@@ -171,6 +171,12 @@ class AttachmentBehavior extends ModelBehavior {
 		}
 	}
 
+	public function afterDelete(Model $model) {
+		// afterDeleteだと$model->idで消したデータのIDがとれるだけ
+		$contentId = $model->id;
+		$this->UploadFile->deleteContentLink($model->plugin, $contentId);
+	}
+
 /**
  * アップロードフィールドの設定
  *
