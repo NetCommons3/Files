@@ -236,6 +236,21 @@ class AttachmentBehavior extends ModelBehavior {
 		$this->UploadFile->attach($pluginKey, $contentKey, $contentId, $fieldName, $file);
 	}
 
+/**
+ * ダウンロードカウントアップ
+ *
+ * @param Model $model 元モデル
+ * @param array $data UploadFile Model Data
+ * @param string $fieldName アップロードファイルフィールド名
+ * @return void
+ */
+	public function downloadCountUp(Model $model, $data, $fieldName){
+		$uploadFile = [
+			'UploadFile' => $data['UploadFile'][$fieldName]
+		];
+		$this->UploadFile->countUp($uploadFile);
+	}
+
 	// ===== 以下 UploadBehavior のバリデータをラップ ====
 
 /**
