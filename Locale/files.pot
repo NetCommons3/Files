@@ -17,3 +17,8 @@ msgstr ""
 msgid "Not Found file."
 msgstr ""
 
+msgid "Please specify the file"
+msgstr ""
+
+msgid "It is upload disabled file format"
+msgstr ""
