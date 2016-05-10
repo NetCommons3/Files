@@ -4,17 +4,23 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
-"PO-Revision-Date: 2015-06-01 17:59+0900\n"
+"PO-Revision-Date: 2016-05-09 11:23+0900\n"
 "Last-Translator: NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <EMAIL@ADDRESS>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
 "POT-Creation-Date: \n"
 "Language: ja\n"
-"X-Generator: Poedit 1.8.1\n"
+"X-Generator: Poedit 1.8.7\n"
 
 #: Files/Controller/FilesController.php:65
 msgid "Not Found file."
 msgstr "ファイルが存在しません"
+
+msgid "Please specify the file"
+msgstr "ファイルを指定してください"
+
+msgid "It is upload disabled file format"
+msgstr "アップロード不可のファイル形式です"
