@@ -10,6 +10,8 @@
 
 App::uses('NetCommonsModelTestCase', 'NetCommons.TestSuite');
 App::uses('UploadFileFixture', 'Files.Test/Fixture');
+App::uses('TemporaryFolder', 'Files.Utility');
+App::uses('TemporaryFile', 'Files.Utility');
 
 /**
  * UploadFile::removeFile()のテスト
@@ -78,8 +80,15 @@ class UploadFileRemoveFileTest extends NetCommonsModelTestCase {
 	public function testRemoveFile() {
 		$contentId = 2;
 		$fileId = 1;
-		// uploadビヘイビアが動作して実態ファイル削除を実行する…がここではUploadビヘイビアを外してDBレベルのテスト
-		$this->UploadFile->Behaviors->unload('Upload');
+
+		// Uploadビヘイビアが実ファイルを削除しにくるので事前に削除されるファイルを用意しておく
+		$tmpFolder = new TemporaryFolder();
+		$this->UploadFile->uploadBasePath = $tmpFolder->path . '/';
+		$tmpFile = new TemporaryFile($tmpFolder->path . '/files/upload_file/real_file_name/1/1/');
+		rename($tmpFile->path, dirname($tmpFile->path) . '/foobarhash.jpg');
+		$tmpFile->name = 'foobarhash.jpg';
+		$tmpFile->path = dirname($tmpFile->path) . '/foobarhash.jpg';
+
 		$this->UploadFile->removeFile($contentId, $fileId);
 
 		$conditions = [
