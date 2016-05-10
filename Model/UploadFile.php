@@ -17,6 +17,11 @@ App::uses('Folder', 'Utility');
 class UploadFile extends FilesAppModel {
 
 /**
+ * @var string UploadFileでアップロードする基準パス
+ */
+	public $uploadBasePath = WWW_ROOT;
+
+/**
  * @var int recursiveはデフォルトアソシエーションなしに
  */
 	public $recursive = -1;
@@ -100,7 +105,7 @@ class UploadFile extends FilesAppModel {
 	public function deleteUploadFile($fileId){
 		// Uploadビヘイビアにpathを渡す
 		$uploadFile = $this->findById($fileId);
-		$path = WWW_ROOT . $uploadFile['UploadFile']['path'];
+		$path = $this->uploadBasePath . $uploadFile['UploadFile']['path'];
 		$this->uploadSettings('real_file_name', 'path', $path);
 		$this->uploadSettings('real_file_name', 'thumbnailPath', $path);
 
@@ -139,10 +144,10 @@ class UploadFile extends FilesAppModel {
 		}
 
 		$roomId = Current::read('Room.id');
-		$path = WWW_ROOT . 'files' . DS . 'upload_file' . DS . 'real_file_name' . DS . $roomId . DS;
+		$path = $this->uploadBasePath . 'files' . DS . 'upload_file' . DS . 'real_file_name' . DS . $roomId . DS;
 
 		// ID以外のpathを保存 WWW_ROOTも除外する
-		$path = substr($path, strlen(WWW_ROOT));
+		$path = substr($path, strlen($this->uploadBasePath));
 		$this->data['UploadFile']['path'] = $path;
 
 		$this->uploadSettings('real_file_name', 'path', $path);
@@ -167,15 +172,6 @@ class UploadFile extends FilesAppModel {
 		unset($this->virtualFields['total']);
 		return true;
 	}
-
-	//public function beforeDelete($cascade = true) {
-	//	$uploadFile = $this->findById($this->id);
-	//	$path = WWW_ROOT . $uploadFile['UploadFile']['path'];
-	//	$this->uploadSettings('real_file_name', 'path', $path);
-	//	$this->uploadSettings('real_file_name', 'thumbnailPath', $path);
-	//
-	//	parent::beforeDelete($cascade);
-	//}
 
 /**
  * ファイル情報取得
