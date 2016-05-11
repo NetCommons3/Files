@@ -171,6 +171,12 @@ class AttachmentBehavior extends ModelBehavior {
 		}
 	}
 
+/**
+ * After delete
+ *
+ * @param Model $model 元モデル
+ * @return void
+ */
 	public function afterDelete(Model $model) {
 		// afterDeleteだと$model->idで消したデータのIDがとれるだけ
 		$contentId = $model->id;
@@ -244,7 +250,7 @@ class AttachmentBehavior extends ModelBehavior {
  * @param string $fieldName アップロードファイルフィールド名
  * @return void
  */
-	public function downloadCountUp(Model $model, $data, $fieldName){
+	public function downloadCountUp(Model $model, $data, $fieldName) {
 		$uploadFile = [
 			'UploadFile' => $data['UploadFile'][$fieldName]
 		];

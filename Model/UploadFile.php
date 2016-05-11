@@ -102,7 +102,13 @@ class UploadFile extends FilesAppModel {
 		}
 	}
 
-	public function deleteUploadFile($fileId){
+/**
+ * Delete uploadFile
+ *
+ * @param int $fileId UploadFile.id
+ * @return bool
+ */
+	public function deleteUploadFile($fileId) {
 		// Uploadビヘイビアにpathを渡す
 		$uploadFile = $this->findById($fileId);
 		$path = $this->uploadBasePath . $uploadFile['UploadFile']['path'];
@@ -144,7 +150,8 @@ class UploadFile extends FilesAppModel {
 		}
 
 		$roomId = Current::read('Room.id');
-		$path = $this->uploadBasePath . 'files' . DS . 'upload_file' . DS . 'real_file_name' . DS . $roomId . DS;
+		$path = $this->uploadBasePath . 'files' . DS .
+			'upload_file' . DS . 'real_file_name' . DS . $roomId . DS;
 
 		// ID以外のpathを保存 WWW_ROOTも除外する
 		$path = substr($path, strlen($this->uploadBasePath));
@@ -318,7 +325,6 @@ class UploadFile extends FilesAppModel {
  *
  * @param string $pluginKey プラグインキー
  * @param int $contentId コンテンツID
- * @param string $fieldName フィールド名
  * @return void
  */
 	public function deleteContentLink($pluginKey, $contentId) {
@@ -332,7 +338,6 @@ class UploadFile extends FilesAppModel {
 			$this->_deleteNoRelationUploadFile($link);
 		}
 	}
-
 
 /**
  * 関連テーブルデータがひとつもないUploadFileレコードを削除する
