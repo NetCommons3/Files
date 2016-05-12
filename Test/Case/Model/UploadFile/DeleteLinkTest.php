@@ -10,7 +10,8 @@
 
 App::uses('NetCommonsModelTestCase', 'NetCommons.TestSuite');
 App::uses('UploadFileFixture', 'Files.Test/Fixture');
-
+App::uses('TemporaryFolder', 'Files.Utility');
+App::uses('TemporaryFile', 'Files.Utility');
 /**
  * UploadFile::deleteLink()のテスト
  *
@@ -80,8 +81,15 @@ class UploadFileDeleteLinkTest extends NetCommonsModelTestCase {
 		$pluginKey = 'site_manager';
 		$contentId = 2;
 		$fieldName = 'photo';
-		// Uploadビヘイビアを無効にしておく
-		$this->UploadFile->Behaviors->unload('Upload');
+
+		// Uploadビヘイビアが実ファイルを削除しにくるので事前に削除されるファイルを用意しておく
+		$tmpFolder = new TemporaryFolder();
+		$this->UploadFile->uploadBasePath = $tmpFolder->path . '/';
+		$tmpFile = new TemporaryFile($tmpFolder->path . '/files/upload_file/real_file_name/1/1/');
+		rename($tmpFile->path, dirname($tmpFile->path) . '/foobarhash.jpg');
+		$tmpFile->name = 'foobarhash.jpg';
+		$tmpFile->path = dirname($tmpFile->path) . '/foobarhash.jpg';
+
 		$this->UploadFile->deleteLink($pluginKey, $contentId, $fieldName);
 
 		// fixtureで挿入された関連レコードが削除されてること

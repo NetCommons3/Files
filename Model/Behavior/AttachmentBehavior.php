@@ -10,7 +10,9 @@
 /**
  * Class AttachmentBehavior
  *
+ * Uploadビヘイビアのバリデータをwrapするためにphpmd制限を外してる
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
+ * @SuppressWarnings(PHPMD.TooManyMethods)
  */
 class AttachmentBehavior extends ModelBehavior {
 
@@ -172,6 +174,18 @@ class AttachmentBehavior extends ModelBehavior {
 	}
 
 /**
+ * After delete
+ *
+ * @param Model $model 元モデル
+ * @return void
+ */
+	public function afterDelete(Model $model) {
+		// afterDeleteだと$model->idで消したデータのIDがとれるだけ
+		$contentId = $model->id;
+		$this->UploadFile->deleteLink($model->plugin, $contentId);
+	}
+
+/**
  * アップロードフィールドの設定
  *
  * @param Model $model モデル
@@ -228,6 +242,21 @@ class AttachmentBehavior extends ModelBehavior {
 		$contentId = $data[$model->alias]['id'];
 
 		$this->UploadFile->attach($pluginKey, $contentKey, $contentId, $fieldName, $file);
+	}
+
+/**
+ * ダウンロードカウントアップ
+ *
+ * @param Model $model 元モデル
+ * @param array $data UploadFile Model Data
+ * @param string $fieldName アップロードファイルフィールド名
+ * @return void
+ */
+	public function downloadCountUp(Model $model, $data, $fieldName) {
+		$uploadFile = [
+			'UploadFile' => $data['UploadFile'][$fieldName]
+		];
+		$this->UploadFile->countUp($uploadFile);
 	}
 
 	// ===== 以下 UploadBehavior のバリデータをラップ ====

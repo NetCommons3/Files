@@ -17,6 +17,11 @@ App::uses('Folder', 'Utility');
 class UploadFile extends FilesAppModel {
 
 /**
+ * @var string UploadFileでアップロードする基準パス
+ */
+	public $uploadBasePath = WWW_ROOT;
+
+/**
  * @var int recursiveはデフォルトアソシエーションなしに
  */
 	public $recursive = -1;
@@ -41,7 +46,10 @@ class UploadFile extends FilesAppModel {
 									//'dir' => 'path',
 									'type' => 'mimetype',
 									'size' => 'size'
-							]
+							],
+							// https://github.com/josegonzalez/cakephp-upload/issues/263
+							// 上記修正がUploadビヘイビアにとりこまれるまで false
+							'deleteFolderOnDelete' => false,
 					),
 			],
 	];
@@ -87,11 +95,27 @@ class UploadFile extends FilesAppModel {
 			$count = $UploadFilesContent->find('count', ['conditions' => ['upload_file_id' => $fileId]]);
 			if ($count == 0) {
 				// 他に関連レコード無ければファイル削除
-				if ($this->delete($fileId, false) === false) {
+				if ($this->deleteUploadFile($fileId) === false) {
 					throw new InternalErrorException('Failed UploadFile::removeFile()');
 				}
 			}
 		}
+	}
+
+/**
+ * Delete uploadFile
+ *
+ * @param int $fileId UploadFile.id
+ * @return bool
+ */
+	public function deleteUploadFile($fileId) {
+		// Uploadビヘイビアにpathを渡す
+		$uploadFile = $this->findById($fileId);
+		$path = $this->uploadBasePath . $uploadFile['UploadFile']['path'];
+		$this->uploadSettings('real_file_name', 'path', $path);
+		$this->uploadSettings('real_file_name', 'thumbnailPath', $path);
+
+		return $this->delete($fileId, false);
 	}
 
 /**
@@ -126,10 +150,11 @@ class UploadFile extends FilesAppModel {
 		}
 
 		$roomId = Current::read('Room.id');
-		$path = WWW_ROOT . 'files' . DS . 'upload_file' . DS . 'real_file_name' . DS . $roomId . DS;
+		$path = $this->uploadBasePath . 'files' . DS .
+			'upload_file' . DS . 'real_file_name' . DS . $roomId . DS;
 
 		// ID以外のpathを保存 WWW_ROOTも除外する
-		$path = substr($path, strlen(WWW_ROOT));
+		$path = substr($path, strlen($this->uploadBasePath));
 		$this->data['UploadFile']['path'] = $path;
 
 		$this->uploadSettings('real_file_name', 'path', $path);
@@ -283,12 +308,14 @@ class UploadFile extends FilesAppModel {
  * @param string $fieldName フィールド名
  * @return void
  */
-	public function deleteLink($pluginKey, $contentId, $fieldName) {
+	public function deleteLink($pluginKey, $contentId, $fieldName = null) {
 		$conditions = [
 			'UploadFilesContent.plugin_key' => $pluginKey,
 			'UploadFilesContent.content_id' => $contentId,
-			'UploadFile.field_name' => $fieldName,
 		];
+		if ($fieldName !== null) {
+			$conditions['UploadFile.field_name'] = $fieldName;
+		}
 		$result = $this->UploadFilesContent->find('all', ['conditions' => $conditions]);
 		foreach ($result as $link) {
 			$this->_deleteNoRelationUploadFile($link);
@@ -311,7 +338,7 @@ class UploadFile extends FilesAppModel {
 		];
 		$count = $this->UploadFilesContent->find('count', ['conditions' => $conditions]);
 		if ($count == 0) {
-			if ($this->delete($link['UploadFile']['id']) === false) {
+			if ($this->deleteUploadFile($link['UploadFile']['id']) === false) {
 				throw new InternalErrorException('Failed UploadFile::_deleteNoRelationUploadFile');
 			};
 		}
