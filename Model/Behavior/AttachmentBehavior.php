@@ -10,7 +10,9 @@
 /**
  * Class AttachmentBehavior
  *
+ * Uploadビヘイビアのバリデータをwrapするためにphpmd制限を外してる
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
+ * @SuppressWarnings(PHPMD.TooManyMethods)
  */
 class AttachmentBehavior extends ModelBehavior {
 
@@ -180,7 +182,7 @@ class AttachmentBehavior extends ModelBehavior {
 	public function afterDelete(Model $model) {
 		// afterDeleteだと$model->idで消したデータのIDがとれるだけ
 		$contentId = $model->id;
-		$this->UploadFile->deleteContentLink($model->plugin, $contentId);
+		$this->UploadFile->deleteLink($model->plugin, $contentId);
 	}
 
 /**

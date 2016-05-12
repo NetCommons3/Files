@@ -308,31 +308,14 @@ class UploadFile extends FilesAppModel {
  * @param string $fieldName フィールド名
  * @return void
  */
-	public function deleteLink($pluginKey, $contentId, $fieldName) {
+	public function deleteLink($pluginKey, $contentId, $fieldName = null) {
 		$conditions = [
 			'UploadFilesContent.plugin_key' => $pluginKey,
 			'UploadFilesContent.content_id' => $contentId,
-			'UploadFile.field_name' => $fieldName,
 		];
-		$result = $this->UploadFilesContent->find('all', ['conditions' => $conditions]);
-		foreach ($result as $link) {
-			$this->_deleteNoRelationUploadFile($link);
+		if ($fieldName !== null) {
+			$conditions['UploadFile.field_name'] = $fieldName;
 		}
-	}
-
-/**
- * 関連テーブルデータの削除（元コンテンツ削除時用）
- *
- * @param string $pluginKey プラグインキー
- * @param int $contentId コンテンツID
- * @return void
- */
-	public function deleteContentLink($pluginKey, $contentId) {
-		$conditions = [
-			'UploadFilesContent.plugin_key' => $pluginKey,
-			'UploadFilesContent.content_id' => $contentId,
-			//'UploadFile.field_name' => $fieldName,
-		];
 		$result = $this->UploadFilesContent->find('all', ['conditions' => $conditions]);
 		foreach ($result as $link) {
 			$this->_deleteNoRelationUploadFile($link);
