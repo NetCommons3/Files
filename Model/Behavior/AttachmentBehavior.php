@@ -189,36 +189,34 @@ class AttachmentBehavior extends ModelBehavior {
  * アップロードフィールドの設定
  *
  * @param Model $model モデル
- * @param string $filed フィールド名
+ * @param string $field フィールド名
  * @param array $options オプション
  * @return void
  */
-	public function uploadSettings(Model $model, $filed, $options = array()) {
-		if (is_int($filed)) {
-			$filed = $options;
+	public function uploadSettings(Model $model, $field, $options = array()) {
+		if (is_int($field)) {
+			$field = $options;
 			$options = array();
 		}
-		$this->_settings[$model->alias]['fileFields'][$filed] = $options;
+		$this->_settings[$model->alias]['fileFields'][$field] = $options;
+
+		$model->validate[$field]['size'] =
+			[
+				'rule' => ['validateUploadFileSize']
+			];
 	}
 
 /**
- * コンテンツとアップロードファイルの関連テーブルを保存
+ * ファイルサイズバリデート ルームの合計ファイルサイズ制限に収まってるかチェックする。
  *
- * @param Model $model モデル
- * @param int $uploadFileId アップロードファイルID
- * @return array
+ * @param Model $model 元モデル
+ * @param array $check 検査対象
+ * @return bool|string OK true, エラー時はメッセージを返す
+ * @see UploadFile::validateSize()
  */
-	protected function _saveUploadFilesContent(Model $model, $uploadFileId) {
-		$contentId = $model->data[$model->alias]['id'];
-		$data = [
-				'content_id' => $contentId,
-				'upload_file_id' => $uploadFileId,
-				'plugin_key' => Inflector::underscore($model->plugin),
-		];
-		$data = $this->UploadFilesContent->create($data);
-		// ε(　　　　 v ﾟωﾟ)　＜ 例外処理
-		$this->UploadFilesContent->save($data);
-		return array($contentId, $data);
+	public function validateUploadFileSize(Model $model, $check) {
+		$result = $this->UploadFile->validateSize($check);
+		return $result;
 	}
 
 /**
@@ -257,6 +255,30 @@ class AttachmentBehavior extends ModelBehavior {
 			'UploadFile' => $data['UploadFile'][$fieldName]
 		];
 		$this->UploadFile->countUp($uploadFile);
+	}
+
+/**
+ * コンテンツとアップロードファイルの関連テーブルを保存
+ *
+ * @param Model $model モデル
+ * @param int $uploadFileId アップロードファイルID
+ * @return array
+ */
+	protected function _saveUploadFilesContent(Model $model, $uploadFileId) {
+		$contentId = $model->data[$model->alias]['id'];
+		$contentIsActive = Hash::get($model->data[$model->alias], 'is_active', null);
+		$contentIsLatest = Hash::get($model->data[$model->alias], 'is_latest', null);
+		$data = [
+			'content_id' => $contentId,
+			'content_is_active' => $contentIsActive,
+			'content_is_latest' => $contentIsLatest,
+			'upload_file_id' => $uploadFileId,
+			'plugin_key' => Inflector::underscore($model->plugin),
+		];
+		$data = $this->UploadFilesContent->create($data);
+		// ε(　　　　 v ﾟωﾟ)　＜ 例外処理
+		$this->UploadFilesContent->save($data);
+		return array($contentId, $data);
 	}
 
 	// ===== 以下 UploadBehavior のバリデータをラップ ====

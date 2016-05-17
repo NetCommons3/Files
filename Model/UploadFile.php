@@ -65,6 +65,17 @@ class UploadFile extends FilesAppModel {
 			),
 	];
 
+	public $validate = [
+		'size' => [
+			'rule' => 'validateSize'
+		]
+	];
+
+	//public function beforeValidate($options = array()) {
+	//
+	//	return parent::beforeValidate($options);
+	//}
+
 /**
  * ビヘイビア設定
  *
@@ -226,7 +237,7 @@ class UploadFile extends FilesAppModel {
 /**
  * FileインスタンスのファイルをUplodFileに登録する
  *
- * @param File $file 登録するファイルのFileインスタンス
+ * @param File|string $file 登録するファイルのFileインスタンス OR ファイルパス
  * @param string $pluginKey プラグインキー
  * @param string $contentKey コンテンツキー
  * @param string $fieldName フィールド名
@@ -235,6 +246,10 @@ class UploadFile extends FilesAppModel {
  * @throws InternalErrorException
  */
 	public function registByFile(File $file, $pluginKey, $contentKey, $fieldName, $data = array()) {
+		if (is_string($file)) {
+			$file = new File($file);
+		}
+
 		// データの登録
 		$_tmpData = $this->create();
 		// $dataにアサイン
@@ -258,24 +273,6 @@ class UploadFile extends FilesAppModel {
 		}
 
 		return $data;
-	}
-
-/**
- * 指定されたパスのファイルをUploadFileに登録する
- *
- * このメソッドではコンテンツとの関連テーブルに関連レコードは挿入されないことに注意
- * コンテンツと関連づけたい場合はAttachmentBehavior::attachFile()推奨
- *
- * @param string $filePath 登録するファイルのファイルパス
- * @param string $pluginKey プラグインキー
- * @param string $contentKey コンテンツキー
- * @param string $fieldName フィールド名
- * @param array $data データ登録時に上書きしたいデータを渡す
- * @return array 登録されたUploadFileレコード
- */
-	public function registByFilePath($filePath, $pluginKey, $contentKey, $fieldName, $data = array()) {
-		$file = new File($filePath);
-		return $this->registByFile($file, $pluginKey, $contentKey, $fieldName, $data);
 	}
 
 /**
@@ -367,5 +364,75 @@ class UploadFile extends FilesAppModel {
 		$this->deleteLink($pluginKey, $contentId, $fieldName);
 		// 関連テーブル登録
 		$this->makeLink($pluginKey, $contentId, $uploadFile['UploadFile']['id']);
+	}
+
+/**
+ * ルームのファイルサイズ制限に収まるかのチェック
+ *
+ * @param array $check 検査対象フォームデータ
+ * @return bool|string おさまっていれば true, おさまってなければエラーメッセージ
+ */
+	public function validateSize($check) {
+		$roomId = Current::read('Room.id');
+
+		$maxRoomDiskSize = Current::read('Space.room_disk_size');
+		if ($maxRoomDiskSize === null) {
+			return true;
+		}
+
+		$size = $check['size'];
+		$roomTotalSize = $this->_getTotalSizeByRoomId($roomId);
+		if (($roomTotalSize + $size) < $maxRoomDiskSize) {
+			return true;
+		} else {
+			$roomsLanguage = ClassRegistry::init('Room.RoomsLanguage');
+			$data = $roomsLanguage->find(
+				'first',
+				[
+					'conditions' => [
+						'room_id' => $roomId,
+						'language_id' => Current::read('Language.id'),
+					]
+				]
+			);
+			$roomName = $data['RoomsLanguage']['name'];
+			// ファイルサイズをMBとかkb表示に
+			App::uses('NumberHelper', 'View/Helper');
+			$this->Number = new NumberHelper(new View());
+			$message = __d(
+				'files',
+				'Total file size uploaded to the %s, exceeded the limit. The limit is %s(%s left).',
+				$roomName,
+				$this->Number->toReadableSize($maxRoomDiskSize),
+				$this->Number->toReadableSize($maxRoomDiskSize - $roomTotalSize)
+			);
+			return $message;
+		}
+	}
+
+/**
+ * ルームのファイルサイズ合計を返す
+ * 履歴データは含まない。
+ *
+ * @param int $roomId ルームID
+ * @return int 合計ファイルサイズ（Byte)
+ */
+	protected function _getTotalSizeByRoomId($roomId) {
+		//$roomId = Current::read('Room.id');
+		// 単純sumじゃだめ。重複は排除しないといけないのでSQL直書き
+		$query = <<< EOF
+		SELECT sum(size) AS total_size FROM
+			(
+				SELECT DISTINCT `UploadFile`.`id`, `UploadFile`.`size` 
+				FROM `upload_files_contents` AS `UploadFilesContent`
+				LEFT JOIN `upload_files` AS `UploadFile` ON (`UploadFilesContent`.`upload_file_id` = `UploadFile`.`id`) 
+				WHERE ((`UploadFilesContent`.`content_is_active` IN (1, NULL)) OR (`UploadFilesContent`.`content_is_latest` IN (1, NULL))) AND `UploadFile`.`room_id` = {$roomId} 
+				GROUP BY `UploadFile`.`id`
+			) AS UploadFileSize;
+EOF;
+		$result = $this->query($query);
+		$total = $result[0][0]['total_size'];
+		$total = (is_null($total)) ? 0 : $total;
+		return $total;
 	}
 }
