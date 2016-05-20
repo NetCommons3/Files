@@ -299,8 +299,4 @@ class AttachmentBehavior extends ModelBehavior {
 		$this->UploadFilesContent->save($data);
 		return array($contentId, $data);
 	}
-
-	// ===== 以下 UploadBehavior のバリデータをラップ ====
-
-
 }
