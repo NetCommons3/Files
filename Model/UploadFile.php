@@ -393,7 +393,7 @@ class UploadFile extends FilesAppModel {
 	//		return true;
 	//	}
 	//
-	//	$size = $check['size'];
+	//	//$size = $check['real_file_name']['size'];
 	//	$roomTotalSize = $this->getTotalSizeByRoomId($roomId);
 	//	if (($roomTotalSize + $size) < $maxRoomDiskSize) {
 	//		return true;
@@ -421,30 +421,5 @@ class UploadFile extends FilesAppModel {
 	//	}
 	//}
 
-/**
- * ルームのファイルサイズ合計を返す
- * 履歴データは含まない。
- *
- * @param int $roomId ルームID
- * @return int 合計ファイルサイズ（Byte)
- */
-//	public function getTotalSizeByRoomId($roomId) {
-//		//$roomId = Current::read('Room.id');
-//		// 単純sumじゃだめ。重複は排除しないといけないのでSQL直書き
-//		$query = <<< EOF
-//		SELECT sum(size) AS total_size FROM
-//			(
-//				SELECT DISTINCT `UploadFile`.`id`, `UploadFile`.`size`
-//				FROM `upload_files_contents` AS `UploadFilesContent`
-//				LEFT JOIN `upload_files` AS `UploadFile` ON (`UploadFilesContent`.`upload_file_id` = `UploadFile`.`id`)
-//				WHERE ((`UploadFilesContent`.`content_is_active` IN (1, NULL)) OR (`UploadFilesContent`.`content_is_latest` IN (1, NULL))) AND `UploadFile`.`room_id` = {$roomId}
-//				GROUP BY `UploadFile`.`id`
-//			) AS UploadFileSize;
-//EOF;
-//		$result = $this->query($query);
-//		$total = $result[0][0]['total_size'];
-//		$total = (is_null($total)) ? 0 : $total;
-//		return $total;
-//	}
 
 }

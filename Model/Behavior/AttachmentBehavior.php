@@ -203,10 +203,10 @@ class AttachmentBehavior extends ModelBehavior {
 		}
 		$this->_settings[$model->alias]['fileFields'][$field] = $options;
 		//
-		//$model->validate[$field]['size'] =
-		//	[
-		//		'rule' => ['validateUploadFileSize']
-		//	];
+		$model->validate[$field]['size'] =
+			[
+				'rule' => ['validateRoomFileSizeLimit']
+			];
 
 		// 元モデルに拡張子バリデータをセットする
 		$uploadAllowExtension = $this->UploadFile->getAllowExtension();
@@ -299,4 +299,6 @@ class AttachmentBehavior extends ModelBehavior {
 		$this->UploadFilesContent->save($data);
 		return array($contentId, $data);
 	}
+
+
 }
