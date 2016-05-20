@@ -66,12 +66,6 @@ class UploadFile extends FilesAppModel {
 			),
 	];
 
-	public $validate = [
-		//'size' => [
-		//	'rule' => 'validateSize'
-		//]
-	];
-
 /**
  * beforeValidate
  *
@@ -85,6 +79,7 @@ class UploadFile extends FilesAppModel {
 			'rule' => ['isValidExtension', $uploadAllowExtension, false],
 			'message' => __d('files', 'It is upload disabled file format')
 		];
+		$this->validate['real_file_name']['size'] = 'validateRoomFileSizeLimit';
 
 		return parent::beforeValidate($options);
 	}
@@ -420,6 +415,4 @@ class UploadFile extends FilesAppModel {
 	//		return $message;
 	//	}
 	//}
-
-
 }

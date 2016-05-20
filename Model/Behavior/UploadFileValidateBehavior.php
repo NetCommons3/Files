@@ -50,18 +50,21 @@ class UploadFileValidateBehavior extends ModelBehavior {
 		SELECT sum(size) AS total_size FROM
 			(
 				SELECT DISTINCT `UploadFile`.`id`, `UploadFile`.`size`
-				FROM `upload_files_contents` AS `UploadFilesContent`
-				LEFT JOIN `upload_files` AS `UploadFile` ON (`UploadFilesContent`.`upload_file_id` = `UploadFile`.`id`)
-				WHERE ((`UploadFilesContent`.`content_is_active` IN (1, NULL)) OR (`UploadFilesContent`.`content_is_latest` IN (1, NULL))) AND `UploadFile`.`room_id` = {$roomId}
+				FROM `%s` AS `UploadFilesContent`
+				LEFT JOIN `%s` AS `UploadFile` ON (`UploadFilesContent`.`upload_file_id` = `UploadFile`.`id`)
+				WHERE ((`UploadFilesContent`.`content_is_active` IN (1, NULL)) OR (`UploadFilesContent`.`content_is_latest` IN (1, NULL))) AND `UploadFile`.`room_id` = ?
 				GROUP BY `UploadFile`.`id`
 			) AS UploadFileSize;
 EOF;
-		$result = $model->query($query);
+
+		$query = sprintf($query,
+			$model->tablePrefix . 'upload_files_contents',
+			$model->tablePrefix . 'upload_files');
+		$result = $model->query($query, [$roomId]);
 		$total = $result[0][0]['total_size'];
 		$total = (is_null($total)) ? 0 : $total;
 		return $total;
 	}
-
 
 /**
  * NetCommons3のシステム管理→一般設定で許可されているルーム容量内かをチェックするバリデータ

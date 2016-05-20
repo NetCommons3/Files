@@ -215,6 +215,9 @@ class AttachmentBehavior extends ModelBehavior {
 			'rule' => ['isValidExtension', $uploadAllowExtension, false],
 			'message' => __d('files', 'It is upload disabled file format')
 		];
+		$model->validate[$field]['size'] = [
+			'rule' => 'validateRoomFileSizeLimit',
+		];
 	}
 
 /**
@@ -299,6 +302,4 @@ class AttachmentBehavior extends ModelBehavior {
 		$this->UploadFilesContent->save($data);
 		return array($contentId, $data);
 	}
-
-
 }
