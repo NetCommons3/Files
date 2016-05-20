@@ -199,11 +199,32 @@ class AttachmentBehavior extends ModelBehavior {
 			$options = array();
 		}
 		$this->_settings[$model->alias]['fileFields'][$field] = $options;
+		//
+		//$model->validate[$field]['size'] =
+		//	[
+		//		'rule' => ['validateUploadFileSize']
+		//	];
 
-		$model->validate[$field]['size'] =
-			[
-				'rule' => ['validateUploadFileSize']
-			];
+		// 元モデルに拡張子バリデータをセットする
+		$uploadAllowExtension = $this->UploadFile->getAllowExtension();
+		$model->validate[$field]['extension'] = [
+			// システム設定の値をとってくる。trimすること
+			'rule' => ['isValidExtension', $uploadAllowExtension, false],
+			'message' => __d('files', 'It is upload disabled file format')
+		];
+
+	}
+
+/**
+ * NetCommons3のセキュリティ設定で許可されている拡張子かをチェックする
+ *
+ * @param Model $model モデル
+ * @param string $extension 拡張子
+ * @return bool
+ * @see UploadFile::isAllowUploadFileExtension
+ */
+	public function isAllowUploadFileExtension(Model $model, $extension) {
+		return $this->UploadFile->isAllowUploadFileExtension($extension);
 	}
 
 /**
@@ -214,10 +235,18 @@ class AttachmentBehavior extends ModelBehavior {
  * @return bool|string OK true, エラー時はメッセージを返す
  * @see UploadFile::validateSize()
  */
-	public function validateUploadFileSize(Model $model, $check) {
-		$result = $this->UploadFile->validateSize($check);
-		return $result;
-	}
+	//public function validateUploadFileSize(Model $model, $check) {
+	//	$result = $this->UploadFile->validateSize($check);
+	//	return $result;
+	//}
+	//
+	//public function isValidRoomFileSizeLimit(Model $model, $size) {
+	//	$check = [
+	//		'size' => $size
+	//	];
+	//	$result = $this->UploadFile->validateSize($check);
+	//	return $result;
+	//}
 
 /**
  * コンテンツに、物理ファイルを添付する処理

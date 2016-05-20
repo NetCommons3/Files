@@ -32,26 +32,27 @@ class UploadFile extends FilesAppModel {
  * @var array
  */
 	public $actsAs = [
-				'Upload.Upload' => [
-					'real_file_name' => array(
-							'thumbnailSizes' => array(
-								// NC2 800 , 640, 480だった
-									'big' => '800ml',
-									'medium' => '400ml',
-									'small' => '200ml',
-									'thumb' => '80x80',
-							),
-							'nameCallback' => 'nameCallback',
-							'fields' => [
-									//'dir' => 'path',
-									'type' => 'mimetype',
-									'size' => 'size'
-							],
-							// https://github.com/josegonzalez/cakephp-upload/issues/263
-							// 上記修正がUploadビヘイビアにとりこまれるまで false
-							'deleteFolderOnDelete' => false,
+		'Upload.Upload' => [
+			'real_file_name' => array(
+					'thumbnailSizes' => array(
+						// NC2 800 , 640, 480だった
+							'big' => '800ml',
+							'medium' => '400ml',
+							'small' => '200ml',
+							'thumb' => '80x80',
 					),
-			],
+					'nameCallback' => 'nameCallback',
+					'fields' => [
+							//'dir' => 'path',
+							'type' => 'mimetype',
+							'size' => 'size'
+					],
+					// https://github.com/josegonzalez/cakephp-upload/issues/263
+					// 上記修正がUploadビヘイビアにとりこまれるまで false
+					'deleteFolderOnDelete' => false,
+			),
+		],
+		'Files.UploadFileValidate',
 	];
 
 /**
@@ -66,15 +67,27 @@ class UploadFile extends FilesAppModel {
 	];
 
 	public $validate = [
-		'size' => [
-			'rule' => 'validateSize'
-		]
+		//'size' => [
+		//	'rule' => 'validateSize'
+		//]
 	];
 
-	//public function beforeValidate($options = array()) {
-	//
-	//	return parent::beforeValidate($options);
-	//}
+/**
+ * beforeValidate
+ *
+ * @param array $options options
+ * @return bool
+ */
+	public function beforeValidate($options = array()) {
+		// 拡張子チェック
+		$uploadAllowExtension = $this->getAllowExtension();
+		$this->validate['real_file_name']['extension'] = [
+			'rule' => ['isValidExtension', $uploadAllowExtension, false],
+			'message' => __d('files', 'It is upload disabled file format')
+		];
+
+		return parent::beforeValidate($options);
+	}
 
 /**
  * ビヘイビア設定
@@ -226,7 +239,7 @@ class UploadFile extends FilesAppModel {
 		// plugin_key, content_key, field_nameが同じだったら
 		$this->create();
 		$this->begin();
-		$result = $this->save($data, ['callbacks' => false]);
+		$result = $this->save($data, ['callbacks' => false, 'validate' => false]);
 		if ($result === false) {
 			throw new InternalErrorException('Failed UploadFile::countUp()');
 		}
@@ -267,7 +280,7 @@ class UploadFile extends FilesAppModel {
 			'size' => $file->size(),
 		];
 		$data = Hash::merge($_tmpData, $data);
-		$data = $this->save($data); // あれ？普通にsaveするとUploadビヘイビアが動く？
+		$data = $this->save($data);
 		if ($data === false) {
 			throw new InternalErrorException('Failed UploadFile::registByFile()');
 		}
@@ -372,43 +385,41 @@ class UploadFile extends FilesAppModel {
  * @param array $check 検査対象フォームデータ
  * @return bool|string おさまっていれば true, おさまってなければエラーメッセージ
  */
-	public function validateSize($check) {
-		$roomId = Current::read('Room.id');
-
-		$maxRoomDiskSize = Current::read('Space.room_disk_size');
-		if ($maxRoomDiskSize === null) {
-			return true;
-		}
-
-		$size = $check['size'];
-		$roomTotalSize = $this->_getTotalSizeByRoomId($roomId);
-		if (($roomTotalSize + $size) < $maxRoomDiskSize) {
-			return true;
-		} else {
-			$roomsLanguage = ClassRegistry::init('Room.RoomsLanguage');
-			$data = $roomsLanguage->find(
-				'first',
-				[
-					'conditions' => [
-						'room_id' => $roomId,
-						'language_id' => Current::read('Language.id'),
-					]
-				]
-			);
-			$roomName = $data['RoomsLanguage']['name'];
-			// ファイルサイズをMBとかkb表示に
-			App::uses('NumberHelper', 'View/Helper');
-			$this->Number = new NumberHelper(new View());
-			$message = __d(
-				'files',
-				'Total file size uploaded to the %s, exceeded the limit. The limit is %s(%s left).',
-				$roomName,
-				$this->Number->toReadableSize($maxRoomDiskSize),
-				$this->Number->toReadableSize($maxRoomDiskSize - $roomTotalSize)
-			);
-			return $message;
-		}
-	}
+	//public function validateSize($check) {
+	//	$roomId = Current::read('Room.id');
+	//
+	//	$maxRoomDiskSize = Current::read('Space.room_disk_size');
+	//	if ($maxRoomDiskSize === null) {
+	//		return true;
+	//	}
+	//
+	//	$size = $check['size'];
+	//	$roomTotalSize = $this->getTotalSizeByRoomId($roomId);
+	//	if (($roomTotalSize + $size) < $maxRoomDiskSize) {
+	//		return true;
+	//	} else {
+	//		$roomsLanguage = ClassRegistry::init('Room.RoomsLanguage');
+	//		$data = $roomsLanguage->find(
+	//			'first',
+	//			[
+	//				'conditions' => [
+	//					'room_id' => $roomId,
+	//					'language_id' => Current::read('Language.id'),
+	//				]
+	//			]
+	//		);
+	//		$roomName = $data['RoomsLanguage']['name'];
+	//		// ファイルサイズをMBとかkb表示に
+	//		$message = __d(
+	//			'files',
+	//			'Total file size uploaded to the %s, exceeded the limit. The limit is %s(%s left).',
+	//			$roomName,
+	//			CakeNumber::toReadableSize($maxRoomDiskSize),
+	//			CakeNumber::toReadableSize($maxRoomDiskSize - $roomTotalSize)
+	//		);
+	//		return $message;
+	//	}
+	//}
 
 /**
  * ルームのファイルサイズ合計を返す
@@ -417,22 +428,23 @@ class UploadFile extends FilesAppModel {
  * @param int $roomId ルームID
  * @return int 合計ファイルサイズ（Byte)
  */
-	protected function _getTotalSizeByRoomId($roomId) {
-		//$roomId = Current::read('Room.id');
-		// 単純sumじゃだめ。重複は排除しないといけないのでSQL直書き
-		$query = <<< EOF
-		SELECT sum(size) AS total_size FROM
-			(
-				SELECT DISTINCT `UploadFile`.`id`, `UploadFile`.`size` 
-				FROM `upload_files_contents` AS `UploadFilesContent`
-				LEFT JOIN `upload_files` AS `UploadFile` ON (`UploadFilesContent`.`upload_file_id` = `UploadFile`.`id`) 
-				WHERE ((`UploadFilesContent`.`content_is_active` IN (1, NULL)) OR (`UploadFilesContent`.`content_is_latest` IN (1, NULL))) AND `UploadFile`.`room_id` = {$roomId} 
-				GROUP BY `UploadFile`.`id`
-			) AS UploadFileSize;
-EOF;
-		$result = $this->query($query);
-		$total = $result[0][0]['total_size'];
-		$total = (is_null($total)) ? 0 : $total;
-		return $total;
-	}
+//	public function getTotalSizeByRoomId($roomId) {
+//		//$roomId = Current::read('Room.id');
+//		// 単純sumじゃだめ。重複は排除しないといけないのでSQL直書き
+//		$query = <<< EOF
+//		SELECT sum(size) AS total_size FROM
+//			(
+//				SELECT DISTINCT `UploadFile`.`id`, `UploadFile`.`size`
+//				FROM `upload_files_contents` AS `UploadFilesContent`
+//				LEFT JOIN `upload_files` AS `UploadFile` ON (`UploadFilesContent`.`upload_file_id` = `UploadFile`.`id`)
+//				WHERE ((`UploadFilesContent`.`content_is_active` IN (1, NULL)) OR (`UploadFilesContent`.`content_is_latest` IN (1, NULL))) AND `UploadFile`.`room_id` = {$roomId}
+//				GROUP BY `UploadFile`.`id`
+//			) AS UploadFileSize;
+//EOF;
+//		$result = $this->query($query);
+//		$total = $result[0][0]['total_size'];
+//		$total = (is_null($total)) ? 0 : $total;
+//		return $total;
+//	}
+
 }
