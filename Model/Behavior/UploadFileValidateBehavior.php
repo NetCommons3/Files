@@ -51,8 +51,13 @@ class UploadFileValidateBehavior extends ModelBehavior {
 			(
 				SELECT DISTINCT `UploadFile`.`id`, `UploadFile`.`size`
 				FROM `%s` AS `UploadFilesContent`
-				LEFT JOIN `%s` AS `UploadFile` ON (`UploadFilesContent`.`upload_file_id` = `UploadFile`.`id`)
-				WHERE ((`UploadFilesContent`.`content_is_active` IN (1, NULL)) OR (`UploadFilesContent`.`content_is_latest` IN (1, NULL))) AND `UploadFile`.`room_id` = ?
+				LEFT JOIN `%s` AS `UploadFile` 
+					ON (`UploadFilesContent`.`upload_file_id` = `UploadFile`.`id`)
+				WHERE (
+					(`UploadFilesContent`.`content_is_active` IN (1, NULL)) 
+					OR 
+					(`UploadFilesContent`.`content_is_latest` IN (1, NULL)) 
+					) AND `UploadFile`.`room_id` = ?
 				GROUP BY `UploadFile`.`id`
 			) AS UploadFileSize;
 EOF;
