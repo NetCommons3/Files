@@ -52,11 +52,12 @@ class AttachmentBehavior extends ModelBehavior {
 			throw new CakeException($error);
 		}
 
+		$this->UploadFile = ClassRegistry::init('Files.UploadFile');
+
 		foreach ($config as $filed => $options) {
 			$this->uploadSettings($model, $filed, $options);
 		}
 
-		$this->UploadFile = ClassRegistry::init('Files.UploadFile');
 		$this->UploadFilesContent = ClassRegistry::init('Files.UploadFilesContent');
 
 		$model->Behaviors->load('Files.UploadFileValidate');
