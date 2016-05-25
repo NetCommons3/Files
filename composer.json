@@ -12,7 +12,7 @@
         "josegonzalez/cakephp-upload":  "2.x@dev",
         "netcommons/authorization-keys": "dev-master",
         "netcommons/blocks":            "dev-master",
-        "netcommons/net-commons":       "dev-master"
+        "netcommons/net-commons":       "dev-master",
         "netcommons/site-manager":       "dev-master"
     },
     "license": "NetCommons License",
