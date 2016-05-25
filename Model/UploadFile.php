@@ -32,26 +32,27 @@ class UploadFile extends FilesAppModel {
  * @var array
  */
 	public $actsAs = [
-				'Upload.Upload' => [
-					'real_file_name' => array(
-							'thumbnailSizes' => array(
-								// NC2 800 , 640, 480だった
-									'big' => '800ml',
-									'medium' => '400ml',
-									'small' => '200ml',
-									'thumb' => '80x80',
-							),
-							'nameCallback' => 'nameCallback',
-							'fields' => [
-									//'dir' => 'path',
-									'type' => 'mimetype',
-									'size' => 'size'
-							],
-							// https://github.com/josegonzalez/cakephp-upload/issues/263
-							// 上記修正がUploadビヘイビアにとりこまれるまで false
-							'deleteFolderOnDelete' => false,
+		'Upload.Upload' => [
+			'real_file_name' => array(
+					'thumbnailSizes' => array(
+						// NC2 800 , 640, 480だった
+							'big' => '800ml',
+							'medium' => '400ml',
+							'small' => '200ml',
+							'thumb' => '80x80',
 					),
-			],
+					'nameCallback' => 'nameCallback',
+					'fields' => [
+							//'dir' => 'path',
+							'type' => 'mimetype',
+							'size' => 'size'
+					],
+					// https://github.com/josegonzalez/cakephp-upload/issues/263
+					// 上記修正がUploadビヘイビアにとりこまれるまで false
+					'deleteFolderOnDelete' => false,
+			),
+		],
+		'Files.UploadFileValidate',
 	];
 
 /**
@@ -64,6 +65,24 @@ class UploadFile extends FilesAppModel {
 					'className' => 'Files.UploadFilesContent',
 			),
 	];
+
+/**
+ * beforeValidate
+ *
+ * @param array $options options
+ * @return bool
+ */
+	public function beforeValidate($options = array()) {
+		// 拡張子チェック
+		$uploadAllowExtension = $this->getAllowExtension();
+		$this->validate['real_file_name']['extension'] = [
+			'rule' => ['isValidExtension', $uploadAllowExtension, false],
+			'message' => __d('files', 'It is upload disabled file format')
+		];
+		$this->validate['real_file_name']['size'] = 'validateRoomFileSizeLimit';
+
+		return parent::beforeValidate($options);
+	}
 
 /**
  * ビヘイビア設定
@@ -215,7 +234,7 @@ class UploadFile extends FilesAppModel {
 		// plugin_key, content_key, field_nameが同じだったら
 		$this->create();
 		$this->begin();
-		$result = $this->save($data, ['callbacks' => false]);
+		$result = $this->save($data, ['callbacks' => false, 'validate' => false]);
 		if ($result === false) {
 			throw new InternalErrorException('Failed UploadFile::countUp()');
 		}
@@ -226,7 +245,7 @@ class UploadFile extends FilesAppModel {
 /**
  * FileインスタンスのファイルをUplodFileに登録する
  *
- * @param File $file 登録するファイルのFileインスタンス
+ * @param File|string $file 登録するファイルのFileインスタンス OR ファイルパス
  * @param string $pluginKey プラグインキー
  * @param string $contentKey コンテンツキー
  * @param string $fieldName フィールド名
@@ -235,6 +254,10 @@ class UploadFile extends FilesAppModel {
  * @throws InternalErrorException
  */
 	public function registByFile(File $file, $pluginKey, $contentKey, $fieldName, $data = array()) {
+		if (is_string($file)) {
+			$file = new File($file);
+		}
+
 		// データの登録
 		$_tmpData = $this->create();
 		// $dataにアサイン
@@ -252,30 +275,12 @@ class UploadFile extends FilesAppModel {
 			'size' => $file->size(),
 		];
 		$data = Hash::merge($_tmpData, $data);
-		$data = $this->save($data); // あれ？普通にsaveするとUploadビヘイビアが動く？
+		$data = $this->save($data);
 		if ($data === false) {
 			throw new InternalErrorException('Failed UploadFile::registByFile()');
 		}
 
 		return $data;
-	}
-
-/**
- * 指定されたパスのファイルをUploadFileに登録する
- *
- * このメソッドではコンテンツとの関連テーブルに関連レコードは挿入されないことに注意
- * コンテンツと関連づけたい場合はAttachmentBehavior::attachFile()推奨
- *
- * @param string $filePath 登録するファイルのファイルパス
- * @param string $pluginKey プラグインキー
- * @param string $contentKey コンテンツキー
- * @param string $fieldName フィールド名
- * @param array $data データ登録時に上書きしたいデータを渡す
- * @return array 登録されたUploadFileレコード
- */
-	public function registByFilePath($filePath, $pluginKey, $contentKey, $fieldName, $data = array()) {
-		$file = new File($filePath);
-		return $this->registByFile($file, $pluginKey, $contentKey, $fieldName, $data);
 	}
 
 /**
@@ -368,4 +373,46 @@ class UploadFile extends FilesAppModel {
 		// 関連テーブル登録
 		$this->makeLink($pluginKey, $contentId, $uploadFile['UploadFile']['id']);
 	}
+
+/**
+ * ルームのファイルサイズ制限に収まるかのチェック
+ *
+ * @param array $check 検査対象フォームデータ
+ * @return bool|string おさまっていれば true, おさまってなければエラーメッセージ
+ */
+	//public function validateSize($check) {
+	//	$roomId = Current::read('Room.id');
+	//
+	//	$maxRoomDiskSize = Current::read('Space.room_disk_size');
+	//	if ($maxRoomDiskSize === null) {
+	//		return true;
+	//	}
+	//
+	//	//$size = $check['real_file_name']['size'];
+	//	$roomTotalSize = $this->getTotalSizeByRoomId($roomId);
+	//	if (($roomTotalSize + $size) < $maxRoomDiskSize) {
+	//		return true;
+	//	} else {
+	//		$roomsLanguage = ClassRegistry::init('Room.RoomsLanguage');
+	//		$data = $roomsLanguage->find(
+	//			'first',
+	//			[
+	//				'conditions' => [
+	//					'room_id' => $roomId,
+	//					'language_id' => Current::read('Language.id'),
+	//				]
+	//			]
+	//		);
+	//		$roomName = $data['RoomsLanguage']['name'];
+	//		// ファイルサイズをMBとかkb表示に
+	//		$message = __d(
+	//			'files',
+	//			'Total file size uploaded to the %s, exceeded the limit. The limit is %s(%s left).',
+	//			$roomName,
+	//			CakeNumber::toReadableSize($maxRoomDiskSize),
+	//			CakeNumber::toReadableSize($maxRoomDiskSize - $roomTotalSize)
+	//		);
+	//		return $message;
+	//	}
+	//}
 }

@@ -27,6 +27,7 @@ class UploadFileAttachTest extends NetCommonsModelTestCase {
 	public $fixtures = array(
 		'plugin.files.upload_file',
 		'plugin.files.upload_files_content',
+		'plugin.site_manager.site_setting',
 	);
 
 /**
