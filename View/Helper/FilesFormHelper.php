@@ -114,9 +114,11 @@ class FilesFormHelper extends AppHelper {
 			if ($remove) {
 				$output .= $this->NetCommonsForm->checkbox(
 						$inputFieldName . '.remove',
-						['type' => 'checkbox', 'div' => false, 'error' => false]
+						[
+							'type' => 'checkbox', 'div' => false, 'error' => false,
+							'label' => __d('net_commons', 'Delete'), 'inline' => true
+						]
 				);
-				$output .= $this->Form->label($inputFieldName . '.remove', __d('net_commons', 'Delete'));
 			}
 		}
 		$output .= '</div>';
