@@ -102,7 +102,7 @@ class ZipDownloader {
 		} else {
 			// パスワード無しZIP
 			// ZipArchiverを使う
-			// TODO OSにあわせてファイル名、フォルダ名の文字コード変換をする
+			// OSにあわせてファイル名、フォルダ名の文字コード変換をする
 			setlocale(LC_ALL, 'ja_JP.UTF-8');
 			$zip = new ZipArchive();
 			$zip->open($this->path, ZipArchive::CREATE);
