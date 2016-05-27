@@ -102,8 +102,6 @@ class ZipDownloader {
 		} else {
 			// パスワード無しZIP
 			// ZipArchiverを使う
-			// OSにあわせてファイル名、フォルダ名の文字コード変換をする
-			setlocale(LC_ALL, 'ja_JP.UTF-8');
 			$zip = new ZipArchive();
 			$zip->open($this->path, ZipArchive::CREATE);
 			chdir($this->_tmpFolder->path);
@@ -112,15 +110,12 @@ class ZipDownloader {
 			foreach ($folders as $folder) {
 				if ($folder !== $this->_tmpFolder->path) {
 					$relativePath = str_replace($this->_tmpFolder->path . DS, '', $folder);
-					//$zip->addEmptyDir($relativePath);
-					$zip->addEmptyDir(mb_convert_encoding($relativePath,
-						$this->_clientOsEncoding, 'UTF-8'));
+					$zip->addEmptyDir($this->_convertFilename($relativePath));
 				}
 			}
 			foreach ($files as $file) {
 				$relativePath = str_replace($this->_tmpFolder->path . DS, '', $file);
-				$zip->addFile($relativePath, mb_convert_encoding($relativePath,
-					$this->_clientOsEncoding, 'UTF-8'));
+				$zip->addFile($relativePath, $this->_convertFilename($relativePath));
 			}
 			$zip->close();
 			copy($this->path, TMP . time() . '.zip');
@@ -207,5 +202,23 @@ class ZipDownloader {
 		$response->type('application/zip');
 		$response->file($this->path, ['name' => $filename, 'download' => 'true']);
 		return $response;
+	}
+
+/**
+ * OSのファイルシステムにあわせて文字コード変換を行う
+ *
+ * @param string $name ファイル名
+ * @return string
+ */
+	protected function _convertFilename($name) {
+		// Mac上でNC3をつかってるケースの対策
+		// Macファイルシステムでは濁点文字が2つの文字になるNFDなのをNFCに変換する
+		if (class_exists('Normalizer')) {
+			if (Normalizer::isNormalized($name, Normalizer::FORM_D)) {
+				$name = Normalizer::normalize($name, Normalizer::FORM_C);
+			}
+		}
+		$name = mb_convert_encoding($name, $this->_clientOsEncoding, 'auto');
+		return $name;
 	}
 }
