@@ -44,11 +44,26 @@ class ZipDownloader {
 	protected $_zipCommand = 'zip';
 
 /**
+ * @var string クライアントOSの文字コード
+ */
+	protected $_clientOsEncoding;
+
+/**
  * ZipDownloader constructor.
  */
 	public function __construct() {
 		$this->_tmpFolder = new TemporaryFolder();
 		$this->_open = true;
+
+		if (stristr($_SERVER['HTTP_USER_AGENT'], 'Mac')) {
+			// Macの場合
+			$this->_clientOsEncoding = 'UTF-8';
+		} elseif (stristr($_SERVER['HTTP_USER_AGENT'], 'Windows')) {
+			// Windowsの場合
+			$this->_clientOsEncoding = 'SJIS-win';
+		} else {
+			$this->_clientOsEncoding = Configure::read('App.encoding');
+		}
 	}
 
 /**
@@ -87,6 +102,8 @@ class ZipDownloader {
 		} else {
 			// パスワード無しZIP
 			// ZipArchiverを使う
+			// TODO OSにあわせてファイル名、フォルダ名の文字コード変換をする
+			setlocale(LC_ALL, 'ja_JP.UTF-8');
 			$zip = new ZipArchive();
 			$zip->open($this->path, ZipArchive::CREATE);
 			chdir($this->_tmpFolder->path);
@@ -95,12 +112,15 @@ class ZipDownloader {
 			foreach ($folders as $folder) {
 				if ($folder !== $this->_tmpFolder->path) {
 					$relativePath = str_replace($this->_tmpFolder->path . DS, '', $folder);
-					$zip->addEmptyDir($relativePath);
+					//$zip->addEmptyDir($relativePath);
+					$zip->addEmptyDir(mb_convert_encoding($relativePath,
+						$this->_clientOsEncoding, 'UTF-8'));
 				}
 			}
 			foreach ($files as $file) {
 				$relativePath = str_replace($this->_tmpFolder->path . DS, '', $file);
-				$zip->addFile($relativePath);
+				$zip->addFile($relativePath, mb_convert_encoding($relativePath,
+					$this->_clientOsEncoding, 'UTF-8'));
 			}
 			$zip->close();
 			copy($this->path, TMP . time() . '.zip');
