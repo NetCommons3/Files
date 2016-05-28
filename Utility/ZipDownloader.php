@@ -55,10 +55,11 @@ class ZipDownloader {
 		$this->_tmpFolder = new TemporaryFolder();
 		$this->_open = true;
 
-		if (stristr($_SERVER['HTTP_USER_AGENT'], 'Mac')) {
+		$userAgent = Hash::get($_SERVER, 'HTTP_USER_AGENT');
+		if (stristr($userAgent, 'Mac')) {
 			// Macの場合
 			$this->_clientOsEncoding = 'UTF-8';
-		} elseif (stristr($_SERVER['HTTP_USER_AGENT'], 'Windows')) {
+		} elseif (stristr($userAgent, 'Windows')) {
 			// Windowsの場合
 			$this->_clientOsEncoding = 'SJIS-win';
 		} else {
