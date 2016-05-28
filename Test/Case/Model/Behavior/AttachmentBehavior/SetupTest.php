@@ -26,6 +26,7 @@ class AttachmentBehaviorSetupTest extends NetCommonsModelTestCase {
  */
 	public $fixtures = array(
 		'plugin.files.test_attachment_behavior_save_model',
+		'plugin.site_manager.site_setting',
 	);
 
 /**
