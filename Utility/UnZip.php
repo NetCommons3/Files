@@ -78,25 +78,69 @@ class UnZip {
  */
 	protected function _extractTo($path) {
 		if (version_compare(PHP_VERSION, '5.6.0', '<') && $this->_password) {
-			// コマンドで解凍
-			$cmd = sprintf('unzip -P %s %s -d %s', ($this->_password), $this->_zipPath, $path);
-			exec($cmd, $output, $returnVar);
-			if ($returnVar > 0) {
-				// エラー
-				CakeLog::warning('Unzip Error:output=' . json_encode($output) . ', return_var=' . $returnVar);
-				return false;
-			}
-			return true;
+			return $this->_extractWithZipCommand($path);
+
 		} else {
-			$zip = new ZipArchive();
-			$result = $zip->open($this->_zipPath);
-			if ($result !== true) {
+			return $this->_extractWithZipArchiveClass($path);
+
+		}
+	}
+
+/**
+ * ZIPコマンドを使った解凍
+ *
+ * @param string $path zipファイルパス
+ * @return bool
+ */
+	protected function _extractWithZipCommand($path) {
+		// コマンドで解凍
+		$cmd = sprintf('unzip -P %s %s -d %s', ($this->_password), $this->_zipPath, $path);
+		exec($cmd, $output, $returnVar);
+		if ($returnVar > 0) {
+			// エラー
+			CakeLog::warning(
+				'Unzip Error:output=' . json_encode($output) . ', return_var=' . $returnVar
+			);
+			return false;
+		}
+		return true;
+	}
+
+/**
+ * ZipArchiveクラスを利用した解凍
+ *
+ * @param string $path Zipファイルパス
+ * @return bool
+ */
+	protected function _extractWithZipArchiveClass($path) {
+		$encodeCharset = "UTF-8"; // server os のファイルシステム文字コード
+		mb_language('Japanese');
+		setlocale(LC_ALL, 'ja_JP.UTF-8'); // スレッドセーフじゃないので直前で
+
+		$zip = new ZipArchive();
+		$result = $zip->open($this->_zipPath);
+		if ($result !== true) {
+			return false;
+		}
+		if ($this->_password) {
+			$zip->setPassword($this->_password);
+		}
+		$index = 0;
+		while ($zipEntry = $zip->statIndex($index)) {
+			$zipEntryName = $zipEntry['name'];
+			$destName = mb_convert_encoding($zipEntry['name'], $encodeCharset, 'auto');
+			if ($zip->renameName($zipEntryName, $destName) === false) {
 				return false;
 			}
-			if ($this->_password) {
-				$zip->setPassword($this->_password);
+			if ($zip->extractTo($path, $destName) === false) {
+				return false;
 			}
-			return $zip->extractTo($path);
+			if ($zip->renameName($destName, $zipEntryName) === false) {
+				return false;
+			}
+			$index++;
 		}
+		$zip->close();
+		return true;
 	}
 }
