@@ -63,7 +63,7 @@ class DownloadComponent extends Component {
  * @throws ForbiddenException
  */
 	public function doDownloadByUploadFileId($uploadFileId, $options = array()) {
-		$fieldName = $this->_controller->params['pass'][2];
+		$fieldName = Hash::get($this->_controller->params['pass'], 2, null);
 		$size = Hash::get($this->_controller->params['pass'], 3, null);
 
 		$fieldName = Hash::get($options, 'field', $fieldName);
