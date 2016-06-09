@@ -270,6 +270,46 @@ class UploadFileFixture extends CakeTestFixture {
 			'modified_user' => 1,
 			'modified' => '2016-02-25 03:44:14'
 		),
+		array( // wysiwyg
+			'id' => 12,
+			'plugin_key' => 'wysiwyg',
+			'content_key' => null,
+			'field_name' => 'Wysiwyg.file',
+			'original_name' => 'michel2.gif',
+			'path' => 'files/upload_file/test/',
+			'real_file_name' => 'michel2.gif',
+			'extension' => 'gif',
+			'mimetype' => 'image/gif',
+			'size' => 21229,
+			'download_count' => 12,
+			'total_download_count' => 12,
+			'room_id' => 1,
+			'block_key' => 'block_1',
+			'created_user' => 1,
+			'created' => '2016-02-25 03:44:14',
+			'modified_user' => 1,
+			'modified' => '2016-02-25 03:44:14'
+		),
+		array( // wysiwyg
+			'id' => 13,
+			'plugin_key' => 'wysiwyg',
+			'content_key' => null,
+			'field_name' => 'Wysiwyg.file',
+			'original_name' => 'michel2.gif',
+			'path' => 'files/upload_file/test/',
+			'real_file_name' => 'michel2.gif',
+			'extension' => 'gif',
+			'mimetype' => 'image/gif',
+			'size' => 21229,
+			'download_count' => 13,
+			'total_download_count' => 13,
+			'room_id' => 1,
+			'block_key' => 'block_100',
+			'created_user' => 1,
+			'created' => '2016-02-25 03:44:14',
+			'modified_user' => 1,
+			'modified' => '2016-02-25 03:44:14'
+		),
 	);
 
 }
