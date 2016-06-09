@@ -7,6 +7,7 @@
  * @license http://www.netcommons.org/license.txt NetCommons License
  */
 
+App::uses('SiteSettingUtil', 'SiteManager.Utility');
 /**
  * Class UploadFileValidateBehavior
  */
