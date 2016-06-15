@@ -9,6 +9,7 @@
 
 App::uses('File', 'Utility');
 App::uses('TemporaryFolder', 'Files.Utility');
+App::uses('Security', 'Utility');
 
 /**
  * Class TemporaryFile
