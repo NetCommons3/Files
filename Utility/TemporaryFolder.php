@@ -7,6 +7,7 @@
  */
 
 App::uses('Folder', 'Utility');
+App::uses('Security', 'Utility');
 
 /**
  * Class TemporaryFolder
