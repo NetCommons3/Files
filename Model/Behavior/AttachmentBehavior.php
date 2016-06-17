@@ -96,15 +96,15 @@ class AttachmentBehavior extends ModelBehavior {
 	}
 
 /**
- * Before save method. Called before all saves
+ * afterSave
  *
- * Handles setup of file uploads
- *
- * @param Model $model Model instance
- * @param array $options Options passed from Model::save().
- * @return bool
+ * @param Model $model モデル
+ * @param bool $created 新規作成
+ * @param array $options オプション
+ * @throws Exception
+ * @return void
  */
-	public function beforeSave(Model $model, $options = array()) {
+	public function afterSave(Model $model, $created, $options = array()) {
 		foreach ($this->_settings[$model->alias]['fileFields'] as $fieldName => $filedOptions) {
 
 			if (isset($model->data[$model->alias][$fieldName])) {
@@ -128,48 +128,36 @@ class AttachmentBehavior extends ModelBehavior {
 			}
 		}
 
-		return true;
-	}
-
-/**
- * afterSave
- *
- * @param Model $model モデル
- * @param bool $created 新規作成
- * @param array $options オプション
- * @throws Exception
- * @return void
- */
-	public function afterSave(Model $model, $created, $options = array()) {
 		// アップロードがなかったら以前のデータを挿入する
 		// formからhiddenで UploadFile.field_name.id 形式でデータが渡ってくる
 		// $data['UploadFile']にはモデルデータ編集時に添付されてるファイルについてのデータが入っている
-		if (isset($model->data['UploadFile'])) {
-			foreach ($model->data['UploadFile'] as $uploadFile) {
-				// 同じfield_nameでアップロードされてるなら以前のファイルへの関連レコードを新規に追加する必要は無い（過去の関連レコードはそのまま）
-				if (isset($this->_uploadedFiles[$uploadFile['field_name']])) {
-					// 新たにアップロードされてる
-					// 履歴のないモデル（is_latest, is_activeカラムがない）だったら、以前のファイルを削除する
-					// 履歴のないモデルか？
-					if (!$model->hasField('is_latest')) {
-						// 履歴をもたないモデルなら以前のファイルを削除
-						$this->UploadFile->removeFile($model->id, $uploadFile['id']);
-					}
-				} else {
-					// 同じfield_nameでアップロードされてなければ以前のファイルへの関連レコードを入れる
 
-					$removePath = $model->alias . '.' . $uploadFile['field_name'] . '.remove';
-					if (Hash::get($model->data, $removePath, false)) {
-						// ファイル削除にチェックが入ってるのでリンクしない
-						// 今のコンテンツIDで関連テーブルのレコードがあったら、ユーザモデルのように履歴のないモデルなのでそのときは関連テーブルを消す必要があるのでremoveFileは呼んでおく。
-						$this->UploadFile->removeFile($model->id, $uploadFile['id']);
-					} else {
-						$uploadFileId = $uploadFile['id'];
-						$this->_saveUploadFilesContent($model, $uploadFileId);
-					}
+		$uploadFiles = Hash::get($model->data, 'UploadFile', array());
+		foreach ($uploadFiles as $uploadFile) {
+			// 同じfield_nameでアップロードされてるなら以前のファイルへの関連レコードを新規に追加する必要は無い（過去の関連レコードはそのまま）
+			if (isset($this->_uploadedFiles[$uploadFile['field_name']])) {
+				// 新たにアップロードされてる
+				// 履歴のないモデル（is_latest, is_activeカラムがない）だったら、以前のファイルを削除する
+				// 履歴のないモデルか？
+				if (!$model->hasField('is_latest')) {
+					// 履歴をもたないモデルなら以前のファイルを削除
+					$this->UploadFile->removeFile($model->id, $uploadFile['id']);
+				}
+			} else {
+				// 同じfield_nameでアップロードされてなければ以前のファイルへの関連レコードを入れる
+
+				$removePath = $model->alias . '.' . $uploadFile['field_name'] . '.remove';
+				if (Hash::get($model->data, $removePath, false)) {
+					// ファイル削除にチェックが入ってるのでリンクしない
+					// 今のコンテンツIDで関連テーブルのレコードがあったら、ユーザモデルのように履歴のないモデルなのでそのときは関連テーブルを消す必要があるのでremoveFileは呼んでおく。
+					$this->UploadFile->removeFile($model->id, $uploadFile['id']);
+				} else {
+					$uploadFileId = $uploadFile['id'];
+					$this->_saveUploadFilesContent($model, $uploadFileId);
 				}
 			}
 		}
+
 		// 関連テーブルの挿入
 		foreach ($this->_uploadedFiles as $uploadedFile) {
 			$uploadFileId = $uploadedFile['UploadFile']['id'];
