@@ -97,7 +97,7 @@ class FilesFormHelper extends AppHelper {
 		$filename = Hash::get($options, 'filename');
 		$options = Hash::remove($options, 'filename');
 
-		$help = $help = Hash::get($options, 'help', false);
+		$help = Hash::get($options, 'help', false);
 		$options = Hash::remove($options, 'help');
 
 		$output .= $this->NetCommonsForm->input($inputFieldName, $options);
