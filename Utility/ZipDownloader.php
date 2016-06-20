@@ -119,7 +119,6 @@ class ZipDownloader {
 				$zip->addFile($relativePath, $this->_convertFilename($relativePath));
 			}
 			$zip->close();
-			copy($this->path, TMP . time() . '.zip');
 		}
 
 		$this->_open = false;
