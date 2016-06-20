@@ -276,8 +276,7 @@ class AttachmentBehavior extends ModelBehavior {
  * @param string $fieldName フィールド名
  * @return string ファイルパス
  */
-	public function getRealFilePath(Model $model, $uploadFileData, $fieldName)
-	{
+	public function getRealFilePath(Model $model, $uploadFileData, $fieldName) {
 		$data = array();
 		$data['UploadFile'] = $uploadFileData['UploadFile'][$fieldName];
 		return $this->UploadFile->getRealFilePath($data);
