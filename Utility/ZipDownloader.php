@@ -140,7 +140,7 @@ class ZipDownloader {
 			$localName = NetCommonsFile::basename($filePath);
 		}
 		$destPath = $this->_tmpFolder->path . DS . $localName;
-		$result = copy($filePath, $destPath);
+		$result = copy($filePath, $this->_convertFilename($destPath));
 		if (!$result) {
 			// 失敗
 			throw new InternalErrorException('NetCommonsZip File IO Error');
