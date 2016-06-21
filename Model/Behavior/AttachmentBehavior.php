@@ -269,6 +269,20 @@ class AttachmentBehavior extends ModelBehavior {
 	}
 
 /**
+ * Attachmentビヘイビアで添付されたファイルのパスを返す
+ *
+ * @param Model $model Model
+ * @param array $uploadFileData UploadFile Data Attachmentビヘイビアで取得される形式
+ * @param string $fieldName フィールド名
+ * @return string ファイルパス
+ */
+	public function getRealFilePath(Model $model, $uploadFileData, $fieldName) {
+		$data = array();
+		$data['UploadFile'] = $uploadFileData['UploadFile'][$fieldName];
+		return $this->UploadFile->getRealFilePath($data);
+	}
+
+/**
  * コンテンツとアップロードファイルの関連テーブルを保存
  *
  * @param Model $model モデル

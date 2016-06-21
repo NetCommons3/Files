@@ -375,44 +375,16 @@ class UploadFile extends FilesAppModel {
 	}
 
 /**
- * ルームのファイルサイズ制限に収まるかのチェック
+ * UploadFileに登録済みの実ファイルのパスを返す
  *
- * @param array $check 検査対象フォームデータ
- * @return bool|string おさまっていれば true, おさまってなければエラーメッセージ
+ * @param array $uploadFileData UploadFile
+ * @return string 実ファイルパス
  */
-	//public function validateSize($check) {
-	//	$roomId = Current::read('Room.id');
-	//
-	//	$maxRoomDiskSize = Current::read('Space.room_disk_size');
-	//	if ($maxRoomDiskSize === null) {
-	//		return true;
-	//	}
-	//
-	//	//$size = $check['real_file_name']['size'];
-	//	$roomTotalSize = $this->getTotalSizeByRoomId($roomId);
-	//	if (($roomTotalSize + $size) < $maxRoomDiskSize) {
-	//		return true;
-	//	} else {
-	//		$roomsLanguage = ClassRegistry::init('Room.RoomsLanguage');
-	//		$data = $roomsLanguage->find(
-	//			'first',
-	//			[
-	//				'conditions' => [
-	//					'room_id' => $roomId,
-	//					'language_id' => Current::read('Language.id'),
-	//				]
-	//			]
-	//		);
-	//		$roomName = $data['RoomsLanguage']['name'];
-	//		// ファイルサイズをMBとかkb表示に
-	//		$message = __d(
-	//			'files',
-	//			'Total file size uploaded to the %s, exceeded the limit. The limit is %s(%s left).',
-	//			$roomName,
-	//			CakeNumber::toReadableSize($maxRoomDiskSize),
-	//			CakeNumber::toReadableSize($maxRoomDiskSize - $roomTotalSize)
-	//		);
-	//		return $message;
-	//	}
-	//}
+	public function getRealFilePath($uploadFileData) {
+		$filePath = $this->uploadBasePath .
+			$uploadFileData['UploadFile']['path'] .
+			$uploadFileData['UploadFile']['id'] .
+			DS . $uploadFileData['UploadFile']['real_file_name'];
+		return $filePath;
+	}
 }
