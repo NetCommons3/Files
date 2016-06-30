@@ -10,9 +10,6 @@
 /**
  * Class AttachmentBehavior
  *
- * Uploadビヘイビアのバリデータをwrapするためにphpmd制限を外してる
- * SuppressWarnings(PHPMD.TooManyPublicMethods)
- * SuppressWarnings(PHPMD.TooManyMethods)
  */
 class AttachmentBehavior extends ModelBehavior {
 
@@ -95,6 +92,33 @@ class AttachmentBehavior extends ModelBehavior {
 		return $results;
 	}
 
+/**
+ * beforeSave
+ * 元モデルのデータに返す値をセットする
+ *
+ * @param Model $model Model
+ * @param array $options Options
+ * @return mixed
+ */
+	public function beforeSave(Model $model, $options = array()) {
+		foreach ($this->_settings[$model->alias]['fileFields'] as $fieldName => $filedOptions) {
+
+			if (isset($model->data[$model->alias][$fieldName])) {
+				$fileData = $model->data[$model->alias][$fieldName];
+				if ($fileData['name']) {
+					// 元データにファイル名フィールドが定義されてたら埋める
+					$fileNameFieldName = Hash::get($filedOptions, 'fileNameFieldName');
+					if ($fileNameFieldName) {
+						$model->data[$model->alias][$fileNameFieldName] =
+							$fileData['name'];
+					}
+					//if ($model->hasField(''))
+					// ε(　　　　 v ﾟωﾟ)　＜ サイズフィールドをうめる
+				}
+			}
+		}
+		return parent::beforeSave($model);
+	}
 /**
  * afterSave
  *
