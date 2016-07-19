@@ -38,8 +38,16 @@ class DownloadComponent extends Component {
  * @throws ForbiddenException
  */
 	public function doDownload($contentId, $options = array()) {
-		$fieldName = $this->_controller->params['pass'][2];
-		$size = Hash::get($this->_controller->params['pass'], 3, null);
+		$fieldName = Hash::get(
+			$this->_controller->request->params,
+			'field_name',
+			Hash::get($this->_controller->params['pass'], 0, null)
+		);
+		$size = Hash::get(
+			$this->_controller->request->params,
+			'size',
+			Hash::get($this->_controller->params['pass'], 1, null)
+		);
 
 		$fieldName = Hash::get($options, 'field', $fieldName);
 		unset($options['field']);
@@ -63,11 +71,12 @@ class DownloadComponent extends Component {
  * @throws ForbiddenException
  */
 	public function doDownloadByUploadFileId($uploadFileId, $options = array()) {
-		$fieldName = Hash::get($this->_controller->params['pass'], 2, null);
-		$size = Hash::get($this->_controller->params['pass'], 3, null);
+		$size = Hash::get(
+			$this->_controller->request->params,
+			'size',
+			Hash::get($this->_controller->params['pass'], 1, null)
+		);
 
-		$fieldName = Hash::get($options, 'field', $fieldName);
-		unset($options['field']);
 		$size = Hash::get($options, 'size', $size);
 		unset($options['size']);
 

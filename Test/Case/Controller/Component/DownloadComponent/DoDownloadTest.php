@@ -75,9 +75,9 @@ class DownloadComponentDoDownloadTest extends NetCommonsControllerTestCase {
 		));
 
 		$pass = [
-			null,
-			null,
-			'photo', //params['pass'][2]
+			//null,
+			//null,
+			'photo', //params['pass'][0]
 		];
 
 		Current::$current['Room']['id'] = 1;
@@ -125,9 +125,9 @@ class DownloadComponentDoDownloadTest extends NetCommonsControllerTestCase {
 		));
 
 		$pass = [
-			null,
-			null,
-			'photo', //params['pass'][2]
+			//null,
+			//null,
+			'photo', //params['pass'][0]
 		];
 
 		Current::$current['Room']['id'] = 1;
@@ -175,9 +175,9 @@ class DownloadComponentDoDownloadTest extends NetCommonsControllerTestCase {
 		));
 
 		$pass = [
-			null,
-			null,
-			'photo', //params['pass'][2]
+			//null,
+			//null,
+			'photo', //params['pass'][0]
 		];
 
 		Current::$current['Room']['id'] = 2; // 別ルーム
@@ -211,9 +211,9 @@ class DownloadComponentDoDownloadTest extends NetCommonsControllerTestCase {
 		));
 
 		$pass = [
-			null,
-			null,
-			'photo', //params['pass'][2]
+			//null,
+			//null,
+			'photo', //params['pass'][0]
 		];
 
 		Current::$current['Room']['id'] = 1;
@@ -253,9 +253,9 @@ class DownloadComponentDoDownloadTest extends NetCommonsControllerTestCase {
 		));
 
 		$pass = [
-			null,
-			null,
-			'photo', //params['pass'][2]
+			//null,
+			//null,
+			'photo', //params['pass'][0]
 		];
 
 		Current::$current['Room']['id'] = 1;
@@ -290,9 +290,9 @@ class DownloadComponentDoDownloadTest extends NetCommonsControllerTestCase {
 		));
 
 		$pass = [
-			null,
-			null,
-			'photo', //params['pass'][2]
+			//null,
+			//null,
+			'photo', //params['pass'][0]
 		];
 
 		Current::$current['Room']['id'] = 1;
