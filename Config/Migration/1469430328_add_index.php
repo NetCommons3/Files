@@ -23,11 +23,19 @@ class AddIndex extends CakeMigration {
 	public $migration = array(
 		'up' => array(
 			'alter_field' => array(
+				'upload_files' => array(
+					'field_name' => array('type' => 'string', 'null' => true, 'default' => null, 'key' => 'index', 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
+				),
 				'upload_files_contents' => array(
 					'plugin_key' => array('type' => 'string', 'null' => false, 'default' => null, 'key' => 'index', 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
 				),
 			),
 			'create_field' => array(
+				'upload_files' => array(
+					'indexes' => array(
+						'field_name' => array('column' => 'field_name', 'unique' => 0),
+					),
+				),
 				'upload_files_contents' => array(
 					'indexes' => array(
 						'plugin_key' => array('column' => array('plugin_key', 'content_id'), 'unique' => 0),
@@ -37,11 +45,15 @@ class AddIndex extends CakeMigration {
 		),
 		'down' => array(
 			'alter_field' => array(
+				'upload_files' => array(
+					'field_name' => array('type' => 'string', 'null' => true, 'default' => null, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
+				),
 				'upload_files_contents' => array(
 					'plugin_key' => array('type' => 'string', 'null' => false, 'default' => null, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
 				),
 			),
 			'drop_field' => array(
+				'upload_files' => array('indexes' => array('field_name')),
 				'upload_files_contents' => array('indexes' => array('plugin_key')),
 			),
 		),
