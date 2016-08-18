@@ -9,6 +9,7 @@
  */
 
 App::uses('NetCommonsControllerTestCase', 'NetCommons.TestSuite');
+App::uses('Role', 'Roles.Model');
 
 /**
  * DownloadComponent::doDownload()のテスト
@@ -193,7 +194,7 @@ class DownloadComponentDoDownloadTest extends NetCommonsControllerTestCase {
 	}
 
 /**
- * ブロック非表示で例外発生
+ * ブロック非表示で編集許可（block_editable）なしは例外発生
  *
  * @return void
  */
@@ -203,7 +204,7 @@ class DownloadComponentDoDownloadTest extends NetCommonsControllerTestCase {
 		// $this->controllerにテスト用コントローラが配置される
 
 		//ログイン
-		TestAuthGeneral::login($this);
+		TestAuthGeneral::login($this, Role::ROOM_ROLE_KEY_EDITOR);
 
 		// componentのInitializeをコールしたいのでアクションコール
 		$this->_testNcAction('/test_files/test_download_component/index', array(

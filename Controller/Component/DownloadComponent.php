@@ -115,7 +115,9 @@ class DownloadComponent extends Component {
 				$file['UploadFile']['block_key'],
 				Current::read('Language.id')
 			);
-			if ($Block->isVisible($uploadFileBlock) === false) {
+			// ブロック見えない & ブロック編集できないのは 403
+			if ($Block->isVisible($uploadFileBlock) === false
+				&& Current::permission('block_editable') === false) {
 				throw new ForbiddenException();
 			}
 		}
