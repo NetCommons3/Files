@@ -187,6 +187,7 @@ class AttachmentBehavior extends ModelBehavior {
 			$uploadFileId = $uploadedFile['UploadFile']['id'];
 			$this->_saveUploadFilesContent($model, $uploadFileId);
 		}
+		$this->_uploadedFiles = array();
 	}
 
 /**
