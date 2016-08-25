@@ -27,3 +27,6 @@ msgstr "アップロード不可のファイル形式です"
 
 msgid "Total file size uploaded to the %s, exceeded the limit. The limit is %s(%s left)."
 msgstr "%sにアップロードしたファイルサイズの合計が大きすぎます。合計%s(残り:%s)までしか使用できません。"
+
+msgid "FileUpload.post_max_size.over"
+msgstr "アップロードファイルが大きすぎて php.ini の post_max_size ディレクティブの値を超えたため、入力内容が消えました。管理者にご相談ください"

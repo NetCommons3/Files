@@ -37,6 +37,25 @@ class FileUploadComponent extends Component {
 	}
 
 /**
+ * Called after the Controller::beforeFilter() and before the controller action
+ *
+ * @param Controller $controller Controller with components to startup
+ * @return void
+ */
+	public function startup(Controller $controller) {
+		// ファイルアップロード等で post_max_size を超えると $_POSTが空っぽになるため、このタイミングでエラー表示
+		$contentLength = Hash::get($_SERVER, 'CONTENT_LENGTH');
+		if ($contentLength > CakeNumber::fromReadableSize(ini_get('post_max_size'))) {
+			$message = __d('files', 'FileUpload.post_max_size.over');
+			$controller->NetCommons->setFlashNotification($message, array(
+				'class' => 'danger',
+				'interval' => NetCommonsComponent::ALERT_VALIDATE_ERROR_INTERVAL,
+			));
+			$controller->redirect($controller->referer());
+		}
+	}
+
+/**
  * アップロードされたテンポラリファイルを得る。
  *
  * @param string $fieldName フォームのフィールド名
