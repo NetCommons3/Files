@@ -22,3 +22,6 @@ msgstr ""
 
 msgid "It is upload disabled file format"
 msgstr ""
+
+msgid "Total file size uploaded to the %s, exceeded the limit. The limit is %s(%s left)."
+msgstr ""
