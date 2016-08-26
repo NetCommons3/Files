@@ -33,7 +33,9 @@ class TestAttachmentBehaviorModel extends AppModel {
  */
 	public $actsAs = array(
 		'NetCommons.OriginalKey',
-		'Files.Attachment'
+		'Files.Attachment' => [
+			'photo'
+		]
 	);
 
 }
