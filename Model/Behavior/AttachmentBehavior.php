@@ -95,13 +95,12 @@ class AttachmentBehavior extends ModelBehavior {
 /**
  * before validate PHPのアップロードエラーがあったらvalidationErrorをセットする
  *
- *
  * @param Model $model モデル
  * @param array $options オプション
  * @return void
  */
 	public function beforeValidate(Model $model, $options = array()) {
-		foreach ($this->_settings[$model->alias]['fileFields'] as $fieldName => $filedOptions) {
+		foreach (array_keys($this->_settings[$model->alias]['fileFields']) as $fieldName) {
 
 			if (isset($model->data[$model->alias][$fieldName])) {
 				$fileData = $model->data[$model->alias][$fieldName];
@@ -114,6 +113,7 @@ class AttachmentBehavior extends ModelBehavior {
 			}
 		}
 	}
+
 /**
  * beforeSave
  * 元モデルのデータに返す値をセットする
