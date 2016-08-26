@@ -1,30 +1,32 @@
 # LANGUAGE translation of CakePHP Application
 # Copyright YEAR NAME <EMAIL@ADDRESS>
 #
-#, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
-"PO-Revision-Date: YYYY-mm-DD HH:MM+ZZZZ\n"
+"PO-Revision-Date: 2016-08-26 09:56+0900\n"
 "Last-Translator: NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <EMAIL@ADDRESS>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"POT-Creation-Date: \n"
+"Language: en\n"
+"X-Generator: Poedit 1.8.8\n"
 
 #: Files/Controller/FilesController.php:65
 msgid "Not Found file."
-msgstr ""
+msgstr "Not Found file"
 
 msgid "Please specify the file"
-msgstr ""
+msgstr "Please specify the file"
 
 msgid "It is upload disabled file format"
-msgstr ""
+msgstr "It is upload disabled file format"
 
 msgid "Total file size uploaded to the %s, exceeded the limit. The limit is %s(%s left)."
-msgstr ""
+msgstr "Total file size uploaded to the %s, exceeded the limit. The limit is %s(%s left)"
 
 msgid "FileUpload.post_max_size.over"
-msgstr ""
+msgstr "Since the upload file is too large exceeds the value of post_max_size directives of the php.ini, the input contents have disappeared. Please consult your administrator"
