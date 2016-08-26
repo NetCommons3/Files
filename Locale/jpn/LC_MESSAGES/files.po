@@ -30,3 +30,6 @@ msgstr "%sにアップロードしたファイルサイズの合計が大きす�
 
 msgid "FileUpload.post_max_size.over"
 msgstr "アップロードファイルが大きすぎて php.ini の post_max_size ディレクティブの値を超えたため、入力内容が消えました。管理者にご相談ください"
+
+msgid "Failed uploading file."
+msgstr "アップロードに失敗したため、処理を中断しました。"

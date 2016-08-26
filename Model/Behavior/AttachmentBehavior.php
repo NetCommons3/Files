@@ -93,6 +93,28 @@ class AttachmentBehavior extends ModelBehavior {
 	}
 
 /**
+ * before validate PHPのアップロードエラーがあったらvalidationErrorをセットする
+ *
+ *
+ * @param Model $model モデル
+ * @param array $options オプション
+ * @return void
+ */
+	public function beforeValidate(Model $model, $options = array()) {
+		foreach ($this->_settings[$model->alias]['fileFields'] as $fieldName => $filedOptions) {
+
+			if (isset($model->data[$model->alias][$fieldName])) {
+				$fileData = $model->data[$model->alias][$fieldName];
+				// php upload errorだったらvalidationerrorにする
+				if ($fileData['error'] !== UPLOAD_ERR_OK &&
+					$fileData['error'] !== UPLOAD_ERR_NO_FILE) {
+					$model->validationErrors[$fieldName][] =
+						__d('files', 'Failed uploading file.');
+				}
+			}
+		}
+	}
+/**
  * beforeSave
  * 元モデルのデータに返す値をセットする
  *
@@ -105,6 +127,7 @@ class AttachmentBehavior extends ModelBehavior {
 
 			if (isset($model->data[$model->alias][$fieldName])) {
 				$fileData = $model->data[$model->alias][$fieldName];
+				// $fileData['error'] があったら処理中止。バリデーションエラーにする。
 				if ($fileData['name']) {
 					// 元データにファイル名フィールドが定義されてたら埋める
 					$fileNameFieldName = Hash::get($filedOptions, 'fileNameFieldName');
@@ -133,6 +156,7 @@ class AttachmentBehavior extends ModelBehavior {
 
 			if (isset($model->data[$model->alias][$fieldName])) {
 				$fileData = $model->data[$model->alias][$fieldName];
+
 				if ($fileData['name']) {
 					$uploadFile = $this->UploadFile->create();
 					$pathInfo = pathinfo($fileData['name']);
