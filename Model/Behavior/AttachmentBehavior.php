@@ -100,15 +100,16 @@ class AttachmentBehavior extends ModelBehavior {
  * @return void
  */
 	public function beforeValidate(Model $model, $options = array()) {
-		foreach (array_keys($this->_settings[$model->alias]['fileFields']) as $fieldName) {
-
-			if (isset($model->data[$model->alias][$fieldName])) {
-				$fileData = $model->data[$model->alias][$fieldName];
-				// php upload errorだったらvalidationerrorにする
-				if ($fileData['error'] !== UPLOAD_ERR_OK &&
-					$fileData['error'] !== UPLOAD_ERR_NO_FILE) {
-					$model->validationErrors[$fieldName][] =
-						__d('files', 'Failed uploading file.');
+		if (isset($this->_settings[$model->alias]['fileFields'])) {
+			foreach (array_keys($this->_settings[$model->alias]['fileFields']) as $fieldName) {
+				if (isset($model->data[$model->alias][$fieldName])) {
+					$fileData = $model->data[$model->alias][$fieldName];
+					// php upload errorだったらvalidationerrorにする
+					if ($fileData['error'] !== UPLOAD_ERR_OK &&
+						$fileData['error'] !== UPLOAD_ERR_NO_FILE) {
+						$model->validationErrors[$fieldName][] =
+							__d('files', 'Failed uploading file.');
+					}
 				}
 			}
 		}
