@@ -213,7 +213,8 @@ class UploadFile extends FilesAppModel {
 				'UploadFilesContent.plugin_key' => $pluginKey,
 				'UploadFilesContent.content_id' => $contentId,
 				'UploadFile.field_name' => $fieldName
-			]
+			],
+			'order' => ['UploadFile.id' => 'desc']
 		];
 
 		$UploadFilesContent = ClassRegistry::init('Files.UploadFilesContent');
