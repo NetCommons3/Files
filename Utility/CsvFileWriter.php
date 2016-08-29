@@ -121,6 +121,8 @@ class CsvFileWriter extends TemporaryFile {
  */
 	protected function _rename($toFilename) {
 		// ε(　　　　 v ﾟωﾟ)　＜ $toFilenameがフルパスかファイル名のみかで処理分ける
+		$prohibited = array('\\', '/', ':', '*', '?', '"', '<', '>', '|');
+		$toFilename = str_replace($prohibited, '_', $toFilename);
 		rename($this->path, dirname($this->path) . DS . $toFilename);
 		$this->path = dirname($this->path) . DS . $toFilename;
 	}
