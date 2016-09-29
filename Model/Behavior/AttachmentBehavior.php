@@ -136,8 +136,12 @@ class AttachmentBehavior extends ModelBehavior {
 						$model->data[$model->alias][$fileNameFieldName] =
 							$fileData['name'];
 					}
-					//if ($model->hasField(''))
-					// ε(　　　　 v ﾟωﾟ)　＜ サイズフィールドをうめる
+					// サイズフィールドをうめる
+					$sizeFieldName = Hash::get($filedOptions, 'sizeFieldName');
+					if ($sizeFieldName) {
+						$model->data[$model->alias][$sizeFieldName] =
+							$fileData['size'];
+					}
 				}
 			}
 		}
