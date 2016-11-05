@@ -83,7 +83,7 @@ class DownloadComponentDoDownloadByUploadFileIdTest extends NetCommonsController
 			'photo', //params['pass'][0]
 		];
 
-		Current::$current['Room']['id'] = 1;
+		Current::$current['Room']['id'] = '2';
 		Current::$current['Language']['id'] = 2;
 		$this->controller->plugin = 'SiteManager';
 

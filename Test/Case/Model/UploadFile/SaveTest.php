@@ -71,7 +71,7 @@ class UploadFileSaveTest extends NetCommonsModelTestCase {
 			//'size' => 1,
 			//'download_count' => 1,
 			//'total_download_count' => 1,
-			//'room_id' => 1,
+			//'room_id' => '2',
 			//'block_key' => 'block_1',
 			//'created_user' => 1,
 			//'created' => '2015-11-06 02:20:55',

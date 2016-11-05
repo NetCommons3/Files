@@ -81,7 +81,7 @@ class DownloadComponentDoDownloadTest extends NetCommonsControllerTestCase {
 			'photo', //params['pass'][0]
 		];
 
-		Current::$current['Room']['id'] = 1;
+		Current::$current['Room']['id'] = '2';
 		Current::$current['Language']['id'] = 2;
 		$this->controller->plugin = 'SiteManager';
 
@@ -131,7 +131,7 @@ class DownloadComponentDoDownloadTest extends NetCommonsControllerTestCase {
 			'photo', //params['pass'][0]
 		];
 
-		Current::$current['Room']['id'] = 1;
+		Current::$current['Room']['id'] = '2';
 		Current::$current['Language']['id'] = 2;
 		$this->controller->plugin = 'SiteManager';
 
@@ -181,7 +181,7 @@ class DownloadComponentDoDownloadTest extends NetCommonsControllerTestCase {
 			'photo', //params['pass'][0]
 		];
 
-		Current::$current['Room']['id'] = 2; // 別ルーム
+		Current::$current['Room']['id'] = '3'; // 別ルーム
 		Current::$current['Language']['id'] = 2;
 		$this->controller->plugin = 'SiteManager';
 
@@ -217,7 +217,7 @@ class DownloadComponentDoDownloadTest extends NetCommonsControllerTestCase {
 			'photo', //params['pass'][0]
 		];
 
-		Current::$current['Room']['id'] = 1;
+		Current::$current['Room']['id'] = '2';
 		Current::$current['Language']['id'] = 2;
 		$this->controller->plugin = 'SiteManager';
 
@@ -259,7 +259,7 @@ class DownloadComponentDoDownloadTest extends NetCommonsControllerTestCase {
 			'photo', //params['pass'][0]
 		];
 
-		Current::$current['Room']['id'] = 1;
+		Current::$current['Room']['id'] = '2';
 		Current::$current['Language']['id'] = 2;
 		$this->controller->plugin = 'SiteManager';
 
@@ -296,7 +296,7 @@ class DownloadComponentDoDownloadTest extends NetCommonsControllerTestCase {
 			'photo', //params['pass'][0]
 		];
 
-		Current::$current['Room']['id'] = 1;
+		Current::$current['Room']['id'] = '2';
 		Current::$current['Language']['id'] = 2;
 		$this->controller->plugin = 'TestFiles';
 
