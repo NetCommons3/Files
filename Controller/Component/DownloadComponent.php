@@ -100,6 +100,8 @@ class DownloadComponent extends Component {
  * @return CakeResponse|null
  * @throws ForbiddenException
  * @throws BadRequestException
+ * @throws NotFoundException
+ * @SuppressWarnings(PHPMD.CyclomaticComplexity)
  */
 	protected function _downloadUploadFile($file, $size, $options) {
 		$UploadFile = ClassRegistry::init('Files.UploadFile');
@@ -108,7 +110,7 @@ class DownloadComponent extends Component {
 		if ($file['UploadFile']['room_id']) {
 			$roomId = Current::read('Room.id');
 			if ($file['UploadFile']['room_id'] != $roomId) {
-				throw new ForbiddenException();
+				throw new ForbiddenException('Not found file');
 			}
 		}
 		if ($file['UploadFile']['block_key']) {
@@ -121,7 +123,7 @@ class DownloadComponent extends Component {
 			// ブロック見えない & ブロック編集できないのは 403
 			if ($Block->isVisible($uploadFileBlock) === false
 				&& Current::permission('block_editable') === false) {
-				throw new ForbiddenException();
+				throw new ForbiddenException('Not found file');
 			}
 		}
 
@@ -138,10 +140,19 @@ class DownloadComponent extends Component {
 		$filePath = WWW_ROOT . $file['UploadFile']['path'] . $file['UploadFile']['id'] . DS . $filename;
 
 		$options = Hash::merge(array('name' => $file['UploadFile']['original_name']), $options);
-		$this->_controller->response->file(
-			$filePath,
-			$options
-		);
+		try {
+			$this->_controller->response->file(
+				$filePath,
+				$options
+			);
+		} catch (NotFoundException $ex) {
+			//データがない＝リンク切れ。リンク切れの場合、ログアウトしないようにする
+			CakeLog::error($ex);
+			throw new NotFoundException('Not found file');
+		} catch (Exception $ex) {
+			CakeLog::error($ex);
+			throw $ex;
+		}
 
 		// Download カウントアップ
 		$UploadFile->countUp($file);
