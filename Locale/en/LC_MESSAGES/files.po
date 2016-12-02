@@ -1,32 +1,43 @@
 # LANGUAGE translation of CakePHP Application
 # Copyright YEAR NAME <EMAIL@ADDRESS>
 #
+#, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
-"PO-Revision-Date: 2016-08-26 09:56+0900\n"
+"PO-Revision-Date: YYYY-mm-DD HH:MM+ZZZZ\n"
 "Last-Translator: NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <EMAIL@ADDRESS>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=1; plural=0;\n"
-"POT-Creation-Date: \n"
-"Language: en\n"
-"X-Generator: Poedit 1.8.8\n"
+"Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
 
-#: Files/Controller/FilesController.php:65
-msgid "Not Found file."
-msgstr "Not Found file"
-
-msgid "Please specify the file"
-msgstr "Please specify the file"
-
-msgid "It is upload disabled file format"
-msgstr "It is upload disabled file format"
-
-msgid "Total file size uploaded to the %s, exceeded the limit. The limit is %s(%s left)."
-msgstr "Total file size uploaded to the %s, exceeded the limit. The limit is %s(%s left)"
-
+#: Files/Controller/Component/FileUploadComponent.php:49
 msgid "FileUpload.post_max_size.over"
-msgstr "Since the upload file is too large exceeds the value of post_max_size directives of the php.ini, the input contents have disappeared. Please consult your administrator"
+msgstr ""
+
+#: Files/Model/UploadFile.php:80
+#: Files/Model/Behavior/AttachmentBehavior.php:259
+#: PhotoAlbums/Model/PhotoAlbum.php:351;355
+#: PhotoAlbums/Model/PhotoAlbumPhoto.php:73
+#: Videos/Model/Behavior/VideoValidationBehavior.php:120;125;140;144;156;160;167;171
+#: Videos/Test/Case/Model/Video/ValidateTest.php:176;181;198;203;213;218
+msgid "It is upload disabled file format"
+msgstr ""
+
+#: Files/Model/Behavior/AttachmentBehavior.php:111
+#: Videos/Test/Case/Model/Video/ValidateTest.php:170;192
+msgid "Failed uploading file."
+msgstr ""
+
+#: Files/Model/Behavior/UploadFileValidateBehavior.php:110
+msgid "Total file size uploaded to the %s, exceeded the limit. The limit is %s(%s left)."
+msgstr ""
+
+#: PhotoAlbums/Model/PhotoAlbum.php:343
+#: PhotoAlbums/Model/PhotoAlbumPhoto.php:63
+#: Videos/Model/Behavior/VideoValidationBehavior.php:115;136
+msgid "Please specify the file"
+msgstr ""
+
