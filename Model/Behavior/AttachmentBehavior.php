@@ -42,6 +42,9 @@ class AttachmentBehavior extends ModelBehavior {
  * @return void
  */
 	public function setup(Model $model, $config = array()) {
+		//ビヘイビアの優先順位
+		$this->settings['priority'] = 8;
+
 		// 先にOriginalKeyをロードしてもらう
 		if (! $model->Behaviors->loaded('NetCommons.OriginalKey')) {
 			$error = '"NetCommons.OriginalKeyBehavior" not loaded in ' . $model->alias . '. ';
