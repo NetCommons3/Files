@@ -116,9 +116,8 @@ class DownloadComponent extends Component {
 		if ($file['UploadFile']['block_key']) {
 			// block_keyによるガード
 			$Block = ClassRegistry::init('Blocks.Block');
-			$uploadFileBlock = $Block->findByKeyAndLanguageId(
-				$file['UploadFile']['block_key'],
-				Current::read('Language.id')
+			$uploadFileBlock = $Block->findByKey(
+				$file['UploadFile']['block_key']
 			);
 			// ブロック見えない & ブロック編集できないのは 403
 			if ($Block->isVisible($uploadFileBlock) === false
