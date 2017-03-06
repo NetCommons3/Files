@@ -128,7 +128,7 @@ class DownloadComponent extends Component {
 
 		// size対応
 		$filename = $file['UploadFile']['real_file_name'];
-		if ($size !== null) {
+		if ($size) {
 			// $size = '../../'とかを排除するため！
 			if (strpos($size, '..') !== false) {
 				throw new BadRequestException();
