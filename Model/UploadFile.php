@@ -103,6 +103,9 @@ class UploadFile extends FilesAppModel {
  * @return void
  */
 	public function removeFile($contentId, $fileId) {
+		if (! $contentId || ! $fileId) {
+			return;
+		}
 		$UploadFilesContent = ClassRegistry::init('Files.UploadFilesContent');
 		$link = $UploadFilesContent->findByContentIdAndUploadFileId($contentId, $fileId);
 		if ($link) {
