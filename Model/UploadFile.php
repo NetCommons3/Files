@@ -315,6 +315,10 @@ class UploadFile extends FilesAppModel {
  * @return void
  */
 	public function deleteLink($pluginKey, $contentId, $fieldName = null) {
+		if (! $pluginKey || ! $contentId) {
+			return;
+		}
+
 		$conditions = [
 			'UploadFilesContent.plugin_key' => $pluginKey,
 			'UploadFilesContent.content_id' => $contentId,
