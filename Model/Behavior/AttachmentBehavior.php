@@ -150,6 +150,7 @@ class AttachmentBehavior extends ModelBehavior {
 		}
 		return parent::beforeSave($model);
 	}
+
 /**
  * afterSave
  *
@@ -176,6 +177,8 @@ class AttachmentBehavior extends ModelBehavior {
 					$uploadFile['UploadFile']['extension'] = $pathInfo['extension'];
 					$uploadFile['UploadFile']['real_file_name'] = $fileData;
 
+					//MIMEタイプがimageではじまってなかったらサムネイルはつくらない
+					$filedOptions['thumbnails'] = $this->_isImageFile($fileData['tmp_name']);
 					// フィールド毎にオプションを設定しなおしてsave実行
 					$this->UploadFile->setOptions($filedOptions);
 					// ε(　　　　 v ﾟωﾟ)　＜ 例外処理
@@ -361,5 +364,19 @@ class AttachmentBehavior extends ModelBehavior {
 		// ε(　　　　 v ﾟωﾟ)　＜ 例外処理
 		$this->UploadFilesContent->save($data);
 		return array($contentId, $data);
+	}
+
+/**
+ * MimeTypeをみてimageか判定する
+ *
+ * @param string $file ファイルへのパス
+ * @return bool
+ */
+	protected function _isImageFile($file) {
+		$finfo = finfo_open(FILEINFO_MIME_TYPE);
+		$mimeType = finfo_file($finfo, $file);
+		finfo_close($finfo);
+		$result = (substr($mimeType, 0, 5) === 'image');
+		return $result;
 	}
 }
