@@ -183,22 +183,25 @@ class UploadFile extends FilesAppModel {
 		$this->uploadSettings('real_file_name', 'thumbnailPath', $path);
 
 		// トータルダウンロード数設定
-		$this->virtualFields['total'] = 'sum(download_count)';
-		$options = [
-				'fields' => ['total'],
-				'conditions' => [
-						'plugin_key' => $this->data['UploadFile']['plugin_key'],
-						'content_key' => $this->data['UploadFile']['content_key'],
-						'field_name' => $this->data['UploadFile']['field_name'],
-				]
-		];
-		if (Hash::get($this->data, 'UploadFile.id', false) === false) {
-			// 新規の時だけトータルをセット
-			$result = $this->find('first', $options);
-			$total = ($result['UploadFile']['total'] !== null) ? $result['UploadFile']['total'] : 0;
-			$this->data['UploadFile']['total_download_count'] = $total;
+		if ($this->data['UploadFile']['content_key']) {
+			$this->virtualFields['total'] = 'sum(download_count)';
+			$options = [
+					'fields' => ['total'],
+					'conditions' => [
+							'plugin_key' => $this->data['UploadFile']['plugin_key'],
+							'content_key' => $this->data['UploadFile']['content_key'],
+							'field_name' => $this->data['UploadFile']['field_name'],
+					]
+			];
+			if (Hash::get($this->data, 'UploadFile.id', false) === false) {
+				// 新規の時だけトータルをセット
+				$result = $this->find('first', $options);
+				$total = ($result['UploadFile']['total'] !== null) ? $result['UploadFile']['total'] : 0;
+				$this->data['UploadFile']['total_download_count'] = $total;
+			}
+			unset($this->virtualFields['total']);
 		}
-		unset($this->virtualFields['total']);
+
 		return true;
 	}
 
