@@ -74,7 +74,7 @@ class DownloadComponent extends Component {
 		$size = Hash::get(
 			$this->_controller->request->params,
 			'size',
-			Hash::get($this->_controller->params['pass'], 1, null)
+			Hash::get($this->_controller->params['pass'], 2, null)
 		);
 
 		$size = Hash::get($options, 'size', $size);
