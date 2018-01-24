@@ -78,6 +78,8 @@ class UploadFileSaveTest extends NetCommonsModelTestCase {
 			//'modified_user' => 1,
 			//'modified' => '2015-11-06 02:20:55'
 		];
+		// behaviorはずしておく
+		$this->$model->Behaviors->unload('UploadFileDisableThumbnail');
 		//テスト実施
 		$result = $this->$model->$methodName($data);
 

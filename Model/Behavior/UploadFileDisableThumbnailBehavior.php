@@ -10,7 +10,7 @@
 /**
  * Class UploadFileDesableThumbnailBehavior
  */
-class UploadFileDesableThumbnailBehavior extends ModelBehavior {
+class UploadFileDisableThumbnailBehavior extends ModelBehavior {
 
 /**
  * beforeSave is called before a model is saved. Returning false from a beforeSave callback
