@@ -32,6 +32,7 @@ class UploadFile extends FilesAppModel {
  * @var array
  */
 	public $actsAs = [
+		'Files.UploadFileDesableThumbnail',
 		'Upload.Upload' => [
 			'real_file_name' => array(
 					'thumbnailSizes' => array(
