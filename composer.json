@@ -4,28 +4,33 @@
     "homepage": "http://www.netcommons.org/",
     "extra": {
         "installer-paths": {
-            "app/Plugin/{$name}": ["type:cakephp-plugin"]
+            "app/Plugin/{$name}": [
+                "type:cakephp-plugin"
+            ]
         }
     },
     "require": {
-        "cakedc/migrations":            "~2.2",
-        "josegonzalez/cakephp-upload":  "~1.3",
+        "cakedc/migrations": "~2.2",
+        "josegonzalez/cakephp-upload": "~1.3",
         "netcommons/authorization-keys": "@dev",
-        "netcommons/blocks":            "@dev",
-        "netcommons/net-commons":       "@dev",
-        "netcommons/site-manager":       "@dev"
+        "netcommons/blocks": "@dev",
+        "netcommons/net-commons": "@dev",
+        "netcommons/site-manager": "@dev"
     },
-    "license": "NetCommons License",
+    "license": "LicenseRef-NetCommons",
+    "license-ref-net-commons": "https://raw.githubusercontent.com/NetCommons3/NetCommons3/master/license.txt",
     "authors": [
         {
             "name": "NetCommons Community",
             "homepage": "http://www.netcommons.org"
         }
     ],
-    "type":        "cakephp-plugin",
-    "keywords":    ["cakephp", "files"],
+    "type": "cakephp-plugin",
+    "keywords": [
+        "cakephp",
+        "files"
+    ],
     "config": {
         "vendor-dir": "vendors"
     }
 }
-
