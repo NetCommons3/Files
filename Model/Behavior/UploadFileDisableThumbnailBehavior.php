@@ -22,6 +22,11 @@ class UploadFileDisableThumbnailBehavior extends ModelBehavior {
  * @see Model::save()
  */
 	public function beforeSave(Model $model, $options = array()) {
+		// phpunit用。Wysiwyg等のphpunitで'tmp_name'はセットされないため、tmp_nameが無いものはなにもしない。
+		if (!isset($model->data['UploadFile']['real_file_name']['tmp_name'])) {
+			return true;
+		}
+
 		// 画像以外だったらサムネイルを生成させない
 		$makeThumbnails = $this->_isImageFile(
 			$model->data['UploadFile']['real_file_name']['tmp_name']
