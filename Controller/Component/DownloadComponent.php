@@ -139,6 +139,7 @@ class DownloadComponent extends Component {
 		$filePath = WWW_ROOT . $file['UploadFile']['path'] . $file['UploadFile']['id'] . DS . $filename;
 
 		$options = Hash::merge(array('name' => $file['UploadFile']['original_name']), $options);
+		$options['name'] = rawurlencode($options['name']);
 		try {
 			$this->_controller->response->file(
 				$filePath,
