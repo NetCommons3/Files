@@ -198,6 +198,9 @@ class ZipDownloader {
 		if ($this->_open) {
 			$this->close();
 		}
+		if (strlen($filename) != mb_strlen($filename)) {
+			$filename = rawurlencode($filename);
+		}
 		$response = new CakeResponse();
 		$response->type('application/zip');
 		$response->file($this->path, ['name' => $filename, 'download' => 'true']);
