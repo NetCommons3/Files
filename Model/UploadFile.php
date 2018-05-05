@@ -187,12 +187,12 @@ class UploadFile extends FilesAppModel {
 		if ($this->data['UploadFile']['content_key']) {
 			$this->virtualFields['total'] = 'sum(download_count)';
 			$options = [
-					'fields' => ['total'],
-					'conditions' => [
-							'plugin_key' => $this->data['UploadFile']['plugin_key'],
-							'content_key' => $this->data['UploadFile']['content_key'],
-							'field_name' => $this->data['UploadFile']['field_name'],
-					]
+				'fields' => ['total'],
+				'conditions' => [
+					'plugin_key' => $this->data['UploadFile']['plugin_key'],
+					'content_key' => $this->data['UploadFile']['content_key'],
+					'field_name' => $this->data['UploadFile']['field_name'],
+				]
 			];
 			if (Hash::get($this->data, 'UploadFile.id', false) === false) {
 				// 新規の時だけトータルをセット
@@ -216,6 +216,28 @@ class UploadFile extends FilesAppModel {
  */
 	public function getFile($pluginKey, $contentId, $fieldName) {
 		$options = [
+			'fields' => [
+				'UploadFilesContent.id',
+				'UploadFilesContent.plugin_key',
+				'UploadFilesContent.content_id',
+				'UploadFilesContent.upload_file_id',
+				'UploadFilesContent.content_is_active',
+				'UploadFilesContent.content_is_latest',
+				'UploadFile.id',
+				'UploadFile.plugin_key',
+				'UploadFile.content_key',
+				'UploadFile.field_name',
+				'UploadFile.original_name',
+				'UploadFile.path',
+				'UploadFile.real_file_name',
+				'UploadFile.extension',
+				'UploadFile.mimetype',
+				'UploadFile.size',
+				'UploadFile.download_count',
+				'UploadFile.total_download_count',
+				'UploadFile.room_id',
+				'UploadFile.block_key'
+			],
 			'conditions' => [
 				'UploadFilesContent.plugin_key' => $pluginKey,
 				'UploadFilesContent.content_id' => $contentId,

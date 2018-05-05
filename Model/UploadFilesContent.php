@@ -66,7 +66,11 @@ class UploadFilesContent extends FilesAppModel {
 			'className' => 'Files.UploadFile',
 			'foreignKey' => 'upload_file_id',
 			'conditions' => '',
-			'fields' => '',
+			'fields' => [
+				'id', 'plugin_key', 'content_key', 'field_name', 'original_name', 'path',
+				'real_file_name', 'extension', 'mimetype', 'size', 'download_count',
+				'total_download_count', 'room_id', 'block_key'
+			],
 			'order' => ''
 		),
 	);
