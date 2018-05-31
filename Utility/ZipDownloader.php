@@ -198,12 +198,20 @@ class ZipDownloader {
 		if ($this->_open) {
 			$this->close();
 		}
+
+		// 全角文字が含まれたファイル名が指定されている場合
+		// encodeしてあげる
 		if (strlen($filename) != mb_strlen($filename)) {
 			$filename = rawurlencode($filename);
 		}
 		$response = new CakeResponse();
 		$response->type('application/zip');
-		$response->file($this->path, ['name' => $filename, 'download' => 'true']);
+
+		$content = 'attachment;';
+		$content .= 'filename*=UTF-8\'\'' . $filename;
+		$response->header('Content-Disposition', $content);
+
+		$response->file($this->path);
 		return $response;
 	}
 
