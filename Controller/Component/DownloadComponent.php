@@ -138,9 +138,15 @@ class DownloadComponent extends Component {
 
 		$filePath = WWW_ROOT . $file['UploadFile']['path'] . $file['UploadFile']['id'] . DS . $filename;
 
-		$options = Hash::merge(array('name' => $file['UploadFile']['original_name']), $options);
-		$options['name'] = rawurlencode($options['name']);
 		try {
+			$content = 'attachment;';
+			$content .= 'filename*=UTF-8\'\'' . rawurlencode($file['UploadFile']['original_name']);
+			$this->_controller->response->header('Content-Disposition', $content);
+
+			// name, downloadが入っているとCake側処理により文字化けが発生する
+			unset($options['name']);
+			unset($options['download']);
+
 			$this->_controller->response->file(
 				$filePath,
 				$options
