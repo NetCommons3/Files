@@ -139,8 +139,12 @@ class DownloadComponent extends Component {
 		$filePath = WWW_ROOT . $file['UploadFile']['path'] . $file['UploadFile']['id'] . DS . $filename;
 
 		try {
+			$downloadFileName = $file['UploadFile']['original_name'];
+			if (! empty($options['name'])) {
+				$downloadFileName = $options['name'];
+			}
 			$content = 'attachment;';
-			$content .= 'filename*=UTF-8\'\'' . rawurlencode($file['UploadFile']['original_name']);
+			$content .= 'filename*=UTF-8\'\'' . rawurlencode($downloadFileName);
 			$this->_controller->response->header('Content-Disposition', $content);
 
 			// name, downloadが入っているとCake側処理により文字化けが発生する
