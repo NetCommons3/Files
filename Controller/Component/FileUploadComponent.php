@@ -10,7 +10,6 @@
  */
 
 App::uses('Component', 'Controller');
-App::uses('FileModel', 'Files.Model');
 App::uses('TemporaryUploadFile', 'Files.Utility');
 
 /**
