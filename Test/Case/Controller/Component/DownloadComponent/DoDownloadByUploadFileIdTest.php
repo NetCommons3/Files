@@ -91,7 +91,7 @@ class DownloadComponentDoDownloadByUploadFileIdTest extends NetCommonsController
 
 		$fileId = 1;
 		// responseをモックにして渡される値をテスト
-		$path = WWW_ROOT . 'files/upload_file/real_file_name/1/1/foobarhash.jpg';
+		$path = UPLOADS_ROOT . 'files/upload_file/real_file_name/1/1/foobarhash.jpg';
 
 		$responseMock = $this->getMock('CakeResponse', ['file']);
 		$responseMock->expects($this->once())
@@ -137,7 +137,7 @@ class DownloadComponentDoDownloadByUploadFileIdTest extends NetCommonsController
 
 		$fileId = 6; // avatarファイル
 
-		$path = WWW_ROOT . 'files/upload_file/real_file_name//6/hash_name.jpg';
+		$path = UPLOADS_ROOT . 'files/upload_file/real_file_name//6/hash_name.jpg';
 
 		$responseMock = $this->getMock('CakeResponse', ['file']);
 		$responseMock->expects($this->once())

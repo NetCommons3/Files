@@ -136,7 +136,8 @@ class DownloadComponent extends Component {
 			$filename = $size . '_' . $filename;
 		}
 
-		$filePath = WWW_ROOT . $file['UploadFile']['path'] . $file['UploadFile']['id'] . DS . $filename;
+		$filePath = $UploadFile->uploadBasePath .
+				$file['UploadFile']['path'] . $file['UploadFile']['id'] . DS . $filename;
 
 		try {
 			$downloadFileName = $file['UploadFile']['original_name'];
