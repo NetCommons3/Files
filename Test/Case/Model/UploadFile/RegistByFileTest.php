@@ -67,7 +67,7 @@ class UploadFileRegistByFileTest extends NetCommonsModelTestCase {
 
 		$this->assertTrue($data['UploadFile']['id'] > 0);
 
-		$this->UploadFile->delete($this->UploadFile->id);
+		$this->UploadFile->deleteUploadFile($this->UploadFile->id);
 	}
 
 /**
@@ -116,6 +116,6 @@ class UploadFileRegistByFileTest extends NetCommonsModelTestCase {
 		$uploadFile = $this->UploadFile->findById($data['UploadFile']['id']);
 		$this->assertEquals('logo.gif', $uploadFile['UploadFile']['original_name']);
 
-		$this->UploadFile->delete($this->UploadFile->id);
+		$this->UploadFile->deleteUploadFile($this->UploadFile->id);
 	}
 }

@@ -10,16 +10,35 @@
 App::uses('FilesAppModel', 'Files.Model');
 App::uses('Folder', 'Utility');
 
+//app/webroot/index.phpでセットするため、不要だが、念のため入れておく。
+if (!defined('UPLOADS_ROOT')) {
+	if (file_exists(dirname(WWW_ROOT) . DS . 'Uploads' . DS)) {
+		define('UPLOADS_ROOT', dirname(WWW_ROOT) . DS . 'Uploads' . DS);
+	} else {
+		define('UPLOADS_ROOT', WWW_ROOT);
+	}
+}
+
 /**
  * Summary for File Model
+ *
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
-
 class UploadFile extends FilesAppModel {
 
 /**
  * @var string UploadFileでアップロードする基準パス
  */
-	public $uploadBasePath = WWW_ROOT;
+	public $uploadBasePath = UPLOADS_ROOT;
+
+/**
+ * アップロードファイルを登録する際、
+ * アップロードディレクトリのパスがWEB_ROOTパス配下になるのでUPLOADS_ROOTにchdirする必要があるため、
+ * 処理が終わったら元に戻すように現在のパスを保持しておく用の変数
+ *
+ * @var string UploadFileでアップロードする基準パス
+ */
+	private $__currentDir = null;
 
 /**
  * @var int recursiveはデフォルトアソシエーションなしに
@@ -165,6 +184,9 @@ class UploadFile extends FilesAppModel {
  * @return void
  */
 	public function beforeSave($options = array()) {
+		$this->__currentDir = getcwd();
+		chdir($this->uploadBasePath);
+
 		// imagickクラスがなかったらサムネイル生成はGDを利用
 		if (class_exists('imagick') === false) {
 			// @codeCoverageIgnoreStart
@@ -204,6 +226,20 @@ class UploadFile extends FilesAppModel {
 		}
 
 		return true;
+	}
+
+/**
+ * save()実行後に呼ばれるメソッド
+ *
+ * @param bool $created 新しいレコードが作成された場合はTrue
+ * @param array $options Model::save()のオプション
+ * @return void
+ * @link http://book.cakephp.org/2.0/ja/models/callback-methods.html#aftersave
+ * @see Model::save()
+ */
+	public function afterSave($created, $options = array()) {
+		chdir($this->__currentDir);
+		parent::afterSave($created, $options);
 	}
 
 /**
