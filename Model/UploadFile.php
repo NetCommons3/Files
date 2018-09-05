@@ -194,9 +194,17 @@ class UploadFile extends FilesAppModel {
 			// @codeCoverageIgnoreEnd
 		}
 
-		$roomId = Current::read('Room.id');
-		$path = $this->uploadBasePath . 'files' . DS .
-			'upload_file' . DS . 'real_file_name' . DS . $roomId . DS;
+		$path = $this->uploadBasePath . 'files' . DS . 'upload_file' . DS;
+		if (!empty($this->data['UploadFile']['room_id'])) {
+			$roomId = $this->data['UploadFile']['room_id'];
+		} else {
+			$roomId = Current::read('Room.id');
+		}
+		if ($roomId) {
+			$path .= 'real_file_name' . DS . $roomId . DS;
+		} else {
+			$path .= $this->data['UploadFile']['field_name'] . DS;
+		}
 
 		// ID以外のpathを保存 WWW_ROOTも除外する
 		$path = substr($path, strlen($this->uploadBasePath));
