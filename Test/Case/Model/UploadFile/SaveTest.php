@@ -55,12 +55,52 @@ class UploadFileSaveTest extends NetCommonsModelTestCase {
  *
  * @return void
  */
-	public function testSave() {
+	public function testSaveWithRoomId() {
 		$model = $this->_modelName;
 		$methodName = $this->_methodName;
 
 		//データ生成
-		$data['UploadFile'] = (new UploadFileFixture())->records[0];
+		//$data['UploadFile'] = (new UploadFileFixture())->records[0];
+		$data['UploadFile'] = [
+			'plugin_key' => 'site_manager',
+			'content_key' => 'theme',
+			'field_name' => 'photo',
+			'original_name' => 'foo.jpg',
+			//'extension' => 'jpg',
+			//'mimetype' => 'image/jpg',
+			//'size' => 1,
+			//'download_count' => 1,
+			//'total_download_count' => 1,
+			'room_id' => '2',
+			//'block_key' => 'block_1',
+			//'created_user' => 1,
+			//'created' => '2015-11-06 02:20:55',
+			//'modified_user' => 1,
+			//'modified' => '2015-11-06 02:20:55'
+		];
+		// behaviorはずしておく
+		$this->$model->Behaviors->unload('UploadFileDisableThumbnail');
+		//テスト実施
+		$result = $this->$model->$methodName($data);
+
+		// pathがセットされるか？
+		$this->assertStringStartsWith('files' . DS . 'upload_file' . DS . 'real_file_name' . DS, $result['UploadFile']['path']);
+
+		// トータルダウンロードの値が更新されるか id=1 1カウント, id=3 1カウント total 2になるはず
+		$this->assertEquals(2, $result['UploadFile']['total_download_count']);
+	}
+
+/**
+ * save()のテスト
+ *
+ * @return void
+ */
+	public function testSaveWithoutRoomId() {
+		$model = $this->_modelName;
+		$methodName = $this->_methodName;
+
+		//データ生成
+		//$data['UploadFile'] = (new UploadFileFixture())->records[0];
 		$data['UploadFile'] = [
 			'plugin_key' => 'site_manager',
 			'content_key' => 'theme',
@@ -84,7 +124,7 @@ class UploadFileSaveTest extends NetCommonsModelTestCase {
 		$result = $this->$model->$methodName($data);
 
 		// pathがセットされるか？
-		$this->assertStringStartsWith('files' . DS . 'upload_file' . DS . 'real_file_name' . DS, $result['UploadFile']['path']);
+		$this->assertStringStartsWith('files' . DS . 'upload_file' . DS . 'photo' . DS, $result['UploadFile']['path']);
 
 		// トータルダウンロードの値が更新されるか id=1 1カウント, id=3 1カウント total 2になるはず
 		$this->assertEquals(2, $result['UploadFile']['total_download_count']);
