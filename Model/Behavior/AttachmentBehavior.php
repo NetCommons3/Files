@@ -127,8 +127,20 @@ class AttachmentBehavior extends ModelBehavior {
  * @return mixed
  */
 	public function beforeSave(Model $model, $options = array()) {
-		foreach ($this->_settings[$model->alias]['fileFields'] as $fieldName => $filedOptions) {
+		$this->beforeSaveByAttachment($model, $options);
+		return parent::beforeSave($model);
+	}
 
+/**
+ * beforeSave
+ * 元モデルのデータに返す値をセットする
+ *
+ * @param Model $model Model
+ * @param array $options Options
+ * @return void
+ */
+	public function beforeSaveByAttachment(Model $model, $options = array()) {
+		foreach ($this->_settings[$model->alias]['fileFields'] as $fieldName => $filedOptions) {
 			if (isset($model->data[$model->alias][$fieldName])) {
 				$fileData = $model->data[$model->alias][$fieldName];
 				// $fileData['error'] があったら処理中止。バリデーションエラーにする。
@@ -148,7 +160,6 @@ class AttachmentBehavior extends ModelBehavior {
 				}
 			}
 		}
-		return parent::beforeSave($model);
 	}
 
 /**
@@ -161,8 +172,20 @@ class AttachmentBehavior extends ModelBehavior {
  * @return void
  */
 	public function afterSave(Model $model, $created, $options = array()) {
-		foreach ($this->_settings[$model->alias]['fileFields'] as $fieldName => $filedOptions) {
+		$this->afterSaveByAttachment($model, $created, $options);
+	}
 
+/**
+ * afterSave
+ *
+ * @param Model $model モデル
+ * @param bool $created 新規作成
+ * @param array $options オプション
+ * @throws Exception
+ * @return void
+ */
+	public function afterSaveByAttachment(Model $model, $created, $options = array()) {
+		foreach ($this->_settings[$model->alias]['fileFields'] as $fieldName => $filedOptions) {
 			if (isset($model->data[$model->alias][$fieldName])) {
 				$fileData = $model->data[$model->alias][$fieldName];
 
