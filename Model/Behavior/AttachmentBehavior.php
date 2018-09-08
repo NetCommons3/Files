@@ -183,6 +183,7 @@ class AttachmentBehavior extends ModelBehavior {
  * @param array $options オプション
  * @throws Exception
  * @return void
+ * @SuppressWarnings(PHPMD.CyclomaticComplexity)
  */
 	public function afterSaveByAttachment(Model $model, $created, $options = array()) {
 		foreach ($this->_settings[$model->alias]['fileFields'] as $fieldName => $filedOptions) {
@@ -213,10 +214,14 @@ class AttachmentBehavior extends ModelBehavior {
 		// アップロードがなかったら以前のデータを挿入する
 		// formからhiddenで UploadFile.field_name.id 形式でデータが渡ってくる
 		// $data['UploadFile']にはモデルデータ編集時に添付されてるファイルについてのデータが入っている
-
-		$uploadFiles = Hash::get($model->data, 'UploadFile', array());
+		if (isset($model->data['UploadFile'])) {
+			$uploadFiles = $model->data['UploadFile'];
+		} else {
+			$uploadFiles = [];
+		}
 		foreach ($uploadFiles as $uploadFile) {
-			// 同じfield_nameでアップロードされてるなら以前のファイルへの関連レコードを新規に追加する必要は無い（過去の関連レコードはそのまま）
+			// 同じfield_nameでアップロードされてるなら以前のファイルへの関連レコードを
+			// 新規に追加する必要は無い（過去の関連レコードはそのまま）
 			if (isset($this->_uploadedFiles[$uploadFile['field_name']])) {
 				// 新たにアップロードされてる
 				// 履歴のないモデル（is_latest, is_activeカラムがない）だったら、以前のファイルを削除する
@@ -227,11 +232,11 @@ class AttachmentBehavior extends ModelBehavior {
 				}
 			} else {
 				// 同じfield_nameでアップロードされてなければ以前のファイルへの関連レコードを入れる
-
 				$removePath = $model->alias . '.' . $uploadFile['field_name'] . '.remove';
 				if (Hash::get($model->data, $removePath, false)) {
 					// ファイル削除にチェックが入ってるのでリンクしない
-					// 今のコンテンツIDで関連テーブルのレコードがあったら、ユーザモデルのように履歴のないモデルなのでそのときは関連テーブルを消す必要があるのでremoveFileは呼んでおく。
+					// 今のコンテンツIDで関連テーブルのレコードがあったら、ユーザモデルのように履歴のないモデルなので
+					// そのときは関連テーブルを消す必要があるのでremoveFileは呼んでおく。
 					$this->UploadFile->removeFile($model->id, $uploadFile['id']);
 				} else {
 					$uploadFileId = $uploadFile['id'];
