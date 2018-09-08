@@ -296,6 +296,46 @@ class UploadFile extends FilesAppModel {
 	}
 
 /**
+ * ファイル情報取得
+ *
+ * アバターなどは、UploadFilesContentを見る必要がないので、ContentKeyでファイル情報を取得できるようにする
+ *
+ * @param string $pluginKey プラグインキー
+ * @param string $contentKey コンテンツキー
+ * @param string $fieldName フィールド名
+ * @return array|false
+ */
+	public function getFileByContentKey($pluginKey, $contentKey, $fieldName) {
+		$options = [
+			'fields' => [
+				'UploadFile.id',
+				'UploadFile.plugin_key',
+				'UploadFile.content_key',
+				'UploadFile.field_name',
+				'UploadFile.original_name',
+				'UploadFile.path',
+				'UploadFile.real_file_name',
+				'UploadFile.extension',
+				'UploadFile.mimetype',
+				'UploadFile.size',
+				'UploadFile.download_count',
+				'UploadFile.total_download_count',
+				'UploadFile.room_id',
+				'UploadFile.block_key'
+			],
+			'conditions' => [
+				'UploadFile.plugin_key' => $pluginKey,
+				'UploadFile.content_key' => $contentKey,
+				'UploadFile.field_name' => $fieldName
+			],
+			'order' => ['UploadFile.id' => 'desc']
+		];
+
+		$file = $this->find('first', $options);
+		return $file;
+	}
+
+/**
  * ダウンロードカウントアップ
  *
  * @param array $data UploadFileデータ
