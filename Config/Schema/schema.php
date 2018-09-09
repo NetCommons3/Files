@@ -59,7 +59,7 @@ class FilesSchema extends CakeSchema {
 		'indexes' => array(
 			'PRIMARY' => array('column' => 'id', 'unique' => 1),
 			'field_name' => array('column' => 'field_name', 'unique' => 0),
-			'content_key' => array('column' => array('content_key', 'field_name', 'id'), 'unique' => 0)
+			'content_key' => array('column' => array('content_key', 'field_name', 'plugin_key', 'id'), 'unique' => 0)
 		),
 		'tableParameters' => array('charset' => 'utf8', 'collate' => 'utf8_general_ci', 'engine' => 'InnoDB')
 	);
