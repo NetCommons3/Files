@@ -40,7 +40,7 @@ class AddInde2 extends NetCommonsMigration {
 			'create_field' => array(
 				'upload_files' => array(
 					'indexes' => array(
-						'content_key' => array('column' => array('content_key', 'id', 'field_name', 'extension'), 'unique' => 0),
+						'content_key' => array('column' => array('content_key', 'field_name', 'id'), 'unique' => 0),
 					),
 				),
 			),
