@@ -38,21 +38,31 @@ class DownloadComponent extends Component {
  * @throws ForbiddenException
  */
 	public function doDownload($contentId, $options = array()) {
-		$fieldName = Hash::get(
-			$this->_controller->request->params,
-			'field_name',
-			Hash::get($this->_controller->params['pass'], 0, null)
-		);
-		$size = Hash::get(
-			$this->_controller->request->params,
-			'size',
-			Hash::get($this->_controller->params['pass'], 1, null)
-		);
+		if (isset($options['field'])) {
+			$fieldName = $options['field'];
+			unset($options['field']);
+		} else {
+			if (isset($this->_controller->request->params['field_name'])) {
+				$fieldName = $this->_controller->request->params['field_name'];
+			} elseif (isset($this->_controller->params['pass'][0])) {
+				$fieldName = $this->_controller->params['pass'][0];
+			} else {
+				$fieldName = null;
+			}
+		}
 
-		$fieldName = Hash::get($options, 'field', $fieldName);
-		unset($options['field']);
-		$size = Hash::get($options, 'size', $size);
-		unset($options['size']);
+		if (isset($options['size'])) {
+			$size = $options['size'];
+			unset($options['size']);
+		} else {
+			if (isset($this->_controller->request->params['size'])) {
+				$size = $this->_controller->request->params['size'];
+			} elseif (isset($this->_controller->params['pass'][1])) {
+				$size = $this->_controller->params['pass'][1];
+			} else {
+				$size = null;
+			}
+		}
 
 		// ファイル情報取得 plugin_keyとコンテンツID、フィールドの情報が必要
 		$UploadFile = ClassRegistry::init('Files.UploadFile');
@@ -71,14 +81,18 @@ class DownloadComponent extends Component {
  * @throws ForbiddenException
  */
 	public function doDownloadByUploadFileId($uploadFileId, $options = array()) {
-		$size = Hash::get(
-			$this->_controller->request->params,
-			'size',
-			Hash::get($this->_controller->params['pass'], 2, null)
-		);
-
-		$size = Hash::get($options, 'size', $size);
-		unset($options['size']);
+		if (isset($options['size'])) {
+			$size = $options['size'];
+			unset($options['size']);
+		} else {
+			if (isset($this->_controller->request->params['size'])) {
+				$size = $this->_controller->request->params['size'];
+			} elseif (isset($this->_controller->params['pass'][2])) {
+				$size = $this->_controller->params['pass'][2];
+			} else {
+				$size = null;
+			}
+		}
 
 		// ファイル情報取得 plugin_keyとコンテンツID、フィールドの情報が必要
 		$UploadFile = ClassRegistry::init('Files.UploadFile');
@@ -88,6 +102,29 @@ class DownloadComponent extends Component {
 			//データがない＝リンク切れ。リンク切れの場合、ログアウトしないようにするため、メッセージを追加
 			throw new ForbiddenException('Not found file');
 		}
+		return $this->_downloadUploadFile($file, $size, $options);
+	}
+
+/**
+ * UploadFileのデータ指定でのダウンロード実行
+ *
+ * @param array $file UploadFile data
+ * @param array $options オプション field : ダウンロードのフィールド名, size: nullならオリジナル thumb, small, medium, big
+ * @return CakeResponse|null
+ * @throws ForbiddenException
+ */
+	public function doDownloadByUploadFile($file, $options = []) {
+		if (isset($options['size'])) {
+			$size = $options['size'];
+			unset($options['size']);
+		} else {
+			if (isset($this->_controller->request->params['size'])) {
+				$size = $this->_controller->request->params['size'];
+			} else {
+				$size = null;
+			}
+		}
+
 		return $this->_downloadUploadFile($file, $size, $options);
 	}
 
