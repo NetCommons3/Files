@@ -157,8 +157,9 @@ class DownloadComponent extends Component {
 				$file['UploadFile']['block_key']
 			);
 			// ブロック見えない & ブロック編集できないのは 403
-			if ($Block->isVisible($uploadFileBlock) === false
-				&& Current::permission('block_editable') === false) {
+			if (!$uploadFileBlock ||
+				($Block->isVisible($uploadFileBlock) === false &&
+					!Current::permission('block_editable'))) {
 				throw new ForbiddenException('Not found file');
 			}
 		}
