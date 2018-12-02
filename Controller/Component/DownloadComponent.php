@@ -181,8 +181,14 @@ class DownloadComponent extends Component {
 			if (! empty($options['name'])) {
 				$downloadFileName = $options['name'];
 			}
-			$content = 'attachment;';
-			$content .= 'filename*=UTF-8\'\'' . rawurlencode($downloadFileName);
+			// PDF is click to browser viewing. right click to file saving are file name is japanese file name.
+			if (isset($file['UploadFile']['extension']) && $file['UploadFile']['extension'] == 'pdf') {
+				$content = 'inline; filename="' . $filename . '";';
+				$content .= 'filename*=UTF-8\'\'' . rawurlencode($downloadFileName);
+			} else {
+				$content = 'attachment;';
+				$content .= 'filename*=UTF-8\'\'' . rawurlencode($downloadFileName);
+			}
 			$this->_controller->response->header('Content-Disposition', $content);
 
 			// name, downloadが入っているとCake側処理により文字化けが発生する
