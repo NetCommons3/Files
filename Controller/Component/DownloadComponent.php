@@ -139,6 +139,7 @@ class DownloadComponent extends Component {
  * @throws BadRequestException
  * @throws NotFoundException
  * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+ * @SuppressWarnings(PHPMD.NPathComplexity)
  */
 	protected function _downloadUploadFile($file, $size, $options) {
 		$UploadFile = ClassRegistry::init('Files.UploadFile');
