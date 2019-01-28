@@ -25,6 +25,14 @@ class CsvFileWriter extends TemporaryFile {
 	public function __construct($options = array()) {
 		$folderPath = Hash::get($options, 'folder', null);
 		parent::__construct($folderPath);
+
+		if (! isset($options['to_encoding'])) {
+			$options['to_encoding'] = 'SJIS-win';
+		}
+		if (! isset($options['from_encoding'])) {
+			$options['from_encoding'] = 'UTF-8';
+		}
+
 		$this->_options = $options;
 		if (Hash::get($this->_options, 'header', false)) {
 			// headerオプションが指定されてたらヘッダ出力
@@ -47,8 +55,16 @@ class CsvFileWriter extends TemporaryFile {
 			$csvLine .= fgets($fp);
 		}
 		fclose($fp);
-		// ε(　　　　 v ﾟωﾟ)　＜ SJIS-win決め打ちなのをなんとかしたいか
-		$convertLine = mb_convert_encoding($csvLine, 'SJIS-win', 'UTF-8');
+
+		if ($this->_options['to_encoding'] !== $this->_options['from_encoding']) {
+			$convertLine = mb_convert_encoding(
+				$csvLine,
+				$this->_options['to_encoding'],
+				$this->_options['from_encoding']
+			);
+		} else {
+			$convertLine = $csvLine;
+		}
 		$this->append($convertLine);
 	}
 
