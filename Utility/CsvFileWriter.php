@@ -56,11 +56,15 @@ class CsvFileWriter extends TemporaryFile {
 		}
 		fclose($fp);
 
-		$convertLine = mb_convert_encoding(
-			$csvLine,
-			$this->_options['to_encoding'],
-			$this->_options['from_encoding']
-		);
+		if ($this->_options['to_encoding'] !== $this->_options['from_encoding']) {
+			$convertLine = mb_convert_encoding(
+				$csvLine,
+				$this->_options['to_encoding'],
+				$this->_options['from_encoding']
+			);
+		} else {
+			$convertLine = $csvLine;
+		}
 		$this->append($convertLine);
 	}
 
