@@ -153,8 +153,14 @@ class DownloadComponent extends Component {
 		if ($file['UploadFile']['block_key']) {
 			// block_keyによるガード
 			$Block = ClassRegistry::init('Blocks.Block');
-			$uploadFileBlock = $Block->findByKey(
-				$file['UploadFile']['block_key']
+			$uploadFileBlock = $Block->find('first',
+				[
+					'recursive' => -1,
+					'fields' => ['id', 'key', 'public_type', 'publish_start', 'publish_end'],
+					'conditions' => [
+						'key' => $file['UploadFile']['block_key']
+					]
+				]
 			);
 			// ブロック見えない & ブロック編集できないのは 403
 			if (!$uploadFileBlock ||
