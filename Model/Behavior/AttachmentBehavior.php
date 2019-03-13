@@ -54,8 +54,8 @@ class AttachmentBehavior extends ModelBehavior {
 
 		$this->UploadFile = ClassRegistry::init('Files.UploadFile');
 
-		foreach ($config as $filed => $options) {
-			$this->uploadSettings($model, $filed, $options);
+		foreach ($config as $field => $options) {
+			$this->uploadSettings($model, $field, $options);
 		}
 
 		$this->UploadFilesContent = ClassRegistry::init('Files.UploadFilesContent');
@@ -140,19 +140,19 @@ class AttachmentBehavior extends ModelBehavior {
  * @return void
  */
 	public function beforeSaveByAttachment(Model $model, $options = array()) {
-		foreach ($this->_settings[$model->alias]['fileFields'] as $fieldName => $filedOptions) {
+		foreach ($this->_settings[$model->alias]['fileFields'] as $fieldName => $fieldOptions) {
 			if (isset($model->data[$model->alias][$fieldName])) {
 				$fileData = $model->data[$model->alias][$fieldName];
 				// $fileData['error'] があったら処理中止。バリデーションエラーにする。
 				if ($fileData['name']) {
 					// 元データにファイル名フィールドが定義されてたら埋める
-					$fileNameFieldName = Hash::get($filedOptions, 'fileNameFieldName');
+					$fileNameFieldName = Hash::get($fieldOptions, 'fileNameFieldName');
 					if ($fileNameFieldName) {
 						$model->data[$model->alias][$fileNameFieldName] =
 							$fileData['name'];
 					}
 					// サイズフィールドをうめる
-					$sizeFieldName = Hash::get($filedOptions, 'sizeFieldName');
+					$sizeFieldName = Hash::get($fieldOptions, 'sizeFieldName');
 					if ($sizeFieldName) {
 						$model->data[$model->alias][$sizeFieldName] =
 							$fileData['size'];
@@ -186,7 +186,7 @@ class AttachmentBehavior extends ModelBehavior {
  * @SuppressWarnings(PHPMD.CyclomaticComplexity)
  */
 	public function afterSaveByAttachment(Model $model, $created, $options = array()) {
-		foreach ($this->_settings[$model->alias]['fileFields'] as $fieldName => $filedOptions) {
+		foreach ($this->_settings[$model->alias]['fileFields'] as $fieldName => $fieldOptions) {
 			if (isset($model->data[$model->alias][$fieldName])) {
 				$fileData = $model->data[$model->alias][$fieldName];
 
@@ -194,7 +194,7 @@ class AttachmentBehavior extends ModelBehavior {
 					$uploadFile = $this->UploadFile->create();
 					$pathInfo = pathinfo($fileData['name']);
 					$uploadFile['UploadFile']['plugin_key'] = Inflector::underscore($model->plugin);
-					$keyField = Hash::get($filedOptions, 'contentKeyFieldName', 'key');
+					$keyField = Hash::get($fieldOptions, 'contentKeyFieldName', 'key');
 					$uploadFile['UploadFile']['content_key'] = $model->data[$model->alias][$keyField];
 					$uploadFile['UploadFile']['field_name'] = $fieldName;
 					$uploadFile['UploadFile']['original_name'] = $fileData['name'];
@@ -202,9 +202,9 @@ class AttachmentBehavior extends ModelBehavior {
 					$uploadFile['UploadFile']['real_file_name'] = $fileData;
 
 					//MIMEタイプがimageではじまってなかったらサムネイルはつくらない
-					$filedOptions['thumbnails'] = $this->_isImageFile($fileData['tmp_name']);
+					$fieldOptions['thumbnails'] = $this->_isImageFile($fileData['tmp_name']);
 					// フィールド毎にオプションを設定しなおしてsave実行
-					$this->UploadFile->setOptions($filedOptions);
+					$this->UploadFile->setOptions($fieldOptions);
 					// ε(　　　　 v ﾟωﾟ)　＜ 例外処理
 					$this->_uploadedFiles[$fieldName] = $this->UploadFile->save($uploadFile);
 				}
