@@ -67,9 +67,7 @@ class UploadFile extends FilesAppModel {
 							'type' => 'mimetype',
 							'size' => 'size'
 					],
-					// https://github.com/josegonzalez/cakephp-upload/issues/263
-					// 上記修正がUploadビヘイビアにとりこまれるまで false
-					'deleteFolderOnDelete' => false,
+					'deleteFolderOnDelete' => true,
 			),
 		],
 		'Files.UploadFileValidate',
