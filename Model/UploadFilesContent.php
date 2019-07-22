@@ -71,6 +71,7 @@ class UploadFilesContent extends FilesAppModel {
 				'real_file_name', 'extension', 'mimetype', 'size', 'download_count',
 				'total_download_count', 'room_id', 'block_key'
 			],
+			'type' => 'inner',
 			'order' => ''
 		),
 	);
