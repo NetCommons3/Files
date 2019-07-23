@@ -115,6 +115,7 @@ class AttachmentBehavior extends ModelBehavior {
 					}
 				}
 			}
+			// TODO リンク先ファイルが存在しなかったら誰かが編集した可能性があるので「編集されたかも」なエラーにする
 		}
 	}
 
@@ -211,6 +212,7 @@ class AttachmentBehavior extends ModelBehavior {
 			}
 		}
 
+		// TODO 履歴なし&アップロードされなかった　なら　関連レコードの追加はしない（idに変更なければ追加する必要がない）
 		// アップロードがなかったら以前のデータを挿入する
 		// formからhiddenで UploadFile.field_name.id 形式でデータが渡ってくる
 		// $data['UploadFile']にはモデルデータ編集時に添付されてるファイルについてのデータが入っている
@@ -376,8 +378,15 @@ class AttachmentBehavior extends ModelBehavior {
  * @param Model $model モデル
  * @param int $uploadFileId アップロードファイルID
  * @return array
+ * @throws InternalErrorException
  */
 	protected function _saveUploadFilesContent(Model $model, $uploadFileId) {
+		if ($this->UploadFile->exists($uploadFileId) === false) {
+			// 関連づけようとしているUploadFileレコードが存在しなかったら例外なげる
+			//（履歴なしタイプの同時編集で発生しうる）
+			throw new InternalErrorException('UploadFile Record Not Found');
+		}
+
 		$contentId = $model->data[$model->alias]['id'];
 		$contentIsActive = Hash::get($model->data[$model->alias], 'is_active', null);
 		$contentIsLatest = Hash::get($model->data[$model->alias], 'is_latest', null);
