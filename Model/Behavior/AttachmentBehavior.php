@@ -115,7 +115,6 @@ class AttachmentBehavior extends ModelBehavior {
 					}
 				}
 			}
-			// TODO リンク先ファイルが存在しなかったら誰かが編集した可能性があるので「編集されたかも」なエラーにする
 		}
 	}
 
@@ -212,7 +211,6 @@ class AttachmentBehavior extends ModelBehavior {
 			}
 		}
 
-		// TODO 履歴なし&アップロードされなかった　なら　関連レコードの追加はしない（idに変更なければ追加する必要がない）
 		// アップロードがなかったら以前のデータを挿入する
 		// formからhiddenで UploadFile.field_name.id 形式でデータが渡ってくる
 		// $data['UploadFile']にはモデルデータ編集時に添付されてるファイルについてのデータが入っている
@@ -241,8 +239,11 @@ class AttachmentBehavior extends ModelBehavior {
 					// そのときは関連テーブルを消す必要があるのでremoveFileは呼んでおく。
 					$this->UploadFile->removeFile($model->id, $uploadFile['id']);
 				} else {
-					$uploadFileId = $uploadFile['id'];
-					$this->_saveUploadFilesContent($model, $uploadFileId);
+					// 履歴なし&アップロードされなかった　なら　関連レコードの追加はしない（idに変更なければ追加する必要がない）
+					if ($model->hasField('is_latest')) {
+						$uploadFileId = $uploadFile['id'];
+						$this->_saveUploadFilesContent($model, $uploadFileId);
+					}
 				}
 			}
 		}
