@@ -239,8 +239,11 @@ class AttachmentBehavior extends ModelBehavior {
 					// そのときは関連テーブルを消す必要があるのでremoveFileは呼んでおく。
 					$this->UploadFile->removeFile($model->id, $uploadFile['id']);
 				} else {
-					$uploadFileId = $uploadFile['id'];
-					$this->_saveUploadFilesContent($model, $uploadFileId);
+					// 履歴なし&アップロードされなかった　なら　関連レコードの追加はしない（idに変更なければ追加する必要がない）
+					if ($model->hasField('is_latest')) {
+						$uploadFileId = $uploadFile['id'];
+						$this->_saveUploadFilesContent($model, $uploadFileId);
+					}
 				}
 			}
 		}
@@ -376,8 +379,15 @@ class AttachmentBehavior extends ModelBehavior {
  * @param Model $model モデル
  * @param int $uploadFileId アップロードファイルID
  * @return array
+ * @throws InternalErrorException
  */
 	protected function _saveUploadFilesContent(Model $model, $uploadFileId) {
+		if ($this->UploadFile->exists($uploadFileId) === false) {
+			// 関連づけようとしているUploadFileレコードが存在しなかったら例外なげる
+			//（履歴なしタイプの同時編集で発生しうる）
+			throw new InternalErrorException('UploadFile Record Not Found');
+		}
+
 		$contentId = $model->data[$model->alias]['id'];
 		$contentIsActive = Hash::get($model->data[$model->alias], 'is_active', null);
 		$contentIsLatest = Hash::get($model->data[$model->alias], 'is_latest', null);
