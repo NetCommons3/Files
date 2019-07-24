@@ -9,6 +9,9 @@ php:
 
 sudo: false
 
+services:
+  - mysql
+  
 env:
   matrix:
     - NETCOMMONS_VERSION=master DB=mysql
