@@ -181,7 +181,7 @@ class AttachmentBehavior extends ModelBehavior {
  * @param Model $model モデル
  * @param bool $created 新規作成
  * @param array $options オプション
- * @throws Exception
+ * @throws InternalErrorException
  * @return void
  * @SuppressWarnings(PHPMD.CyclomaticComplexity)
  */
