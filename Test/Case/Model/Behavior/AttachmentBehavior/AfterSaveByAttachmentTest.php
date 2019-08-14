@@ -1,7 +1,14 @@
 <?php
+/**
+ * AfterSaveByAttachmentでの例外テスト
+ */
+
 App::uses('NetCommonsModelTestCase', 'NetCommons.TestSuite');
 App::uses('TestAttachmentBehaviorSaveModelFixture', 'Files.Test/Fixture');
 
+/**
+ * Class AfterSaveByAttachmentTest
+ */
 class AfterSaveByAttachmentTest extends NetCommonsModelTestCase {
 
 /**
