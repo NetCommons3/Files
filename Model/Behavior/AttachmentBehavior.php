@@ -206,7 +206,20 @@ class AttachmentBehavior extends ModelBehavior {
 					// フィールド毎にオプションを設定しなおしてsave実行
 					$this->UploadFile->setOptions($fieldOptions);
 					// ε(　　　　 v ﾟωﾟ)　＜ 例外処理
-					$this->_uploadedFiles[$fieldName] = $this->UploadFile->save($uploadFile);
+					$saveResult = $this->UploadFile->save($uploadFile);
+					if ($saveResult) {
+						$this->_uploadedFiles[$fieldName] = $saveResult;
+					} else {
+						$errorMessage = 'UploadFile::save() Failed. fieldName=' . $fieldName;
+						$errorMessage .= "\n";
+						$errorMessage .= "uploadFile:\n";
+						$errorMessage .= var_export($uploadFile, true);
+						$errorMessage .= "\n";
+						$errorMessage .= "validationErrors:\n";
+						$errorMessage .= var_export($this->UploadFile->validationErrors, true);
+						$this->log($errorMessage, LOG_DEBUG);
+						throw new InternalErrorException($errorMessage);
+					}
 				}
 			}
 		}
