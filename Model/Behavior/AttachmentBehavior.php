@@ -144,7 +144,7 @@ class AttachmentBehavior extends ModelBehavior {
 			if (isset($model->data[$model->alias][$fieldName])) {
 				$fileData = $model->data[$model->alias][$fieldName];
 				// $fileData['error'] があったら処理中止。バリデーションエラーにする。
-				if ($fileData['name']) {
+				if (!empty($fileData['name'])) {
 					// 元データにファイル名フィールドが定義されてたら埋める
 					$fileNameFieldName = Hash::get($fieldOptions, 'fileNameFieldName');
 					if ($fileNameFieldName) {
@@ -190,7 +190,7 @@ class AttachmentBehavior extends ModelBehavior {
 			if (isset($model->data[$model->alias][$fieldName])) {
 				$fileData = $model->data[$model->alias][$fieldName];
 
-				if ($fileData['name']) {
+				if (!empty($fileData['name'])) {
 					$uploadFile = $this->UploadFile->create();
 					$pathInfo = pathinfo($fileData['name']);
 					$uploadFile['UploadFile']['plugin_key'] = Inflector::underscore($model->plugin);

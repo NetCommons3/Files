@@ -155,7 +155,15 @@ class UploadFile extends FilesAppModel {
 		$this->uploadSettings('real_file_name', 'path', $path);
 		$this->uploadSettings('real_file_name', 'thumbnailPath', $path);
 
-		return $this->delete($fileId, false);
+		if (file_exists($this->getRealFilePath($uploadFile))) {
+			$result = $this->delete($fileId, false);
+		} else {
+			$this->Behaviors->disable('Upload.Upload');
+			$result = $this->delete($fileId, false);
+			$this->Behaviors->enable('Upload.Upload');
+		}
+
+		return $result;
 	}
 
 /**
