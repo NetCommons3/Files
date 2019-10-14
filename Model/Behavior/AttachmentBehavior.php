@@ -282,6 +282,56 @@ class AttachmentBehavior extends ModelBehavior {
 	}
 
 /**
+ * content_keyからUploadFile, UploadFilesContent, および実ファイルの削除をおこなう。
+ *
+ * ファイルを添付する元コンテンツの削除時に呼び出してください。
+ *
+ * @param Model $model Model
+ * @param array $contentKeys content_keyリスト
+ * @return bool
+ */
+	public function deleteUploadFileByContentKeys(Model $model, array $contentKeys) {
+		// ファイルフィールドが未定義ならなにもしない
+		if (!isset($this->_settings[$model->alias]['fileFields'])) {
+			return true;
+		}
+
+		$fields = array_keys($this->_settings[$model->alias]['fileFields']);
+		$pluginKey = Inflector::underscore($model->plugin);
+
+		$uploadFiles = $this->UploadFile->find(
+			'all',
+			[
+				'conditions' => [
+					'UploadFile.plugin_key' => $pluginKey,
+					'UploadFile.content_key' => $contentKeys,
+					'UploadFile.field_name' => $fields
+				],
+				'fields' => ['UploadFile.id'],
+			]
+		);
+		$fileIds = [];
+		foreach ($uploadFiles as $uploadFile) {
+			$fileId = $uploadFile['UploadFile']['id'];
+			if (!$this->UploadFile->deleteUploadFile($fileId)) {
+				return false;
+			}
+			$fileIds[] = $fileId;
+
+		}
+		// 関連テーブルのデータも削除
+		$result = $this->UploadFilesContent->deleteAll(
+			[
+				'UploadFilesContent.upload_file_id' => $fileIds,
+			],
+			false,
+			false
+		);
+
+		return (bool)$result;
+	}
+
+/**
  * アップロードフィールドの設定
  *
  * @param Model $model モデル
