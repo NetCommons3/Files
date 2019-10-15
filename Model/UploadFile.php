@@ -151,11 +151,15 @@ class UploadFile extends FilesAppModel {
 	public function deleteUploadFile($fileId) {
 		// Uploadビヘイビアにpathを渡す
 		$uploadFile = $this->findById($fileId);
-		$path = $this->uploadBasePath . $uploadFile['UploadFile']['path'];
-		$this->uploadSettings('real_file_name', 'path', $path);
-		$this->uploadSettings('real_file_name', 'thumbnailPath', $path);
+		if (! $uploadFile) {
+			//データがない場合、既に削除済みとしてtrueを返す。
+			return true;
+		}
 
 		if (file_exists($this->getRealFilePath($uploadFile))) {
+			$path = $this->uploadBasePath . $uploadFile['UploadFile']['path'];
+			$this->uploadSettings('real_file_name', 'path', $path);
+			$this->uploadSettings('real_file_name', 'thumbnailPath', $path);
 			$result = $this->delete($fileId, false);
 		} else {
 			$this->Behaviors->disable('Upload.Upload');
