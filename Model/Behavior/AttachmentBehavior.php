@@ -10,6 +10,7 @@
 /**
  * Class AttachmentBehavior
  *
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
 class AttachmentBehavior extends ModelBehavior {
 
