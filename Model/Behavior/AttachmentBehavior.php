@@ -209,6 +209,8 @@ class AttachmentBehavior extends ModelBehavior {
 					// ε(　　　　 v ﾟωﾟ)　＜ 例外処理
 					$saveResult = $this->UploadFile->save($uploadFile);
 					if ($saveResult) {
+						$model->data[$this->UploadFile->alias][$fieldName]['id'] =
+								$saveResult[$this->UploadFile->alias]['id'];
 						$this->_uploadedFiles[$fieldName] = $saveResult;
 					} else {
 						$errorMessage = 'UploadFile::save() Failed. fieldName=' . $fieldName;
