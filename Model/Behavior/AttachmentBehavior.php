@@ -238,6 +238,9 @@ class AttachmentBehavior extends ModelBehavior {
 		foreach ($uploadFiles as $uploadFile) {
 			// 同じfield_nameでアップロードされてるなら以前のファイルへの関連レコードを
 			// 新規に追加する必要は無い（過去の関連レコードはそのまま）
+			if (! isset($uploadFile['field_name'])) {
+				continue;
+			}
 			if (isset($this->_uploadedFiles[$uploadFile['field_name']])) {
 				// 新たにアップロードされてる
 				// 履歴のないモデル（is_latest, is_activeカラムがない）だったら、以前のファイルを削除する
