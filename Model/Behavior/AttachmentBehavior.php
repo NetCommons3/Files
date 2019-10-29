@@ -187,6 +187,7 @@ class AttachmentBehavior extends ModelBehavior {
  * @SuppressWarnings(PHPMD.CyclomaticComplexity)
  */
 	public function afterSaveByAttachment(Model $model, $created, $options = array()) {
+		$this->_uploadedFiles = array();
 		foreach ($this->_settings[$model->alias]['fileFields'] as $fieldName => $fieldOptions) {
 			if (isset($model->data[$model->alias][$fieldName])) {
 				$fileData = $model->data[$model->alias][$fieldName];
@@ -209,8 +210,6 @@ class AttachmentBehavior extends ModelBehavior {
 					// ε(　　　　 v ﾟωﾟ)　＜ 例外処理
 					$saveResult = $this->UploadFile->save($uploadFile);
 					if ($saveResult) {
-						$model->data[$this->UploadFile->alias][$fieldName]['id'] =
-								$saveResult[$this->UploadFile->alias]['id'];
 						$this->_uploadedFiles[$fieldName] = $saveResult;
 					} else {
 						$errorMessage = 'UploadFile::save() Failed. fieldName=' . $fieldName;
@@ -238,9 +237,6 @@ class AttachmentBehavior extends ModelBehavior {
 		foreach ($uploadFiles as $uploadFile) {
 			// 同じfield_nameでアップロードされてるなら以前のファイルへの関連レコードを
 			// 新規に追加する必要は無い（過去の関連レコードはそのまま）
-			if (! isset($uploadFile['field_name'])) {
-				continue;
-			}
 			if (isset($this->_uploadedFiles[$uploadFile['field_name']])) {
 				// 新たにアップロードされてる
 				// 履歴のないモデル（is_latest, is_activeカラムがない）だったら、以前のファイルを削除する
@@ -272,7 +268,16 @@ class AttachmentBehavior extends ModelBehavior {
 			$uploadFileId = $uploadedFile['UploadFile']['id'];
 			$this->_saveUploadFilesContent($model, $uploadFileId);
 		}
-		$this->_uploadedFiles = array();
+	}
+
+/**
+ * afterSaveでUploadFileテーブルに登録した結果を返す。
+ *
+ * @param Model $model 元モデル
+ * @return array
+ */
+	public function getUploadedFiles(Model $model) {
+		return $this->_uploadedFiles;
 	}
 
 /**
