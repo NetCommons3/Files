@@ -187,6 +187,7 @@ class AttachmentBehavior extends ModelBehavior {
  * @SuppressWarnings(PHPMD.CyclomaticComplexity)
  */
 	public function afterSaveByAttachment(Model $model, $created, $options = array()) {
+		$this->_uploadedFiles = array();
 		foreach ($this->_settings[$model->alias]['fileFields'] as $fieldName => $fieldOptions) {
 			if (isset($model->data[$model->alias][$fieldName])) {
 				$fileData = $model->data[$model->alias][$fieldName];
@@ -267,7 +268,16 @@ class AttachmentBehavior extends ModelBehavior {
 			$uploadFileId = $uploadedFile['UploadFile']['id'];
 			$this->_saveUploadFilesContent($model, $uploadFileId);
 		}
-		$this->_uploadedFiles = array();
+	}
+
+/**
+ * afterSaveでUploadFileテーブルに登録した結果を返す。
+ *
+ * @param Model $model 元モデル
+ * @return array
+ */
+	public function getUploadedFiles(Model $model) {
+		return $this->_uploadedFiles;
 	}
 
 /**
