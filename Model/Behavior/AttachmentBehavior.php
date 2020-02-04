@@ -375,6 +375,21 @@ class AttachmentBehavior extends ModelBehavior {
 	}
 
 /**
+ * removeUploadSettings
+ *
+ * @param Model $model Model 元モデル
+ * @param string $field フィールド名
+ * @return void
+ */
+	public function removeUploadSettings(Model $model, $field) {
+		// バリデーション削除
+		unset($model->validate[$field]['extension']);
+		unset($model->validate[$field]['size']);
+		// _settings削除
+		unset($this->_settings[$model->alias]['fileFields'][$field]);
+	}
+
+/**
  * ファイルサイズバリデート ルームの合計ファイルサイズ制限に収まってるかチェックする。
  *
  * @param Model $model 元モデル
