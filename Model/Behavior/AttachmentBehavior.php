@@ -2,10 +2,14 @@
 /**
  * AttachmentBehavior
  *
+ * HACK: phpmd の ExcessiveClassComplexity ruleに引っかかる直前の状態なので、凝集度をみて分割したほうがよさそう
+ *
  * @author   Ryuji AMANO <ryuji@ryus.co.jp>
  * @link http://www.netcommons.org NetCommons Project
  * @license http://www.netcommons.org/license.txt NetCommons License
  */
+
+App::uses('ImageFileUtility', 'Files.Utility');
 
 /**
  * Class AttachmentBehavior
@@ -204,7 +208,7 @@ class AttachmentBehavior extends ModelBehavior {
 					$uploadFile['UploadFile']['real_file_name'] = $fileData;
 
 					//MIMEタイプがimageではじまってなかったらサムネイルはつくらない
-					$fieldOptions['thumbnails'] = $this->_isImageFile($fileData['tmp_name']);
+					$fieldOptions['thumbnails'] = ImageFileUtility::isImageByFilePath($fileData['tmp_name']);
 					// フィールド毎にオプションを設定しなおしてsave実行
 					$this->UploadFile->setOptions($fieldOptions);
 					// ε(　　　　 v ﾟωﾟ)　＜ 例外処理
@@ -375,25 +379,19 @@ class AttachmentBehavior extends ModelBehavior {
 	}
 
 /**
- * ファイルサイズバリデート ルームの合計ファイルサイズ制限に収まってるかチェックする。
+ * removeUploadSettings
  *
- * @param Model $model 元モデル
- * @param array $check 検査対象
- * @return bool|string OK true, エラー時はメッセージを返す
- * @see UploadFile::validateSize()
+ * @param Model $model Model 元モデル
+ * @param string $field フィールド名
+ * @return void
  */
-	//public function validateUploadFileSize(Model $model, $check) {
-	//	$result = $this->UploadFile->validateSize($check);
-	//	return $result;
-	//}
-	//
-	//public function isValidRoomFileSizeLimit(Model $model, $size) {
-	//	$check = [
-	//		'size' => $size
-	//	];
-	//	$result = $this->UploadFile->validateSize($check);
-	//	return $result;
-	//}
+	public function removeUploadSettings(Model $model, $field) {
+		// バリデーション削除
+		unset($model->validate[$field]['extension']);
+		unset($model->validate[$field]['size']);
+		// _settings削除
+		unset($this->_settings[$model->alias]['fileFields'][$field]);
+	}
 
 /**
  * コンテンツに、物理ファイルを添付する処理
@@ -420,6 +418,9 @@ class AttachmentBehavior extends ModelBehavior {
 
 /**
  * ダウンロードカウントアップ
+ *
+ * HACK: ダウンロードカウントについてのメソッドなのでこのBehaviorから独立させたBehaviorとし、
+ *       このBehaviorのsetupでloadしてもよさそう
  *
  * @param Model $model 元モデル
  * @param array $data UploadFile Model Data
@@ -450,6 +451,8 @@ class AttachmentBehavior extends ModelBehavior {
 /**
  * コンテンツとアップロードファイルの関連テーブルを保存
  *
+ * HACK: UploadFilesContentモデルに移動させたほうがよいと思われる。
+ *
  * @param Model $model モデル
  * @param int $uploadFileId アップロードファイルID
  * @return array
@@ -478,17 +481,4 @@ class AttachmentBehavior extends ModelBehavior {
 		return array($contentId, $data);
 	}
 
-/**
- * MimeTypeをみてimageか判定する
- *
- * @param string $file ファイルへのパス
- * @return bool
- */
-	protected function _isImageFile($file) {
-		$finfo = finfo_open(FILEINFO_MIME_TYPE);
-		$mimeType = finfo_file($finfo, $file);
-		finfo_close($finfo);
-		$result = (substr($mimeType, 0, 5) === 'image');
-		return $result;
-	}
 }
