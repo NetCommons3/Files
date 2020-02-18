@@ -113,7 +113,7 @@ class AttachmentBehavior extends ModelBehavior {
 				if (isset($model->data[$model->alias][$fieldName])) {
 					$fileData = $model->data[$model->alias][$fieldName];
 					// php upload errorだったらvalidationerrorにする
-					if (isset($fieldData['error']) &&
+					if (isset($fileData['error']) &&
 						$fileData['error'] !== UPLOAD_ERR_OK &&
 						$fileData['error'] !== UPLOAD_ERR_NO_FILE) {
 						$model->validationErrors[$fieldName][] =
