@@ -362,7 +362,9 @@ class UploadFile extends FilesAppModel {
 		if ($result === false) {
 			throw new InternalErrorException('Failed UploadFile::countUp()');
 		}
+		$this->invalidateCDN = false;
 		$this->commit();
+		$this->invalidateCDN = true;
 		return $result;
 	}
 
