@@ -189,7 +189,7 @@ class DownloadComponent extends Component {
 				$downloadFileName = $options['name'];
 			}
 			$content = 'attachment;';
-			$content .= 'filename*=UTF-8\'\'' . rawurlencode($downloadFileName);
+			$content .= 'filename*=UTF-8\'\'' . $downloadFileName;
 			$this->_controller->response->header('Content-Disposition', $content);
 
 			// name, downloadが入っているとCake側処理により文字化けが発生する
