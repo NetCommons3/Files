@@ -89,6 +89,11 @@ EOF;
 			return true;
 		}
 
+		// sizeなければuploadされてないのでtrueでぬける
+		if (!isset($check[$field]['size'])) {
+			return true;
+		}
+
 		$size = $check[$field]['size'];
 
 		$roomTotalSize = $this->getTotalSizeByRoomId($model, $roomId);

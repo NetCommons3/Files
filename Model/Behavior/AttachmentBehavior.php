@@ -67,6 +67,7 @@ class AttachmentBehavior extends ModelBehavior {
 
 		$model->Behaviors->load('Files.UploadFileValidate');
 		$model->Behaviors->load('Files.UploadValidatorWrap');
+		$model->Behaviors->load('Files.DownloadCountUp');
 	}
 
 /**
@@ -113,7 +114,8 @@ class AttachmentBehavior extends ModelBehavior {
 				if (isset($model->data[$model->alias][$fieldName])) {
 					$fileData = $model->data[$model->alias][$fieldName];
 					// php upload errorだったらvalidationerrorにする
-					if ($fileData['error'] !== UPLOAD_ERR_OK &&
+					if (isset($fileData['error']) &&
+						$fileData['error'] !== UPLOAD_ERR_OK &&
 						$fileData['error'] !== UPLOAD_ERR_NO_FILE) {
 						$model->validationErrors[$fieldName][] =
 							__d('files', 'Failed uploading file.');
@@ -414,24 +416,6 @@ class AttachmentBehavior extends ModelBehavior {
 		$contentId = $data[$model->alias]['id'];
 
 		$this->UploadFile->attach($pluginKey, $contentKey, $contentId, $fieldName, $file);
-	}
-
-/**
- * ダウンロードカウントアップ
- *
- * HACK: ダウンロードカウントについてのメソッドなのでこのBehaviorから独立させたBehaviorとし、
- *       このBehaviorのsetupでloadしてもよさそう
- *
- * @param Model $model 元モデル
- * @param array $data UploadFile Model Data
- * @param string $fieldName アップロードファイルフィールド名
- * @return void
- */
-	public function downloadCountUp(Model $model, $data, $fieldName) {
-		$uploadFile = [
-			'UploadFile' => $data['UploadFile'][$fieldName]
-		];
-		$this->UploadFile->countUp($uploadFile);
 	}
 
 /**
