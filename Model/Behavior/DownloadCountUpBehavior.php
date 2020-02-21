@@ -13,7 +13,7 @@
 final class DownloadCountUpBehavior extends ModelBehavior {
 
 /**
- * @var UploadFile
+ * @var UploadFile UploadFile model
  */
 	private $__uploadFile;
 
