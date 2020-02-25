@@ -363,15 +363,9 @@ class UploadFile extends FilesAppModel {
 			throw new InternalErrorException('Failed UploadFile::countUp()');
 		}
 
-		$isWysiwyg = 'wysiwyg' == $data[$this->alias]['plugin_key'];
-
-		if ($isWysiwyg) // wysiwyg の時はCDN cache を invalidate しない
-			$this->invalidateCDN = false;
-
+		$this->invalidateCDN = false;
 		$this->commit();
-
-		if ($isWysiwyg)
-			$this->invalidateCDN = true;
+		$this->invalidateCDN = true;
 
 		return $result;
 	}
