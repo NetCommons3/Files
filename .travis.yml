@@ -6,6 +6,13 @@ php:
   - 7.1
   - 7.2
   - 7.3
+  - 7.4
+
+addons:
+  apt:
+    packages:
+    - libzip-dev
+    - php-zip
 
 sudo: false
 dist: trusty
