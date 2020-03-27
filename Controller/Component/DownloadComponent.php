@@ -182,6 +182,9 @@ class DownloadComponent extends Component {
 
 		$filePath = $UploadFile->uploadBasePath .
 				$file['UploadFile']['path'] . $file['UploadFile']['id'] . DS . $filename;
+		if (!file_exists($filePath)) {
+			return null;
+		}
 
 		try {
 			$downloadFileName = $file['UploadFile']['original_name'];
