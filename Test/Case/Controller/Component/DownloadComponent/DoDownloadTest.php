@@ -67,6 +67,8 @@ class DownloadComponentDoDownloadTest extends NetCommonsControllerTestCase {
 		$this->generateNc('TestFiles.TestDownloadComponent');
 		// $this->controllerにテスト用コントローラが配置される
 
+		$uploadBasePath = \CakePlugin::path('Files') . 'Test' . DS . 'Fixture' . DS;
+
 		//ログイン
 		TestAuthGeneral::login($this);
 
@@ -90,7 +92,7 @@ class DownloadComponentDoDownloadTest extends NetCommonsControllerTestCase {
 		$this->controller->params['pass'] = $pass;
 
 		// responseをモックにして渡される値をテスト
-		$path = UPLOADS_ROOT . 'files/upload_file/real_file_name/1/1/foobarhash.jpg';
+		$path = $uploadBasePath . 'files/upload_file/real_file_name/1/1/foobarhash.jpg';
 
 		$responseMock = $this->getMock('CakeResponse', ['file']);
 		$responseMock->expects($this->once())
@@ -103,6 +105,7 @@ class DownloadComponentDoDownloadTest extends NetCommonsControllerTestCase {
 		$UploadFileMock->expects($this->once())
 			->method('countUp')
 			->will($this->returnValue(true));
+		$UploadFileMock->uploadBasePath = $uploadBasePath;
 
 		$this->controller->Download->doDownload($contentId);
 	}
@@ -117,6 +120,8 @@ class DownloadComponentDoDownloadTest extends NetCommonsControllerTestCase {
 		$this->generateNc('TestFiles.TestDownloadComponent');
 		// $this->controllerにテスト用コントローラが配置される
 
+		$uploadBasePath = \CakePlugin::path('Files') . 'Test' . DS . 'Fixture' . DS;
+
 		//ログイン
 		TestAuthGeneral::login($this);
 
@@ -140,7 +145,7 @@ class DownloadComponentDoDownloadTest extends NetCommonsControllerTestCase {
 		$this->controller->params['pass'] = $pass;
 
 		// responseをモックにして渡される値をテスト
-		$path = UPLOADS_ROOT . 'files/upload_file/real_file_name/1/1/small_foobarhash.jpg';
+		$path = $uploadBasePath . 'files/upload_file/real_file_name/1/1/small_foobarhash.jpg';
 
 		$responseMock = $this->getMock('CakeResponse', ['file']);
 		$responseMock->expects($this->once())
@@ -153,6 +158,7 @@ class DownloadComponentDoDownloadTest extends NetCommonsControllerTestCase {
 		$UploadFileMock->expects($this->once())
 			->method('countUp')
 			->will($this->returnValue(true));
+		$UploadFileMock->uploadBasePath = $uploadBasePath;
 
 		$this->controller->Download->doDownload($contentId, ['size' => 'small']);
 	}

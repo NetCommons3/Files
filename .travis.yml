@@ -1,11 +1,11 @@
 language: php
 
 php:
-  - 5.6
   - 7.0
   - 7.1
   - 7.2
   - 7.3
+  - 7.4
 
 sudo: false
 dist: trusty
@@ -15,13 +15,19 @@ services:
 
 env:
   matrix:
-    - NETCOMMONS_VERSION=master DB=mysql
+    - NETCOMMONS_VERSION=availability DB=mysql
   global:
       - secure: "S8behgtpd8R32b/pfr+HIdRlB1ZFACxRN/Gu9ETLIfvglBmWZW8V0mAdYoOXD2s4I3LuMrEBa2LZBzVubDSPftDvkCTCNCFChL2E0FTkFtwGT78DhBxnyx1HVvmop+6yemF6ykbud/kI24E8rR2k8SXonTLzVRM0Mx+kIqUVYvA="
       - GIT_COMMITTER_NAME=RyujiAMANO
       - GIT_COMMITTER_EMAIL=ryuji@ryus.co.jp
       - GIT_AUTHOR_NAME=RyujiAMANO
       - GIT_AUTHOR_EMAIL=ryuji@ryus.co.jp
+
+matrix:
+  allow_failures:
+    # PHP 7.4 testing is allowed to fail because the GD extension and ZipArchive is not packaged on Travis CI yet.
+    # See https://travis-ci.community/t/some-extensions-are-missing-in-php-7-4-0-zip-gmp-sodium/6320/9
+    - php: 7.4
 
 before_script:
   - export NETCOMMONS_BUILD_DIR=`dirname $TRAVIS_BUILD_DIR`/NetCommons3
