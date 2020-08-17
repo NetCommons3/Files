@@ -229,7 +229,7 @@ class ZipDownloader {
 				$name = Normalizer::normalize($name, Normalizer::FORM_C);
 			}
 		}
-		$name = mb_convert_encoding($name, $this->_clientOsEncoding, 'auto');
+		$name = mb_convert_encoding($name, $this->_clientOsEncoding, 'ASCII,JIS,UTF-8,EUC-JP,SJIS');
 		return $name;
 	}
 }
