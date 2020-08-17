@@ -52,6 +52,7 @@ class DownloadComponentDoDownloadByUploadFileIdTest extends NetCommonsController
 	public function tearDown() {
 		//ログアウト
 		TestAuthGeneral::logout($this);
+		\ClassRegistry::removeObject('UploadFile');
 
 		parent::tearDown();
 	}
@@ -65,6 +66,8 @@ class DownloadComponentDoDownloadByUploadFileIdTest extends NetCommonsController
 		//テストコントローラ生成
 		$this->generateNc('TestFiles.TestDownloadComponent');
 		// $this->controllerにテスト用コントローラが配置される
+
+		$uploadBasePath = \CakePlugin::path('Files') . 'Test' . DS . 'Fixture' . DS;
 
 		//ログイン
 		TestAuthGeneral::login($this);
@@ -91,7 +94,7 @@ class DownloadComponentDoDownloadByUploadFileIdTest extends NetCommonsController
 
 		$fileId = 1;
 		// responseをモックにして渡される値をテスト
-		$path = UPLOADS_ROOT . 'files/upload_file/real_file_name/1/1/foobarhash.jpg';
+		$path = $uploadBasePath . 'files/upload_file/real_file_name/1/1/foobarhash.jpg';
 
 		$responseMock = $this->getMock('CakeResponse', ['file']);
 		$responseMock->expects($this->once())
@@ -104,6 +107,7 @@ class DownloadComponentDoDownloadByUploadFileIdTest extends NetCommonsController
 		$UploadFileMock->expects($this->once())
 			->method('countUp')
 			->will($this->returnValue(true));
+		$UploadFileMock->uploadBasePath = $uploadBasePath;
 
 		$this->controller->Download->doDownloadByUploadFileId($fileId);
 	}
@@ -118,6 +122,14 @@ class DownloadComponentDoDownloadByUploadFileIdTest extends NetCommonsController
 		//テストコントローラ生成
 		$this->generateNc('TestFiles.TestDownloadComponent');
 		// $this->controllerにテスト用コントローラが配置される
+
+		/** @var UploadFile $UploadFile */
+		$uploadBasePath = \CakePlugin::path('Files') . 'Test' . DS . 'Fixture' . DS;
+		\ClassRegistry::removeObject('UploadFile');
+		$UploadFile = \ClassRegistry::init('Files.UploadFile');
+		$UploadFile->uploadBasePath = $uploadBasePath;
+		\ClassRegistry::removeObject('UploadFile');
+		\ClassRegistry::addObject('UploadFile', $UploadFile);
 
 		//ログイン
 		TestAuthGeneral::login($this);
@@ -137,7 +149,7 @@ class DownloadComponentDoDownloadByUploadFileIdTest extends NetCommonsController
 
 		$fileId = 6; // avatarファイル
 
-		$path = UPLOADS_ROOT . 'files/upload_file/real_file_name//6/hash_name.jpg';
+		$path = $uploadBasePath . 'files/upload_file/real_file_name//6/hash_name.jpg';
 
 		$responseMock = $this->getMock('CakeResponse', ['file']);
 		$responseMock->expects($this->once())
