@@ -204,20 +204,7 @@ class UploadFile extends FilesAppModel {
 			// @codeCoverageIgnoreEnd
 		}
 
-		$path = $this->uploadBasePath . 'files' . DS . 'upload_file' . DS;
-		if (!empty($this->data['UploadFile']['room_id'])) {
-			$roomId = $this->data['UploadFile']['room_id'];
-		} else {
-			$roomId = Current::read('Room.id');
-		}
-		if ($roomId) {
-			$path .= 'real_file_name' . DS . $roomId . DS;
-		} else {
-			$path .= $this->data['UploadFile']['field_name'] . DS;
-		}
-
-		// ID以外のpathを保存 WWW_ROOTも除外する
-		$path = substr($path, strlen($this->uploadBasePath));
+		$path = $this->__makePathField();
 		$this->data['UploadFile']['path'] = $path;
 
 		$this->uploadSettings('real_file_name', 'path', $path);
@@ -244,6 +231,31 @@ class UploadFile extends FilesAppModel {
 		}
 
 		return true;
+	}
+
+/**
+ * upload_files.pathを生成する
+ *
+ * @return string
+ */
+	private function __makePathField() {
+		$path = 'files' . DS . 'upload_file' . DS;
+		if (!empty($this->data['UploadFile']['room_id'])) {
+			$roomId = $this->data['UploadFile']['room_id'];
+		} else {
+			$roomId = Current::read('Room.id');
+		}
+		if ($roomId) {
+			$path .= 'real_file_name' . DS . $roomId . DS;
+			if (!empty($this->data['UploadFile']['id']) &&
+					!empty($this->data['UploadFile']['path']) &&
+					$this->data['UploadFile']['path'] !== $path) {
+				$path = $this->data['UploadFile']['path'];
+			}
+		} else {
+			$path .= $this->data['UploadFile']['field_name'] . DS;
+		}
+		return $path;
 	}
 
 /**
