@@ -68,7 +68,10 @@ class DownloadComponent extends Component {
 		$UploadFile = ClassRegistry::init('Files.UploadFile');
 		$pluginKey = Inflector::underscore($this->_controller->plugin);
 		$file = $UploadFile->getFile($pluginKey, $contentId, $fieldName);
-
+		if (! $file) {
+			//データがない＝リンク切れ。リンク切れの場合、ログアウトしないようにするため、メッセージを追加
+			throw new ForbiddenException('Not found file');
+		}
 		return $this->_downloadUploadFile($file, $size, $options);
 	}
 
