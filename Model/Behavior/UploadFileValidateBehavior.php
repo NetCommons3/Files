@@ -58,7 +58,7 @@ class UploadFileValidateBehavior extends ModelBehavior {
 					(`UploadFilesContent`.`content_is_active` IN (1, NULL))
 					OR
 					(`UploadFilesContent`.`content_is_latest` IN (1, NULL))
-					) AND `UploadFile`.`room_id` = ?
+					)
 				GROUP BY `UploadFile`.`id`
 			) AS UploadFileSize;
 EOF;
@@ -66,7 +66,7 @@ EOF;
 		$query = sprintf($query,
 			$model->tablePrefix . 'upload_files_contents',
 			$model->tablePrefix . 'upload_files');
-		$result = $model->query($query, [$roomId]);
+		$result = $model->query($query);
 		$total = $result[0][0]['total_size'];
 		$total = (is_null($total)) ? 0 : $total;
 		return $total;
