@@ -84,20 +84,26 @@ class AttachmentBehavior extends ModelBehavior {
 		if ($model->recursive < 0) {
 			return $results;
 		}
-		foreach ($results as $key => $content) {
-			if (isset($content[$model->alias]['id'])) {
-				$contentId = $content[$model->alias]['id'];
-				$conditions = [
-						'UploadFilesContent.plugin_key' => Inflector::underscore($model->plugin),
-						'UploadFilesContent.content_id' => $contentId,
-				];
-				$uploadFiles = $this->UploadFilesContent->find('all', ['conditions' => $conditions]);
-				foreach ($uploadFiles as $uploadFile) {
-					$fieldName = $uploadFile['UploadFile']['field_name'];
+
+		$contentIdsWithIndex = array_filter(array_column(array_column($results, $model->alias), 'id'));
+
+		if (count($contentIdsWithIndex) > 0) {
+			$conditions = [
+				'UploadFilesContent.plugin_key' => Inflector::underscore($model->plugin),
+				'UploadFilesContent.content_id' => array_values($contentIdsWithIndex),
+			];
+			$uploadFiles = $this->UploadFilesContent->find('all', ['conditions' => $conditions]);
+			foreach ($uploadFiles as $uploadFile) {
+				$contentId = $uploadFile['UploadFilesContent']['content_id'];
+				// $resultsに同じcontent_idのレコードが複数あることもありえるのでその全てのレコードに関連づける
+				$keys = array_keys($contentIdsWithIndex, $contentId);
+				$fieldName = $uploadFile['UploadFile']['field_name'];
+				foreach ($keys as $key) {
 					$results[$key]['UploadFile'][$fieldName] = $uploadFile['UploadFile'];
 				}
 			}
 		}
+
 		return $results;
 	}
 
