@@ -34,12 +34,13 @@ class AttachmentBehaviorFindTest extends NetCommonsModelTestCase {
  * @var string
  */
 	public $plugin = 'files';
-	/**
-	 * @var TestAttachmentBehaviorFindModel
-	 */
-	private $TestModel;
 
-	/**
+/**
+ * @var TestAttachmentBehaviorFindModel テスト用モデル
+ */
+	private $__testModel;
+
+/**
  * setUp method
  *
  * @return void
@@ -50,7 +51,7 @@ class AttachmentBehaviorFindTest extends NetCommonsModelTestCase {
 		//テストプラグインのロード
 		NetCommonsCakeTestCase::loadTestPlugin($this, 'Files', 'TestFiles');
 		/** @var TestAttachmentBehaviorFindModel TestModel */
-		$this->TestModel = ClassRegistry::init('TestFiles.TestAttachmentBehaviorFindModel');
+		$this->__testModel = ClassRegistry::init('TestFiles.TestAttachmentBehaviorFindModel');
 	}
 
 /**
@@ -60,13 +61,13 @@ class AttachmentBehaviorFindTest extends NetCommonsModelTestCase {
  */
 	public function testFind() {
 		// afterFindで添付されてるファイル情報をくっつける
-		$this->TestModel->recursive = 0;
-		$content = $this->TestModel->findById(2);
+		$this->__testModel->recursive = 0;
+		$content = $this->__testModel->findById(2);
 		$this->assertEquals(4, $content['UploadFile']['photo']['id']);
 
 		// recursive マイナスだと添付ファイル情報をつけない
-		$this->TestModel->recursive = -1;
-		$content = $this->TestModel->findById(2);
+		$this->__testModel->recursive = -1;
+		$content = $this->__testModel->findById(2);
 		$this->assertFalse(isset($content['UploadFile']));
 	}
 
@@ -76,8 +77,8 @@ class AttachmentBehaviorFindTest extends NetCommonsModelTestCase {
  * @return void
  */
 	public function testSomeResults() {
-		$this->TestModel->recursive = 0;
-		$contents = $this->TestModel->find('all', ['sort' => 'id ASC']);
+		$this->__testModel->recursive = 0;
+		$contents = $this->__testModel->find('all', ['sort' => 'id ASC']);
 
 		// id:1 は添付ファイル無し
 		self::assertArrayNotHasKey('UploadFile', $contents[0]);
@@ -93,7 +94,7 @@ class AttachmentBehaviorFindTest extends NetCommonsModelTestCase {
  * @return void
  */
 	public function testAfterFindWithDuplicateContentId() {
-		$this->TestModel->recursive = 0;
+		$this->__testModel->recursive = 0;
 		$results = [
 			[
 				'TestAttachmentBehaviorFindModel' => [
@@ -114,7 +115,7 @@ class AttachmentBehaviorFindTest extends NetCommonsModelTestCase {
 		];
 		/** @var AttachmentBehavior $attachmentBehavior */
 		$attachmentBehavior = ClassRegistry::getObject('AttachmentBehavior');
-		$contents = $attachmentBehavior->afterFind($this->TestModel, $results);
+		$contents = $attachmentBehavior->afterFind($this->__testModel, $results);
 
 		// id:2 は添付ファイルid:4が添付されている
 		self::assertSame('4', $contents[0]['UploadFile']['photo']['id']);
