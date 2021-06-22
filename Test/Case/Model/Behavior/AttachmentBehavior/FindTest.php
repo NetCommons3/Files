@@ -36,6 +36,11 @@ class AttachmentBehaviorFindTest extends NetCommonsModelTestCase {
 	public $plugin = 'files';
 
 /**
+ * @var TestAttachmentBehaviorFindModel テスト用モデル
+ */
+	private $__testModel;
+
+/**
  * setUp method
  *
  * @return void
@@ -45,7 +50,8 @@ class AttachmentBehaviorFindTest extends NetCommonsModelTestCase {
 
 		//テストプラグインのロード
 		NetCommonsCakeTestCase::loadTestPlugin($this, 'Files', 'TestFiles');
-		$this->TestModel = ClassRegistry::init('TestFiles.TestAttachmentBehaviorFindModel');
+		/** @var TestAttachmentBehaviorFindModel TestModel */
+		$this->__testModel = ClassRegistry::init('TestFiles.TestAttachmentBehaviorFindModel');
 	}
 
 /**
@@ -54,22 +60,69 @@ class AttachmentBehaviorFindTest extends NetCommonsModelTestCase {
  * @return void
  */
 	public function testFind() {
-		////テストデータ
-		//$type = 'first';
-		//$query = array();
-		//
-		////テスト実施
-		//$result = $this->TestModel->find($type, $query);
-
 		// afterFindで添付されてるファイル情報をくっつける
-		$this->TestModel->recursive = 0;
-		$content = $this->TestModel->findById(2);
+		$this->__testModel->recursive = 0;
+		$content = $this->__testModel->findById(2);
 		$this->assertEquals(4, $content['UploadFile']['photo']['id']);
 
 		// recursive マイナスだと添付ファイル情報をつけない
-		$this->TestModel->recursive = -1;
-		$content = $this->TestModel->findById(2);
+		$this->__testModel->recursive = -1;
+		$content = $this->__testModel->findById(2);
 		$this->assertFalse(isset($content['UploadFile']));
+	}
+
+/**
+ * test検索結果が複数
+ *
+ * @return void
+ */
+	public function testSomeResults() {
+		$this->__testModel->recursive = 0;
+		$contents = $this->__testModel->find('all', ['sort' => 'id ASC']);
+
+		// id:1 は添付ファイル無し
+		self::assertArrayNotHasKey('UploadFile', $contents[0]);
+		// id:2 は添付ファイルid:4が添付されている
+		self::assertSame('4', $contents[1]['UploadFile']['photo']['id']);
+		// id:5 は添付ファイルid:5が添付されている
+		self::assertSame('5', $contents[2]['UploadFile']['photo']['id']);
+	}
+
+/**
+ * 同じIDが複数回ある検索結果
+ *
+ * @return void
+ */
+	public function testAfterFindWithDuplicateContentId() {
+		$this->__testModel->recursive = 0;
+		$results = [
+			[
+				'TestAttachmentBehaviorFindModel' => [
+					'id' => '2',
+				]
+			],
+			[
+				'TestAttachmentBehaviorFindModel' => [
+					'id' => '5'
+				]
+			],
+			// LEFT JOINなどで同じIDが2回取得されることを想定したデータ
+			[
+				'TestAttachmentBehaviorFindModel' => [
+					'id' => '2'
+				]
+			]
+		];
+		/** @var AttachmentBehavior $attachmentBehavior */
+		$attachmentBehavior = ClassRegistry::getObject('AttachmentBehavior');
+		$contents = $attachmentBehavior->afterFind($this->__testModel, $results);
+
+		// id:2 は添付ファイルid:4が添付されている
+		self::assertSame('4', $contents[0]['UploadFile']['photo']['id']);
+		// id:5 は添付ファイルid:5が添付されている
+		self::assertSame('5', $contents[1]['UploadFile']['photo']['id']);
+		// id:2 は添付ファイルid:4が添付されている
+		self::assertSame('4', $contents[2]['UploadFile']['photo']['id']);
 	}
 
 }
