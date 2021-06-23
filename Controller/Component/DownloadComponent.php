@@ -221,4 +221,31 @@ class DownloadComponent extends Component {
 
 		return $this->_controller->response;
 	}
+
+/**
+ * ファイルが存在するかのチェック
+ *
+ * @param array $modelRecord AttachmentBehaviorを利用してfindで取得してきたレコード
+ *                           $data['UploadFile'][フィールド名]にUploadFile情報がはいってる
+ * @param string $field Modelで指定しているattachmentのフィールド名
+ * @param string|null $size 画像等の別サイズ指定
+ * @return bool
+ */
+	public function existsRealFileByModelRecord(
+		array $modelRecord,
+		string $field,
+		string $size = null
+	) : bool {
+		$UploadFile = ClassRegistry::init('Files.UploadFile');
+		$filePath = $UploadFile->uploadBasePath .
+			$modelRecord['UploadFile'][$field]['path'] .
+			$modelRecord['UploadFile'][$field]['id'] .
+			DS;
+		$filename = $modelRecord['UploadFile'][$field]['real_file_name'];
+		if ($size !== null) {
+			$filename = $size . '_' . $filename;
+		}
+		$filePath .= $filename;
+		return file_exists($filePath);
+	}
 }
