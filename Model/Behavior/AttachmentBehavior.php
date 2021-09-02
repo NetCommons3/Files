@@ -384,6 +384,12 @@ class AttachmentBehavior extends ModelBehavior {
 		$model->validate[$field]['size'] = [
 			'rule' => 'validateRoomFileSizeLimit',
 		];
+
+		// removeをファイルアップロードと同時指定しないようにするバリデータ
+		$model->validate[$field]['remove'] = [
+			'rule' => ['validateRemoveWithoutUploading'],
+			'message' => __d('files', 'Cannot attach and delete a file at the same time.')
+		];
 	}
 
 /**

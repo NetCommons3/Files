@@ -43,3 +43,5 @@ msgstr "%sにアップロードしたファイルサイズの合計が大きす�
 msgid "Please specify the file"
 msgstr "ファイルを指定してください"
 
+msgid "Cannot attach and delete a file at the same time."
+msgstr "ファイル添付と削除を同時に行うことはできません。"
