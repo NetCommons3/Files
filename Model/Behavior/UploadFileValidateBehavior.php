@@ -124,6 +124,27 @@ EOF;
 	}
 
 /**
+ * validateRemove
+ *
+ * @param Model $model Model
+ * @param array $check バリデートする値
+ * @return bool
+ */
+	public function validateRemoveWithoutUploading(Model $model, $check) : bool {
+		$fieldName = $this->_getField($check);
+		// ファイルの添付と同時に削除は不可
+		$remove = $model->data[$model->alias][$fieldName]['remove'] ?? null;
+		if (!$remove) {
+			return true;
+		}
+		$uploadError = $model->data[$model->alias][$fieldName]['error']?? null;
+		if ($uploadError === null) {
+			return true;
+		}
+		return $uploadError === UPLOAD_ERR_NO_FILE;
+	}
+
+/**
  * Returns the field to check
  *
  * @param array $check array of validation data

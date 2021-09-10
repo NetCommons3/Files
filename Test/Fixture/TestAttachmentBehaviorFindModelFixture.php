@@ -71,6 +71,15 @@ class TestAttachmentBehaviorFindModelFixture extends CakeTestFixture {
 			'modified_user' => '1',
 			'modified' => '2016-02-18 05:28:21'
 		),
+		array(
+			'id' => '5',
+			'language_id' => '2',
+			'key' => 'key5',
+			'status' => '1',
+			'is_active' => true,
+			'is_latest' => true,
+			'content' => 'Contents',
+		),
 	);
 
 }

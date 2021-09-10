@@ -1,14 +1,9 @@
 Files
 ==============
 
-Files for NetComomns3
-
-[![Build Status](https://api.travis-ci.org/NetCommons3/Files.png?branch=master)](https://travis-ci.org/NetCommons3/Files)
-[![Coverage Status](https://coveralls.io/repos/NetCommons3/Files/badge.png?branch=master)](https://coveralls.io/r/NetCommons3/Files?branch=master)
-
-| dependencies  | status |
-| ------------- | ------ |
-| composer.json | [![Dependency Status](https://www.versioneye.com/user/projects/54e54d12b3ca9bffb4000185/badge.png)](https://www.versioneye.com/user/projects/54e54d12b3ca9bffb4000185) |
+[![Tests Status](https://github.com/NetCommons3/Files/actions/workflows/tests.yml/badge.svg?branch=master)](https://github.com/NetCommons3/Files/actions/workflows/tests.yml)
+[![Coverage Status](https://coveralls.io/repos/NetCommons3/Files/badge.svg?branch=master)](https://coveralls.io/r/NetCommons3/Files?branch=master)
+[![Stable Version](https://img.shields.io/packagist/v/netcommons/files.svg?label=stable)](https://packagist.org/packages/netcommons/files)
 
 
 # AttachmentBehavior
