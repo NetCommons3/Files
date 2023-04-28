@@ -126,7 +126,7 @@ class UnZip {
 			$zip->setPassword($this->_password);
 		}
 		$index = 0;
-		while ($zipEntry = $zip->statIndex($index)) {
+		while ($zipEntry = $zip->statIndex($index, ZipArchive::FL_ENC_RAW)) {
 			$zipEntryName = $zipEntry['name'];
 			$destName = mb_convert_encoding($zipEntry['name'], $encodeCharset, 'auto');
 			if ($zip->renameName($zipEntryName, $destName) === false) {
