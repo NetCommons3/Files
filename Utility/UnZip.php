@@ -129,7 +129,7 @@ class UnZip {
 		while ($zipEntry = $zip->statIndex($index, ZipArchive::FL_ENC_RAW)) {
 			$zipEntryName = $zipEntry['name'];
 			$destName = mb_convert_encoding($zipEntry['name'], $encodeCharset, 'auto');
-			if ($zip->renameName($zipEntryName, $destName) === false) {
+			if ($zip->renameIndex($index, $destName) === false) {
 				return false;
 			}
 			if ($zip->extractTo($path, $destName) === false) {
