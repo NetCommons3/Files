@@ -128,15 +128,15 @@ jobs:
           docker-compose exec -T nc3app bash /opt/scripts/phpunit.sh
           sudo -s chmod a+w -R ${NC3_BUILD_DIR}/build
 
-      - name: push coveralls
-        if: success()
-        env:
-          COVERALLS_REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          COVERALLS_FLAG_NAME: ${{ matrix.php }}
-        run: |
-          cd ${NC3_BUILD_DIR}
-          ls -la ${NC3_BUILD_DIR}
-          vendors/bin/php-coveralls --coverage_clover=build/logs/clover.xml -v
+#      - name: push coveralls
+#        if: success()
+#        env:
+#          COVERALLS_REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#          COVERALLS_FLAG_NAME: ${{ matrix.php }}
+#        run: |
+#          cd ${NC3_BUILD_DIR}
+#          ls -la ${NC3_BUILD_DIR}
+#          vendors/bin/php-coveralls --coverage_clover=build/logs/clover.xml -v
 
       - name: docker-compose remove
         if: always()
