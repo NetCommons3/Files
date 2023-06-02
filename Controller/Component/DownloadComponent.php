@@ -80,10 +80,11 @@ class DownloadComponent extends Component {
  *
  * @param int $uploadFileId UploadFile ID
  * @param array $options オプション field : ダウンロードのフィールド名, size: nullならオリジナル thumb, small, medium, big
+ * @param string $pluginKey プラグインキー
  * @return CakeResponse|null
  * @throws ForbiddenException
  */
-	public function doDownloadByUploadFileId($uploadFileId, $options = array()) {
+	public function doDownloadByUploadFileId($uploadFileId, $options = [], $pluginKey = 'wysiwyg') {
 		if (isset($options['size'])) {
 			$size = $options['size'];
 			unset($options['size']);
@@ -101,10 +102,11 @@ class DownloadComponent extends Component {
 		$UploadFile = ClassRegistry::init('Files.UploadFile');
 
 		$file = $UploadFile->findById($uploadFileId);
-		if (! $file) {
+		if (! $file || $file['UploadFile']['plugin_key'] !== $pluginKey) {
 			//データがない＝リンク切れ。リンク切れの場合、ログアウトしないようにするため、メッセージを追加
 			throw new ForbiddenException('Not found file');
 		}
+
 		return $this->_downloadUploadFile($file, $size, $options);
 	}
 
