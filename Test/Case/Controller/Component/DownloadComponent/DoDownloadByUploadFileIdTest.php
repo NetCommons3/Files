@@ -109,7 +109,7 @@ class DownloadComponentDoDownloadByUploadFileIdTest extends NetCommonsController
 			->will($this->returnValue(true));
 		$UploadFileMock->uploadBasePath = $uploadBasePath;
 
-		$this->controller->Download->doDownloadByUploadFileId($fileId);
+		$this->controller->Download->doDownloadByUploadFileId($fileId, [], 'site_manager');
 	}
 
 /**
@@ -159,7 +159,7 @@ class DownloadComponentDoDownloadByUploadFileIdTest extends NetCommonsController
 
 		// コンテンツキーが入ってるとブロックガードで例外が発生してた。-> DownloadComponent修正で例外発生しなくなったのを確認
 		// @codingStandardsIgnoreStart NOTICE無視して例外発生するのを確認したかったので@でエラー抑止してます。
-		@$this->controller->Download->doDownloadByUploadFileId($fileId);
+		@$this->controller->Download->doDownloadByUploadFileId($fileId, [], 'users');
 		// @codingStandardsIgnoreEnd
 	}
 }
