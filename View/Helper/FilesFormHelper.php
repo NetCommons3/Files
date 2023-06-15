@@ -109,7 +109,7 @@ class FilesFormHelper extends AppHelper {
 
 		if (isset($this->_uploadFileNames[$fieldName])) {
 			if ($filename) {
-				$output .= $this->_uploadFileNames[$fieldName];
+				$output .= h($this->_uploadFileNames[$fieldName]);
 			}
 			if ($remove) {
 				$output .= $this->NetCommonsForm->checkbox(
