@@ -25,6 +25,16 @@ App::uses('Security', 'Utility');
 class TemporaryFolder extends Folder {
 
 /**
+ * @var string[] このクラスで作成されたテンポラリフォルダリスト
+ */
+	private static $__folderPaths = [];
+
+/**
+ * @var bool register_shutdown_functionに登録済みか
+ */
+	private static $__isRegisteredShutdownFunction = false;
+
+/**
  * TemporaryFolder constructor.
  */
 	public function __construct() {
@@ -32,16 +42,41 @@ class TemporaryFolder extends Folder {
 		$path .= Security::hash(mt_rand() . microtime(), 'md5');
 		//$mode = '0775'; // ε(　　　　 v ﾟωﾟ)　＜パーミッションいくつが適切だ？
 		$mode = false; // とりあえずデフォルトのまま
-		register_shutdown_function(array($this, 'delete'));
+		self::$__folderPaths[] = $path;
+		if (!self::$__isRegisteredShutdownFunction) {
+			register_shutdown_function([TemporaryFolder::CLASS, 'deleteAll']);
+			self::$__isRegisteredShutdownFunction = true;
+		}
 		parent::__construct($path, true, $mode);
 	}
 
 /**
- * デストラクタ
+ * 削除
+ *
+ * @param string|null $path 削除対象パス
+ * @return bool
+ */
+	public function delete($path = null) {
+		$path = $path ?? $this->path;
+		if ($path) {
+			$key = array_search($path, self::$__folderPaths);
+			if ($key !== false) {
+				unset(self::$__folderPaths[$key]);
+			}
+		}
+		return parent::delete($path);
+	}
+
+/**
+ * 全テンポラリフォルダの削除
  *
  * @return void
  */
-	//public function __destruct() {
-	//	$this->delete();
-	//}
+	public static function deleteAll() {
+		$folder = new Folder();
+		foreach (self::$__folderPaths as $path) {
+			$folder->delete($path);
+		}
+		self::$__folderPaths = [];
+	}
 }
