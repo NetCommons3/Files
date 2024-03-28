@@ -123,8 +123,11 @@ class AttachmentBehavior extends ModelBehavior {
 					if (isset($fileData['error']) &&
 						$fileData['error'] !== UPLOAD_ERR_OK &&
 						$fileData['error'] !== UPLOAD_ERR_NO_FILE) {
-						$model->validationErrors[$fieldName][] =
-							__d('files', 'Failed uploading file.');
+						$model->validationErrors[$fieldName][] = __d(
+							'files',
+							'Upload failed. File may be larger than %s.',
+							ini_get('upload_max_filesize') . 'B'
+						);
 					}
 				}
 			}

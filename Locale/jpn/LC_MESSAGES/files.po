@@ -33,6 +33,9 @@ msgstr "アップロード不可のファイル形式です"
 msgid "Failed uploading file."
 msgstr "アップロードに失敗したため、処理を中断しました。"
 
+msgid "Upload failed. File may be larger than %s."
+msgstr "アップロードに失敗しました。ファイルが%sを超えている可能性があります。アップロードするファイルを確認して再度お試しください。"
+
 #: Files/Model/Behavior/UploadFileValidateBehavior.php:110
 msgid "Total file size uploaded to the %s, exceeded the limit. The limit is %s(%s left)."
 msgstr "%sにアップロードしたファイルサイズの合計が大きすぎます。合計%s(残り:%s)までしか使用できません。"
