@@ -219,7 +219,10 @@ class DownloadComponent extends Component {
 		}
 
 		// Download カウントアップ
-		$UploadFile->countUp($file);
+		$pluginKey = $file['UploadFile']['plugin_key'] ?? null;
+		if ($pluginKey !== 'wysiwyg') {
+			$UploadFile->countUp($file);
+		}
 
 		return $this->_controller->response;
 	}
