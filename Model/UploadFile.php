@@ -59,7 +59,8 @@ class UploadFile extends FilesAppModel {
 							'big' => '800ml',
 							'medium' => '400ml',
 							'small' => '200ml',
-							'thumb' => '80x80',
+							// 'thumb' => '80x80',
+							'thumb' => '600ml',	// for RstNew
 					),
 					'nameCallback' => 'nameCallback',
 					'fields' => [
